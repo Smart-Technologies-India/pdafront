@@ -1,10 +1,33 @@
-import { Link, useNavigate } from "@remix-run/react";
-import { z } from "zod";
+import { Form, Link, useNavigate } from "@remix-run/react";
+import { number, z } from "zod";
 
 import { ToastContainer, toast } from "react-toastify";
 import { useRef, useState } from "react";
 import { ApiCall } from "~/services/api";
 import { Fa6SolidEye, Fa6SolidEyeSlash, Fa6SolidUser } from "~/components/icons/icons";
+import { ActionArgs, LoaderArgs, LoaderFunction, redirect } from "@remix-run/node";
+import { userPrefs } from "~/cookies";
+
+import styles from "react-toastify/dist/ReactToastify.css";
+
+export function links() {
+    return [{ rel: "stylesheet", href: styles }];
+}
+
+export const loader: LoaderFunction = async (props: LoaderArgs) => {
+    const cookieHeader = props.request.headers.get("Cookie");
+    const cookie: any = await userPrefs.parse(cookieHeader);
+    if (
+        !(cookie == null ||
+            cookie == undefined ||
+            Object.keys(cookie).length == 0)
+    ) {
+        return redirect("/home");
+    }
+
+    return null;
+};
+
 
 export default function register() {
 
@@ -16,12 +39,14 @@ export default function register() {
     const nextButton = useRef<HTMLButtonElement>(null);
 
 
+    const nameRef = useRef<HTMLInputElement>(null);
     const numbeRef = useRef<HTMLInputElement>(null);
     const passRef = useRef<HTMLInputElement>(null);
     const rePassRef = useRef<HTMLInputElement>(null);
 
     const iref = useRef<HTMLInputElement>(null);
-    const eref = useRef<HTMLInputElement>(null);
+    const cref = useRef<HTMLInputElement>(null);
+    const nref = useRef<HTMLInputElement>(null);
     const rref = useRef<HTMLInputElement>(null);
     const tref = useRef<HTMLInputElement>(null);
 
@@ -35,10 +60,12 @@ export default function register() {
     const submit = async () => {
         const RegisterScheme = z
             .object({
-                email: z
+                name: z
                     .string()
-                    .nonempty("Email is required.")
-                    .email("Enter a valid email."),
+                    .nonempty("Name is required"),
+                contact: z
+                    .string()
+                    .nonempty("Contact number is required"),
                 password: z
                     .string()
                     .nonempty("Password is required")
@@ -87,36 +114,44 @@ export default function register() {
                 { message: "Password and Re-Password should be the same" }
             );
 
+
         type RegisterScheme = z.infer<typeof RegisterScheme>;
 
         const register: RegisterScheme = {
-            email: numbeRef!.current!.value,
+            contact: numbeRef!.current!.value,
+            name: nameRef!.current!.value,
             password: passRef!.current!.value,
             repassword: rePassRef!.current!.value,
         };
 
+
         const parsed = RegisterScheme.safeParse(register);
         if (parsed.success) {
+
             const data = await ApiCall({
                 query: `
-          mutation signup($signUpUser:SignUpUserInput!){
-            signup(signUpUserInput:$signUpUser){
-              id,
-              email,
-              role,
-              token
-            }
-          }
-        `,
+                    mutation signup($signUpUser:SignUpUserInput!){
+                        signup(signUpUserInput:$signUpUser){
+                            id,
+                            token,
+                            name,
+                            contact,
+                            role
+                        }
+                    }
+                `,
                 veriables: {
-                    signUpUser: { email: register.email, password: register.password },
+                    signUpUser: { contact: register.contact, name: register.name, password: register.password },
                 },
             });
+
+
             if (!data.status) {
                 toast.error(data.message, { theme: "light" });
             } else {
                 iref!.current!.value = data.data.signup!.id;
-                eref!.current!.value = data.data.signup!.email;
+                nref!.current!.value = data.data.signup!.name;
+                cref!.current!.value = data.data.signup!.contact;
                 rref!.current!.value = data.data.signup!.role;
                 tref!.current!.value = data.data.signup!.token;
                 nextButton.current!.click();
@@ -132,6 +167,19 @@ export default function register() {
                     <h1 className="text-gray-800 text-xl font-bold">PLANNING & DEVELOPMENT AUTHORITY</h1>
                     <p className="text-lg my-4 text-gray-700 text-center">Sign up to start you session</p>
                     <div className="border-b-2 border-gray-200 py-1 flex items-center">
+                        <div
+                            className="text-slate-800 font-bold text-xl mr-4"
+                        >
+                            <Fa6SolidUser></Fa6SolidUser>
+                        </div>
+                        <input
+                            ref={nameRef}
+                            type="text"
+                            placeholder="User Name"
+                            className="bg-transparent outline-none border-none fill-none text-slate-800 py-2"
+                        />
+                    </div>
+                    <div className="border-b-2 border-gray-200 py-1 flex items-center mt-4">
                         <div
                             className="text-slate-800 font-bold text-xl mr-4"
                         >
@@ -172,11 +220,12 @@ export default function register() {
                             className="bg-transparent outline-none border-none fill-none text-slate-800 py-2"
                         />
                     </div>
-                    <Link to="/home"
+                    <button
+                        onClick={submit}
                         className="inline-block text-center text-white bg-purple-500 py-2 px-6 text-xl font-medium rounded-md w-full mt-6"
                     >
                         Register
-                    </Link>
+                    </button>
                     <h5 className="text-slate-800 text-center mt-6">
                         Already have an account?{" "}
                         <Link to={"/"} className="text-blue-500">
@@ -185,6 +234,31 @@ export default function register() {
                     </h5>
                 </div>
             </div>
+            <div className="hidden">
+                <Form method="post">
+                    <input type="hidden" name="id" ref={iref} />
+                    <input type="hidden" name="token" ref={tref} />
+                    <input type="hidden" name="contact" ref={cref} />
+                    <input type="hidden" name="name" ref={nref} />
+                    <input type="hidden" name="role" ref={rref} />
+                    <button ref={nextButton} name="submit">
+                        Submit
+                    </button>
+                </Form>
+            </div>
+            <ToastContainer></ToastContainer>
         </div>
     );
+}
+
+
+export async function action({ request }: ActionArgs) {
+    const formData = await request.formData();
+    const value = Object.fromEntries(formData);
+
+    return redirect("/home", {
+        headers: {
+            "Set-Cookie": await userPrefs.serialize(value),
+        },
+    });
 }

@@ -234,3 +234,38 @@ export function Fa6SolidLink(props: SVGProps<SVGSVGElement>) {
         <svg xmlns="http://www.w3.org/2000/svg" width="1.25em" height="1em" viewBox="0 0 640 512" {...props}><path fill="currentColor" d="M579.8 267.7c56.5-56.5 56.5-148 0-204.5c-50-50-128.8-56.5-186.3-15.4l-1.6 1.1c-14.4 10.3-17.7 30.3-7.4 44.6s30.3 17.7 44.6 7.4l1.6-1.1c32.1-22.9 76-19.3 103.8 8.6c31.5 31.5 31.5 82.5 0 114L422.3 334.8c-31.5 31.5-82.5 31.5-114 0c-27.9-27.9-31.5-71.8-8.6-103.8l1.1-1.6c10.3-14.4 6.9-34.4-7.4-44.6s-34.4-6.9-44.6 7.4l-1.1 1.6C206.5 251.2 213 330 263 380c56.5 56.5 148 56.5 204.5 0l112.3-112.3zM60.2 244.3c-56.5 56.5-56.5 148 0 204.5c50 50 128.8 56.5 186.3 15.4l1.6-1.1c14.4-10.3 17.7-30.3 7.4-44.6s-30.3-17.7-44.6-7.4l-1.6 1.1c-32.1 22.9-76 19.3-103.8-8.6C74 372 74 321 105.5 289.5l112.2-112.3c31.5-31.5 82.5-31.5 114 0c27.9 27.9 31.5 71.8 8.6 103.9l-1.1 1.6c-10.3 14.4-6.9 34.4 7.4 44.6s34.4 6.9 44.6-7.4l1.1-1.6C433.5 260.8 427 182 377 132c-56.5-56.5-148-56.5-204.5 0L60.2 244.3z"></path></svg>
     )
 }
+
+
+export function Fa6SolidFileLines(props: SVGProps<SVGSVGElement>) {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" width="0.75em" height="1em" viewBox="0 0 384 512" {...props}><path fill="currentColor" d="M64 0C28.7 0 0 28.7 0 64v384c0 35.3 28.7 64 64 64h256c35.3 0 64-28.7 64-64V160H256c-17.7 0-32-14.3-32-32V0H64zm192 0v128h128L256 0zM112 256h160c8.8 0 16 7.2 16 16s-7.2 16-16 16H112c-8.8 0-16-7.2-16-16s7.2-16 16-16zm0 64h160c8.8 0 16 7.2 16 16s-7.2 16-16 16H112c-8.8 0-16-7.2-16-16s7.2-16 16-16zm0 64h160c8.8 0 16 7.2 16 16s-7.2 16-16 16H112c-8.8 0-16-7.2-16-16s7.2-16 16-16z"></path></svg>
+    )
+}
+
+
+export function MaterialSymbolsActivityZone(props: SVGProps<SVGSVGElement>) {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...props}><path fill="currentColor" d="M5 22q-1.25 0-2.125-.875T2 19q0-.975.563-1.738T4 16.175v-8.35Q3.125 7.5 2.562 6.737T2 5q0-1.25.875-2.125T5 2q.975 0 1.738.563T7.824 4h8.35q.3-.875 1.063-1.438T19 2q1.25 0 2.125.875T22 5q0 1-.563 1.763T20 7.825v8.35q.875.325 1.438 1.088T22 19q0 1.25-.875 2.125T19 22q-.975 0-1.738-.563T16.175 20h-8.35q-.325.875-1.088 1.438T5 22Zm2.825-4h8.35q.225-.65.7-1.125t1.125-.7v-8.35q-.65-.225-1.125-.7T16.175 6h-8.35q-.225.65-.7 1.125T6 7.825v8.35q.65.225 1.125.7t.7 1.125Z"></path></svg>
+    )
+}
+
+
+export function MaterialSymbolsAlignHorizontalRight(props: SVGProps<SVGSVGElement>) {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...props}><path fill="currentColor" d="M20 22V2h2v20h-2ZM8 17v-3h10v3H8Zm-6-7V7h16v3H2Z"></path></svg>
+    )
+}
+
+
+export function MaterialSymbolsFluidBalance(props: SVGProps<SVGSVGElement>) {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...props}><path fill="currentColor" d="M4 20q-.825 0-1.413-.588T2 18V6q0-.825.588-1.413T4 4h16q.825 0 1.413.588T22 6h-7q-1.425 0-2.488.85T11.125 9H6v2h5v2H6v2h5q0 1.475.537 2.763T13.075 20H4Zm15 3q-.825 0-1.413-.588T17 21v-1.1q-1.725-.35-2.863-1.713T13 15v-5q0-.825.575-1.413T15 8h6q.825 0 1.413.588T23 10v5q0 1.825-1.137 3.188T19 19.9V21h3v2h-3Zm.75-9H21v-4h-6v2h.75q.825 0 1.563.375T18.55 13.4q.2.3.525.45t.675.15Z"></path></svg>
+    )
+}
+
+
+export function MaterialSymbolsOralDisease(props: SVGProps<SVGSVGElement>) {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...props}><path fill="currentColor" d="M5 22v-9h2V8.4L3.6 5l4-4L9 2.4L6.4 5L9 7.6V13h2v9H5Zm8 0v-9h2V9.875q-1.3-.35-2.15-1.4T12 6q0-1.65 1.175-2.825T16 2q1.65 0 2.825 1.175T20 6q0 1.425-.85 2.475T17 9.875V13h2v9h-6Zm3-14q.825 0 1.413-.588T18 6q0-.825-.588-1.413T16 4q-.825 0-1.413.588T14 6q0 .825.588 1.413T16 8Z"></path></svg>
+    )
+}

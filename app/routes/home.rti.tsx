@@ -1,24 +1,175 @@
 import { useRef, useState } from "react";
-import { Fa6SolidLink } from "~/components/icons/icons";
+import { Fa6SolidFileLines, Fa6SolidLink } from "~/components/icons/icons";
+import { ToastContainer, toast } from "react-toastify";
+
+import styles from "react-toastify/dist/ReactToastify.css";
+import { z } from "zod";
+import { ApiCall, UploadFile } from "~/services/api";
+import { Link, useLoaderData, useNavigate } from "@remix-run/react";
+import { LoaderArgs, LoaderFunction, json } from "@remix-run/node";
+import { userPrefs } from "~/cookies";
+
+export function links() {
+    return [{ rel: "stylesheet", href: styles }];
+}
+
+
+
+export const loader: LoaderFunction = async (props: LoaderArgs) => {
+    const cookieHeader = props.request.headers.get("Cookie");
+    const cookie: any = await userPrefs.parse(cookieHeader);
+    return json({ user: cookie });
+};
+
 
 const RightToInformation: React.FC = (): JSX.Element => {
+    const user = useLoaderData().user;
     const nameRef = useRef<HTMLInputElement>(null);
-    const mobileRef = useRef<HTMLInputElement>(null);
     const addressRef = useRef<HTMLTextAreaElement>(null);
+    const mobileRef = useRef<HTMLInputElement>(null);
     const emailRef = useRef<HTMLInputElement>(null);
     const uidRef = useRef<HTMLInputElement>(null);
 
-    const typeOfInfoRef = useRef<HTMLSelectElement>(null);
     const remarkRef = useRef<HTMLTextAreaElement>(null);
     const applicationDateRef = useRef<HTMLInputElement>(null);
-	const applicationDateToRef = useRef<HTMLInputElement>(null);
+    const applicationDateToRef = useRef<HTMLInputElement>(null);
     const applicationNameRef = useRef<HTMLInputElement>(null);
-	const applicationDescRef = useRef<HTMLInputElement>(null);
+    const applicationDescRef = useRef<HTMLInputElement>(null);
 
+
+    const nakalRef = useRef<HTMLInputElement>(null);
+    const povertyLine = useRef<HTMLInputElement>(null);
     const [nakal, setNakal] = useState<File>();
 
     const agreeRef = useRef<HTMLInputElement>(null);
+    const sigimgRef = useRef<HTMLInputElement>(null);
     const [sigimg, setSigimg] = useState<File>();
+
+    const navigator = useNavigate();
+
+
+    const handleLogoChange = (value: React.ChangeEvent<HTMLInputElement>, setvalue: Function) => {
+        let file_size = parseInt(
+            (value!.target.files![0].size / 1024 / 1024).toString()
+        );
+        if (file_size < 4) {
+            setvalue((val: any) => value!.target.files![0]);
+        } else {
+            toast.error("Image file size must be less then 4 mb", { theme: "light" });
+        }
+    }
+
+
+    const submit = async () => {
+        const RTIScheme = z
+            .object({
+                name: z
+                    .string()
+                    .nonempty("Applicant Name is required."),
+                address: z
+                    .string()
+                    .nonempty("Applicant address is required."),
+                mobile: z
+                    .string()
+                    .nonempty("Applicant Contact Number is required."),
+                email: z
+                    .string()
+                    .email("Enter a valid email.")
+                    .optional(),
+                user_uid: z
+                    .string()
+                    .optional(),
+                subject_info: z
+                    .string()
+                    .nonempty("Enter subject information."),
+                from_date: z
+                    .date({ required_error: "Enter From date", invalid_type_error: "Enter a valid from date" }),
+                to_date: z
+                    .date({ required_error: "Enter To date", invalid_type_error: "Enter a valid to date" }),
+                description: z
+                    .string()
+                    .optional(),
+                information: z
+                    .string()
+                    .optional(),
+                proverty_line_url: z
+                    .string(),
+                iagree: z
+                    .string()
+                    .nonempty("I solemnly affirm & hereby."),
+                signature_url: z
+                    .string()
+                    .nonempty("Select signature mark url."),
+            })
+            .strict();
+
+        type RTIScheme = z.infer<typeof RTIScheme>;
+
+        const rtiScheme: RTIScheme = {
+            name: nameRef!.current!.value,
+            address: addressRef!.current!.value,
+            mobile: mobileRef!.current!.value,
+            email: emailRef!.current!.value,
+            user_uid: uidRef!.current!.value,
+            subject_info: remarkRef!.current!.value,
+            from_date: new Date(applicationDateRef!.current!.value),
+            to_date: new Date(applicationDateToRef!.current!.value),
+            description: applicationNameRef!.current!.value,
+            information: applicationDescRef!.current!.value,
+            proverty_line_url: remarkRef!.current!.value,
+            iagree: remarkRef!.current!.value,
+            signature_url: remarkRef!.current!.value,
+        };
+
+
+        const parsed = RTIScheme.safeParse(rtiScheme);
+        if (parsed.success) {
+
+            const nakal_url = await UploadFile(nakal!);
+            const sign_url = await UploadFile(sigimg!);
+
+
+            if (nakal_url.status && sign_url.status) {
+                const data = await ApiCall({
+                    query: `
+                    mutation createRti($createRtiInput:CreateRtiInput!){
+                        createRti(createRtiInput:$createRtiInput){
+                          id
+                        }
+                      }
+                    `,
+                    veriables: {
+                        createRtiInput: {
+                            userId: Number(user.id),
+                            name: rtiScheme.name,
+                            address: rtiScheme.address,
+                            email: rtiScheme.email,
+                            mobile: rtiScheme.mobile,
+                            user_uid: rtiScheme.user_uid,
+                            subject_info: rtiScheme.subject_info,
+                            description: rtiScheme.description,
+                            information: rtiScheme.information,
+                            proverty_line_url: nakal_url.data,
+                            signature_url: sign_url.data,
+                            iagree: remarkRef!.current!.value ? "YES" : "NO",
+                            status: "ACTIVE",
+                            form_status: 1,
+                            from_date: rtiScheme.from_date,
+                            to_date: rtiScheme.to_date
+                        }
+                    },
+                });
+                if (!data.status) {
+                    toast.error(data.message, { theme: "light" });
+                } else {
+                    navigator(`/home/rtiview/${data.data.createRti.id}`);
+                }
+            } else {
+                toast.error("Something want wrong unable to upload images.", { theme: "light" });
+            }
+        }
+        else { toast.error(parsed.error.errors[0].message, { theme: "light" }); }
+    }
 
 
     return (
@@ -30,7 +181,7 @@ const RightToInformation: React.FC = (): JSX.Element => {
                     <div className="w-10 bg-gray-500 h-[3px]"></div>
                     <div className="grow bg-gray-700 h-[2px]"></div>
                 </div>
-                <p className="text-center font-semibold text-xl text-gray-800"> SUBJECT  :  Application for grant of RTI </p>
+                <p className="text-center font-semibold text-xl text-gray-800"> Format of Application for obtaining Information under Right to Information Act ,2005. </p>
 
                 {/*--------------------- section 1 start here ------------------------- */}
                 <div className="w-full bg-indigo-500 py-2 rounded-md px-4 mt-4">
@@ -103,10 +254,10 @@ const RightToInformation: React.FC = (): JSX.Element => {
                 <div className="w-full bg-indigo-500 py-2 rounded-md px-4 mt-4">
                     <p className="text-left font-semibold text-xl text-white"> 2. R.T.I. Details </p>
                 </div>
-               
+
                 <div className="flex flex-wrap gap-4 gap-y-2 px-4 py-2 my-2">
                     <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal text-left text-gray-700 ">
-                        <span className="mr-2">2.1</span> Information Needed
+                        <span className="mr-2">2.1</span> Subject matter of Information
                     </div>
                     <div className="flex-none lg:flex-1 w-full lg:w-auto">
                         <textarea
@@ -128,7 +279,7 @@ const RightToInformation: React.FC = (): JSX.Element => {
                         />
                     </div>
                 </div>
-				<div className="flex  flex-wrap gap-4 gap-y-2 px-4 py-2 my-2">
+                <div className="flex  flex-wrap gap-4 gap-y-2 px-4 py-2 my-2">
                     <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal text-left text-gray-700 ">
                         <span className="mr-2">2.3</span> To Date
                     </div>
@@ -152,7 +303,7 @@ const RightToInformation: React.FC = (): JSX.Element => {
                         />
                     </div>
                 </div>
-				<div className="flex  flex-wrap gap-4 gap-y-2 px-4 py-2 my-2">
+                <div className="flex  flex-wrap gap-4 gap-y-2 px-4 py-2 my-2">
                     <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal text-left text-gray-700 ">
                         <span className="mr-2">2.5</span> Additional Information Required
                     </div>
@@ -169,23 +320,51 @@ const RightToInformation: React.FC = (): JSX.Element => {
                 {/*--------------------- section 3 start here ------------------------- */}
 
                 <div className="w-full bg-indigo-500 py-2 rounded-md px-4 mt-4">
-                    <p className="text-left font-semibold text-xl text-white"> 3. Docoument Attachment </p>
+                    <p className="text-left font-semibold text-xl text-white"> 3. Document Attachment </p>
                 </div>
+                <div className="flex gap-4 gap-y-2 px-4 py-2 my-2">
+                    <div className="text-xl font-normal text-left text-gray-700 ">
+                        3.1
+                    </div>
+                    <div className="flex items-start">
+                        <input ref={povertyLine} type="checkbox" id="checkbox" className="mr-2 my-2" />
+                        <label htmlFor="checkbox" className="text-xl font-normal text-left text-gray-700 ">
+                            Whether the Applicant is below Poverty Line(Select if Yes)
+                        </label>
+                    </div>
+                </div>
+
+
 
                 <div className="flex flex-wrap gap-4 gap-y-2 items-center px-4 py-2 my-2">
                     <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal text-left text-gray-700">
-                        <span className="mr-2">3.1</span> Poverty Line Document Upload
+                        <span className="mr-2">3.2</span> Poverty Line Document Upload
                         <p className="text-rose-500 text-sm">
-                            ( Maximum Upload Size 2MB & Allowed Format JPG / PDF / PNG )</p>
+                            ( Only Applicable in case Applicant is below Poverty Line.Maximum Upload Size 2MB & Allowed Format JPG / PDF / PNG )</p>
                     </div>
-                    <div className="flex-none lg:flex-1 w-full lg:w-auto">
+                    <div className="flex-none flex gap-4 lg:flex-1 w-full lg:w-auto">
+                        <div className="hidden">
+                            <input type="file" ref={nakalRef} accept="*/*" onChange={(e) => handleLogoChange(e, setNakal)} />
+                        </div>
                         <button
+                            onClick={() => nakalRef.current?.click()}
                             className="py-1 w-full sm:w-auto text-white text-lg px-4 bg-green-500 text-center rounded-md font-medium"
                         >
                             <div className="flex items-center gap-2">
-                                <Fa6SolidLink></Fa6SolidLink> Attach Doc.
+                                <Fa6SolidLink></Fa6SolidLink> {nakal == null ? "Attach Doc." : "Update Doc."}
                             </div>
                         </button>
+                        {
+                            nakal != null ?
+                                <a target="_blank" href={URL.createObjectURL(nakal)}
+                                    className="py-1 w-full sm:w-auto flex items-center gap-2  text-white text-lg px-4 bg-green-500 text-center rounded-md font-medium">
+                                    <Fa6SolidFileLines></Fa6SolidFileLines>
+                                    <p>
+                                        View Doc.
+                                    </p>
+                                </a>
+                                : null
+                        }
                     </div>
                 </div>
 
@@ -209,37 +388,55 @@ const RightToInformation: React.FC = (): JSX.Element => {
                         </label>
                     </div>
                 </div>
+
                 <div className="flex flex-wrap gap-4 gap-y-2 items-center px-4 py-2 my-2">
                     <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal text-left text-gray-700">
                         <span className="mr-2">4.2</span> Applicant Signature Image
                         <p className="text-rose-500 text-sm">
-                            ( Maximum Upload Size 2MB & Allowed Format JPG / PDF / PNG )</p>
+                            ( Maximum Upload Size 4MB & Allowed Format JPG / PDF / PNG )</p>
                     </div>
-                    <div className="flex-none lg:flex-1 w-full lg:w-auto">
+                    <div className="flex-none flex gap-4 lg:flex-1 w-full lg:w-auto">
+                        <div className="hidden">
+                            <input type="file" ref={sigimgRef} accept="*/*" onChange={(e) => handleLogoChange(e, setSigimg)} />
+                        </div>
                         <button
+                            onClick={() => sigimgRef.current?.click()}
                             className="py-1 w-full sm:w-auto text-white text-lg px-4 bg-green-500 text-center rounded-md font-medium"
                         >
                             <div className="flex items-center gap-2">
-                                <Fa6SolidLink></Fa6SolidLink> Attach Doc.
+                                <Fa6SolidLink></Fa6SolidLink> {sigimg == null ? "Attach Doc." : "Update Doc."}
                             </div>
                         </button>
+                        {
+                            sigimg != null ?
+                                <a target="_blank" href={URL.createObjectURL(sigimg)}
+                                    className="py-1 w-full sm:w-auto flex items-center gap-2  text-white text-lg px-4 bg-green-500 text-center rounded-md font-medium">
+                                    <Fa6SolidFileLines></Fa6SolidFileLines>
+                                    <p>
+                                        View Doc.
+                                    </p>
+                                </a>
+                                : null
+                        }
                     </div>
                 </div>
-                {/*--------------------- section 4 end here ------------------------- */}
 
+                {/*--------------------- section 4 end here ------------------------- */}
                 <div className="flex flex-wrap gap-6 mt-4">
-                    <button
+                    <Link to={"/home/"}
                         className="py-1 w-full sm:w-auto text-white text-lg px-4 bg-rose-500 text-center rounded-md font-medium"
                     >
                         Discard & Close
-                    </button>
+                    </Link>
                     <button
+                        onClick={submit}
                         className="py-1 w-full sm:w-auto text-white text-lg px-4 bg-green-500 text-center rounded-md font-medium"
                     >
                         Preview & Proceed
                     </button>
                 </div>
             </div>
+            <ToastContainer></ToastContainer>
         </>
     );
 }

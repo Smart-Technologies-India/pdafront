@@ -31,7 +31,7 @@ const ZoneInofrmation: React.FC = (): JSX.Element => {
                     <div className="w-10 bg-gray-500 h-[3px]"></div>
                     <div className="grow bg-gray-700 h-[2px]"></div>
                 </div>
-                <p className="text-center font-semibold text-xl text-gray-800"> SUBJECT  :  Application for grant of permission for N.A. USE OF LAND </p>
+                <p className="text-center font-semibold text-xl text-gray-800"> SUBJECT  :  Request for Obtaining Zone Information. </p>
 
                 {/*--------------------- section 1 start here ------------------------- */}
                 <div className="w-full bg-indigo-500 py-2 rounded-md px-4 mt-4">
@@ -132,71 +132,16 @@ const ZoneInofrmation: React.FC = (): JSX.Element => {
                 </div>
                 {/*--------------------- section 2 end here ------------------------- */}
 
+
                 {/*--------------------- section 3 start here ------------------------- */}
-                <div className="w-full bg-indigo-500 py-2 rounded-md px-4 mt-4">
-                    <p className="text-left font-semibold text-xl text-white"> 3. Permisstion Details </p>
-                </div>
-                <div className="flex flex-wrap gap-4 gap-y-2 items-center px-4 py-2 my-2">
-                    <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal text-left text-gray-700">
-                        <span className="mr-2">3.1</span> Type of information
-                    </div>
-                    <div className="flex-none lg:flex-1 w-full lg:w-auto">
-                        <select ref={typeOfInfoRef} defaultValue={"0"} className="w-full bg-transparent fill-none outline-none border-2 border-black text-black p-2">
-                            <option value="0" className="bg-white text-blakc text-lg" disabled>Type Of Information</option>
-                            <option value="1" className="bg-white text-black text-lg">Construction Permission</option>
-                            <option value="2" className="bg-white text-black text-lg">Occupancy Certificate</option>
-                            <option value="3" className="bg-white text-black text-lg">Maps</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div className="flex flex-wrap gap-4 gap-y-2 px-4 py-2 my-2">
-                    <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal text-left text-gray-700 ">
-                        <span className="mr-2">3.2</span> Information Needed
-                    </div>
-                    <div className="flex-none lg:flex-1 w-full lg:w-auto">
-                        <textarea
-                            ref={remarkRef}
-                            placeholder="Information Needed"
-                            className=" w-full border-2 border-gray-600 bg-transparent outline-none fill-none text-slate-800 p-2 h-28 resize-none"
-                        ></textarea>
-                    </div>
-                </div>
-                <div className="flex  flex-wrap gap-4 gap-y-2 px-4 py-2 my-2">
-                    <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal text-left text-gray-700 ">
-                        <span className="mr-2">3.3</span> Previous application date
-                    </div>
-                    <div className="flex-none lg:flex-1 w-full lg:w-auto">
-                        <input
-                            type="date"
-                            ref={applicationDateRef}
-                            className=" w-full border-2 border-gray-600 bg-transparent outline-none fill-none text-slate-800 p-2"
-                        />
-                    </div>
-                </div>
-                <div className="flex  flex-wrap gap-4 gap-y-2 px-4 py-2 my-2">
-                    <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal text-left text-gray-700 ">
-                        <span className="mr-2">3.4</span> Previous application number
-                    </div>
-                    <div className="flex-none lg:flex-1 w-full lg:w-auto">
-                        <input
-                            ref={applicationNameRef}
-                            placeholder="Previous application number"
-                            className=" w-full border-2 border-gray-600 bg-transparent outline-none fill-none text-slate-800 p-2"
-                        />
-                    </div>
-                </div>
-                {/*--------------------- section 3 end here ------------------------- */}
-
-                {/*--------------------- section 4 start here ------------------------- */}
 
                 <div className="w-full bg-indigo-500 py-2 rounded-md px-4 mt-4">
-                    <p className="text-left font-semibold text-xl text-white"> 4. Docoument Attachment </p>
+                    <p className="text-left font-semibold text-xl text-white"> 3. Document Attachment </p>
                 </div>
 
                 <div className="flex flex-wrap gap-4 gap-y-2 items-center px-4 py-2 my-2">
                     <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal text-left text-gray-700">
-                        <span className="mr-2">4.1</span> 1/14 Nakal
+                        <span className="mr-2">3.1</span> 1/14 Nakal
                         <p className="text-rose-500 text-sm">
                             ( Maximum Upload Size 2MB & Allowed Format JPG / PDF / PNG )</p>
                     </div>
@@ -211,18 +156,18 @@ const ZoneInofrmation: React.FC = (): JSX.Element => {
                     </div>
                 </div>
 
-                {/*--------------------- section 4 end here ------------------------- */}
+                {/*--------------------- section 3 end here ------------------------- */}
 
-                {/*--------------------- section 5 start here ------------------------- */}
+                {/*--------------------- section 4 start here ------------------------- */}
 
                 <div className="w-full bg-indigo-500 py-2 rounded-md px-4 mt-4">
                     <p className="text-left font-semibold text-xl text-white">
-                        5. Applicant / Occupant Declaration and Signature </p>
+                        4. Applicant / Occupant Declaration and Signature </p>
                 </div>
 
                 <div className="flex gap-4 gap-y-2 px-4 py-2 my-2">
                     <div className="text-xl font-normal text-left text-gray-700 ">
-                        5.1
+                        4.1
                     </div>
                     <div className="flex items-start">
                         <input ref={agreeRef} type="checkbox" id="checkbox" className="mr-2 my-2" />
@@ -233,7 +178,7 @@ const ZoneInofrmation: React.FC = (): JSX.Element => {
                 </div>
                 <div className="flex flex-wrap gap-4 gap-y-2 items-center px-4 py-2 my-2">
                     <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal text-left text-gray-700">
-                        <span className="mr-2">5.2</span> Applicant Signature Image
+                        <span className="mr-2">4.2</span> Applicant Signature Image
                         <p className="text-rose-500 text-sm">
                             ( Maximum Upload Size 2MB & Allowed Format JPG / PDF / PNG )</p>
                     </div>
@@ -247,7 +192,7 @@ const ZoneInofrmation: React.FC = (): JSX.Element => {
                         </button>
                     </div>
                 </div>
-                {/*--------------------- section 5 end here ------------------------- */}
+                {/*--------------------- section 4 end here ------------------------- */}
                 <div className="flex flex-wrap gap-6 mt-4">
                     <button
                         className="py-1 w-full sm:w-auto text-white text-lg px-4 bg-rose-500 text-center rounded-md font-medium"

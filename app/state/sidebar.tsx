@@ -3,17 +3,11 @@ import { create } from "zustand";
 enum SideBarTabs {
     Dashborad,
     Services,
-    MyProfile,
-    TakeTesk,
-    RresultStatus,
-    User,
-    Company,
-    Project,
-    Principle,
-    License,
-    Compliance,
-    Questions,
-    LicenseSlave
+    ZoneInfo,
+    Rti,
+    Petroleum,
+    OldCopy,
+    DesignPoint
 }
 
 interface SideBarState {

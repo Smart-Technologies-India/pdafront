@@ -8,15 +8,19 @@ const Petroleum: React.FC = (): JSX.Element => {
     const addressRef = useRef<HTMLTextAreaElement>(null);
     const emailRef = useRef<HTMLInputElement>(null);
     const uidRef = useRef<HTMLInputElement>(null);
+	const companyRef = useRef<HTMLInputElement>(null);
+	const designationRef = useRef<HTMLInputElement>(null);
+	const locationRef = useRef<HTMLInputElement>(null);
 
     const villageRef = useRef<HTMLSelectElement>(null);
     const surveyRef = useRef<HTMLInputElement>(null);
+	
+	
+	const nocRef = useRef<HTMLSelectElement>(null);
+	const classRef = useRef<HTMLSelectElement>(null);
+	const outletRef = useRef<HTMLSelectElement>(null);
+	const capacityRef = useRef<HTMLInputElement>(null);
 
-
-    const typeOfInfoRef = useRef<HTMLSelectElement>(null);
-    const remarkRef = useRef<HTMLTextAreaElement>(null);
-    const applicationDateRef = useRef<HTMLInputElement>(null);
-    const applicationNameRef = useRef<HTMLInputElement>(null);
 
     const [nakal, setNakal] = useState<File>();
 
@@ -32,7 +36,7 @@ const Petroleum: React.FC = (): JSX.Element => {
                     <div className="w-10 bg-gray-500 h-[3px]"></div>
                     <div className="grow bg-gray-700 h-[2px]"></div>
                 </div>
-                <p className="text-center font-semibold text-xl text-gray-800"> SUBJECT  :  Application for grant of permission for N.A. USE OF LAND </p>
+                <p className="text-center font-semibold text-xl text-gray-800"> SUBJECT  :  Application for issuance of Petroleum NOC </p>
 
                 {/*--------------------- section 1 start here ------------------------- */}
                 <div className="w-full bg-indigo-500 py-2 rounded-md px-4 mt-4">
@@ -52,7 +56,7 @@ const Petroleum: React.FC = (): JSX.Element => {
                 </div>
                 <div className="flex flex-wrap gap-4 gap-y-2 px-4 py-2 my-2">
                     <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal text-left text-gray-700 ">
-                        <span className="mr-2">1.2</span> Applicant address
+                        <span className="mr-2">1.2</span> Applicant Address
                     </div>
                     <div className="flex-none lg:flex-1 w-full lg:w-auto">
                         <textarea
@@ -88,21 +92,46 @@ const Petroleum: React.FC = (): JSX.Element => {
                 </div>
                 <div className="flex  flex-wrap gap-4 gap-y-2 px-4 py-2 my-2">
                     <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal text-left text-gray-700 ">
-                        <span className="mr-2">1.5</span> Applicant UID
+                        <span className="mr-2">1.5</span> Company Name
                     </div>
                     <div className="flex-none lg:flex-1 w-full lg:w-auto">
                         <input
-                            ref={uidRef}
-                            placeholder="Applicant UID"
+                            ref={companyRef}
+                            placeholder="Company Name"
                             className=" w-full border-2 border-gray-600 bg-transparent outline-none fill-none text-slate-800 p-2"
                         />
                     </div>
                 </div>
+				<div className="flex  flex-wrap gap-4 gap-y-2 px-4 py-2 my-2">
+                    <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal text-left text-gray-700 ">
+                        <span className="mr-2">1.6</span> Company Region
+                    </div>
+                    <div className="flex-none lg:flex-1 w-full lg:w-auto">
+                        <input
+                            ref={designationRef}
+                            placeholder="Company Region"
+                            className=" w-full border-2 border-gray-600 bg-transparent outline-none fill-none text-slate-800 p-2"
+                        />
+                    </div>
+                </div>
+				<div className="flex  flex-wrap gap-4 gap-y-2 px-4 py-2 my-2">
+                    <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal text-left text-gray-700 ">
+                        <span className="mr-2">1.7</span> Designation
+                    </div>
+                    <div className="flex-none lg:flex-1 w-full lg:w-auto">
+                        <input
+                            ref={designationRef}
+                            placeholder="Designation"
+                            className=" w-full border-2 border-gray-600 bg-transparent outline-none fill-none text-slate-800 p-2"
+                        />
+                    </div>
+                </div>
+				
                 {/*--------------------- section 1 end here ------------------------- */}
 
                 {/*--------------------- section 2 start here ------------------------- */}
                 <div className="w-full bg-indigo-500 py-2 rounded-md px-4 mt-4">
-                    <p className="text-left font-semibold text-xl text-white"> 2. Land Details </p>
+                    <p className="text-left font-semibold text-xl text-white"> 2. Site Details </p>
                 </div>
                 <div className="flex flex-wrap gap-4 gap-y-2 items-center px-4 py-2 my-2">
                     <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal text-left text-gray-700">
@@ -112,7 +141,7 @@ const Petroleum: React.FC = (): JSX.Element => {
                         <select ref={villageRef} defaultValue={"0"} className="w-full bg-transparent fill-none outline-none border-2 border-black text-black p-2">
                             <option value="0" className="bg-white text-blakc text-lg" disabled>Select village</option>
                             <option value="1" className="bg-white text-black text-lg" >Dabhel</option>
-                            <option value="2" className="bg-white text-black text-lg" >Jampor</option>
+                            <option value="2" className="bg-white text-black text-lg" >Jampore</option>
                             <option value="3" className="bg-white text-black text-lg" >Somnath</option>
                             <option value="4" className="bg-white text-black text-lg" >Jani vankad</option>
                             <option value="5" className="bg-white text-black text-lg" >Dholar</option>
@@ -131,73 +160,173 @@ const Petroleum: React.FC = (): JSX.Element => {
                         />
                     </div>
                 </div>
+				
                 {/*--------------------- section 2 end here ------------------------- */}
 
                 {/*--------------------- section 3 start here ------------------------- */}
                 <div className="w-full bg-indigo-500 py-2 rounded-md px-4 mt-4">
-                    <p className="text-left font-semibold text-xl text-white"> 3. Permisstion Details </p>
+                    <p className="text-left font-semibold text-xl text-white"> 3. Permission Details </p>
                 </div>
                 <div className="flex flex-wrap gap-4 gap-y-2 items-center px-4 py-2 my-2">
                     <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal text-left text-gray-700">
-                        <span className="mr-2">3.1</span> Type of information
+                        <span className="mr-2">3.1</span> NOC Type
                     </div>
                     <div className="flex-none lg:flex-1 w-full lg:w-auto">
-                        <select ref={typeOfInfoRef} defaultValue={"0"} className="w-full bg-transparent fill-none outline-none border-2 border-black text-black p-2">
-                            <option value="0" className="bg-white text-blakc text-lg" disabled>Type Of Information</option>
-                            <option value="1" className="bg-white text-black text-lg">Construction Permission</option>
-                            <option value="2" className="bg-white text-black text-lg">Occupancy Certificate</option>
-                            <option value="3" className="bg-white text-black text-lg">Maps</option>
+                        <select ref={nocRef} defaultValue={"0"} className="w-full bg-transparent fill-none outline-none border-2 border-black text-black p-2">
+                            <option value="0" className="bg-white text-blakc text-lg" disabled>Select NOC Type</option>
+                            <option value="1" className="bg-white text-black text-lg" >NOC Type 1</option>
+                            <option value="2" className="bg-white text-black text-lg" >NOC Type 2</option>
+                            <option value="3" className="bg-white text-black text-lg" >NOC Type 3</option>
                         </select>
                     </div>
                 </div>
-
-                <div className="flex flex-wrap gap-4 gap-y-2 px-4 py-2 my-2">
-                    <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal text-left text-gray-700 ">
-                        <span className="mr-2">3.2</span> Information Needed
+				<div className="flex flex-wrap gap-4 gap-y-2 items-center px-4 py-2 my-2">
+                    <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal text-left text-gray-700">
+                        <span className="mr-2">3.2</span> Class Type
                     </div>
                     <div className="flex-none lg:flex-1 w-full lg:w-auto">
-                        <textarea
-                            ref={remarkRef}
-                            placeholder="Information Needed"
-                            className=" w-full border-2 border-gray-600 bg-transparent outline-none fill-none text-slate-800 p-2 h-28 resize-none"
-                        ></textarea>
+                        <select ref={classRef} defaultValue={"0"} className="w-full bg-transparent fill-none outline-none border-2 border-black text-black p-2">
+                            <option value="0" className="bg-white text-blakc text-lg" disabled>Select Class Type</option>
+                            <option value="1" className="bg-white text-black text-lg" >Class Type 1</option>
+                            <option value="2" className="bg-white text-black text-lg" >Class Type 2</option>
+                            <option value="3" className="bg-white text-black text-lg" >Class Type 3</option>
+                        </select>
                     </div>
                 </div>
-                <div className="flex  flex-wrap gap-4 gap-y-2 px-4 py-2 my-2">
+				<div className="flex flex-wrap gap-4 gap-y-2 items-center px-4 py-2 my-2">
+                    <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal text-left text-gray-700">
+                        <span className="mr-2">3.3</span> Outlet Type
+                    </div>
+                    <div className="flex-none lg:flex-1 w-full lg:w-auto">
+                        <select ref={outletRef} defaultValue={"0"} className="w-full bg-transparent fill-none outline-none border-2 border-black text-black p-2">
+                            <option value="0" className="bg-white text-blakc text-lg" disabled>Select Outlet Type</option>
+                            <option value="1" className="bg-white text-black text-lg" >Outlet Type 1</option>
+                            <option value="2" className="bg-white text-black text-lg" >Outlet Type 2</option>
+                            <option value="3" className="bg-white text-black text-lg" >Outlet Type 3</option>
+                        </select>
+                    </div>
+                </div>
+				 <div className="flex  flex-wrap gap-4 gap-y-2 px-4 py-2 my-2">
                     <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal text-left text-gray-700 ">
-                        <span className="mr-2">3.3</span> Previous application date
+                        <span className="mr-2">3.4</span> Capacity
                     </div>
                     <div className="flex-none lg:flex-1 w-full lg:w-auto">
                         <input
-                            type="date"
-                            ref={applicationDateRef}
+                            ref={capacityRef}
+                            placeholder="Capacity"
                             className=" w-full border-2 border-gray-600 bg-transparent outline-none fill-none text-slate-800 p-2"
                         />
                     </div>
                 </div>
-                <div className="flex  flex-wrap gap-4 gap-y-2 px-4 py-2 my-2">
-                    <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal text-left text-gray-700 ">
-                        <span className="mr-2">3.4</span> Previous application number
-                    </div>
-                    <div className="flex-none lg:flex-1 w-full lg:w-auto">
-                        <input
-                            ref={applicationNameRef}
-                            placeholder="Previous application number"
-                            className=" w-full border-2 border-gray-600 bg-transparent outline-none fill-none text-slate-800 p-2"
-                        />
-                    </div>
-                </div>
+				
                 {/*--------------------- section 3 end here ------------------------- */}
 
                 {/*--------------------- section 4 start here ------------------------- */}
 
                 <div className="w-full bg-indigo-500 py-2 rounded-md px-4 mt-4">
-                    <p className="text-left font-semibold text-xl text-white"> 4. Docoument Attachment </p>
+                    <p className="text-left font-semibold text-xl text-white"> 4. Document Attachment </p>
                 </div>
 
                 <div className="flex flex-wrap gap-4 gap-y-2 items-center px-4 py-2 my-2">
                     <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal text-left text-gray-700">
                         <span className="mr-2">4.1</span> 1/14 Nakal
+                        <p className="text-rose-500 text-sm">
+                            ( Maximum Upload Size 2MB & Allowed Format JPG / PDF / PNG )</p>
+                    </div>
+                    <div className="flex-none lg:flex-1 w-full lg:w-auto">
+                        <button
+                            className="py-1 w-full sm:w-auto text-white text-lg px-4 bg-green-500 text-center rounded-md font-medium"
+                        >
+                            <div className="flex items-center gap-2">
+                                <Fa6SolidLink></Fa6SolidLink> Attach Doc.
+                            </div>
+                        </button>
+                    </div>
+                </div>
+				
+				 <div className="flex flex-wrap gap-4 gap-y-2 items-center px-4 py-2 my-2">
+                    <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal text-left text-gray-700">
+                        <span className="mr-2">4.1</span> NOC Fire
+                        <p className="text-rose-500 text-sm">
+                            ( Maximum Upload Size 2MB & Allowed Format JPG / PDF / PNG )</p>
+                    </div>
+                    <div className="flex-none lg:flex-1 w-full lg:w-auto">
+                        <button
+                            className="py-1 w-full sm:w-auto text-white text-lg px-4 bg-green-500 text-center rounded-md font-medium"
+                        >
+                            <div className="flex items-center gap-2">
+                                <Fa6SolidLink></Fa6SolidLink> Attach Doc.
+                            </div>
+                        </button>
+                    </div>
+                </div>
+				 <div className="flex flex-wrap gap-4 gap-y-2 items-center px-4 py-2 my-2">
+                    <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal text-left text-gray-700">
+                        <span className="mr-2">4.1</span> NA Order
+                        <p className="text-rose-500 text-sm">
+                            ( Maximum Upload Size 2MB & Allowed Format JPG / PDF / PNG )</p>
+                    </div>
+                    <div className="flex-none lg:flex-1 w-full lg:w-auto">
+                        <button
+                            className="py-1 w-full sm:w-auto text-white text-lg px-4 bg-green-500 text-center rounded-md font-medium"
+                        >
+                            <div className="flex items-center gap-2">
+                                <Fa6SolidLink></Fa6SolidLink> Attach Doc.
+                            </div>
+                        </button>
+                    </div>
+                </div>
+				 <div className="flex flex-wrap gap-4 gap-y-2 items-center px-4 py-2 my-2">
+                    <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal text-left text-gray-700">
+                        <span className="mr-2">4.1</span> Sanad Order
+                        <p className="text-rose-500 text-sm">
+                            ( Maximum Upload Size 2MB & Allowed Format JPG / PDF / PNG )</p>
+                    </div>
+                    <div className="flex-none lg:flex-1 w-full lg:w-auto">
+                        <button
+                            className="py-1 w-full sm:w-auto text-white text-lg px-4 bg-green-500 text-center rounded-md font-medium"
+                        >
+                            <div className="flex items-center gap-2">
+                                <Fa6SolidLink></Fa6SolidLink> Attach Doc.
+                            </div>
+                        </button>
+                    </div>
+                </div>
+				 <div className="flex flex-wrap gap-4 gap-y-2 items-center px-4 py-2 my-2">
+                    <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal text-left text-gray-700">
+                        <span className="mr-2">4.1</span> Coast Guard NOC
+                        <p className="text-rose-500 text-sm">
+                            ( Maximum Upload Size 2MB & Allowed Format JPG / PDF / PNG )</p>
+                    </div>
+                    <div className="flex-none lg:flex-1 w-full lg:w-auto">
+                        <button
+                            className="py-1 w-full sm:w-auto text-white text-lg px-4 bg-green-500 text-center rounded-md font-medium"
+                        >
+                            <div className="flex items-center gap-2">
+                                <Fa6SolidLink></Fa6SolidLink> Attach Doc.
+                            </div>
+                        </button>
+                    </div>
+                </div>
+				 <div className="flex flex-wrap gap-4 gap-y-2 items-center px-4 py-2 my-2">
+                    <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal text-left text-gray-700">
+                        <span className="mr-2">4.1</span> Site Plan Attachment
+                        <p className="text-rose-500 text-sm">
+                            ( Maximum Upload Size 2MB & Allowed Format JPG / PDF / PNG )</p>
+                    </div>
+                    <div className="flex-none lg:flex-1 w-full lg:w-auto">
+                        <button
+                            className="py-1 w-full sm:w-auto text-white text-lg px-4 bg-green-500 text-center rounded-md font-medium"
+                        >
+                            <div className="flex items-center gap-2">
+                                <Fa6SolidLink></Fa6SolidLink> Attach Doc.
+                            </div>
+                        </button>
+                    </div>
+                </div>
+				 <div className="flex flex-wrap gap-4 gap-y-2 items-center px-4 py-2 my-2">
+                    <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal text-left text-gray-700">
+                        <span className="mr-2">4.1</span> Explosive Attachment
                         <p className="text-rose-500 text-sm">
                             ( Maximum Upload Size 2MB & Allowed Format JPG / PDF / PNG )</p>
                     </div>

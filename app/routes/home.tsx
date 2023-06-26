@@ -1,36 +1,43 @@
+import { LoaderArgs, LoaderFunction, json, redirect } from "@remix-run/node";
 import { Link, Outlet, useLoaderData, useNavigate } from "@remix-run/react";
 import { useEffect } from "react";
-import { Fa6RegularStarHalfStroke, Fa6SolidBars, Fa6SolidBook, Fa6SolidBookTanakh, Fa6SolidBuilding, Fa6SolidChartArea, Fa6SolidCircleQuestion, Fa6SolidCodeBranch, Fa6SolidHouse, Fa6SolidObjectUngroup, Fa6SolidPaintbrush, Fa6SolidStar, Fa6SolidUser, Fa6SolidXmark, MaterialSymbolsLogoutRounded } from "~/components/icons/icons";
+import { Fa6RegularStarHalfStroke, Fa6SolidBars, Fa6SolidBook, Fa6SolidBookTanakh, Fa6SolidBuilding, Fa6SolidChartArea, Fa6SolidCircleQuestion, Fa6SolidCodeBranch, Fa6SolidHouse, Fa6SolidObjectUngroup, Fa6SolidPaintbrush, Fa6SolidStar, Fa6SolidUser, Fa6SolidXmark, MaterialSymbolsActivityZone, MaterialSymbolsAlignHorizontalRight, MaterialSymbolsFluidBalance, MaterialSymbolsLogoutRounded, MaterialSymbolsOralDisease } from "~/components/icons/icons";
+import { userPrefs } from "~/cookies";
+import { ApiCall } from "~/services/api";
 import sideBarStore, { SideBarTabs } from "~/state/sidebar";
+
+export const loader: LoaderFunction = async (props: LoaderArgs) => {
+    const cookieHeader = props.request.headers.get("Cookie");
+    const cookie: any = await userPrefs.parse(cookieHeader);
+    if (
+        cookie == null ||
+        cookie == undefined ||
+        Object.keys(cookie).length == 0
+    ) {
+        return redirect("/");
+    }
+
+    return json({
+        user: cookie,
+        isAdmin: cookie.role == "ADMIN" ? true : false,
+    });
+};
+
 
 const Home: React.FC = (): JSX.Element => {
     const isMobile = sideBarStore((state) => state.isOpen);
     const changeMobile = sideBarStore((state) => state.change);
     const asideindex = sideBarStore((state) => state.currentIndex);
     const achangeindex = sideBarStore((state) => state.changeTab);
-    // const user = useLoaderData().user;
-    // const isAdmin = useLoaderData().isAdmin;
-    const isAdmin = false;
-    // const username = useLoaderData().username;
-    const username = "Rajesh";
+    const user = useLoaderData().user;
+
+    const isUser = user.role == "USER";
+    const username = user.name;
 
     const navigator = useNavigate();
-    const init = () => {
-        // if (isAdmin) {
-        //   achangeindex(SideBarTabs.User);
-        //   navigator("/home/user");
-        // } else {
-        //   if (asideindex === SideBarTabs.None) {
-        //     navigator("/home");
-        //   }
-        // }
-    };
-    useEffect(() => {
-        init();
-    }, []);
 
     const logoutHandle = () => {
-        navigator("/");
+        navigator("/logout");
     };
     return (
         <>
@@ -63,114 +70,7 @@ const Home: React.FC = (): JSX.Element => {
                                         active={asideindex === SideBarTabs.Dashborad}
                                     ></SidebarTab>
                                 </Link>
-                                {isAdmin ? (
-                                    <>
-                                        <Link
-                                            to={"/home/user/"}
-                                            onClick={() => {
-                                                achangeindex(SideBarTabs.User);
-                                                changeMobile(false);
-                                            }}
-                                        >
-                                            <SidebarTab
-                                                icon={Fa6SolidUser}
-                                                title="User"
-                                                active={asideindex === SideBarTabs.User}
-                                            ></SidebarTab>
-                                        </Link>
-                                        <Link
-                                            to={"/home/company/"}
-                                            onClick={() => {
-                                                achangeindex(SideBarTabs.Company);
-                                                changeMobile(false);
-                                            }}
-                                        >
-                                            <SidebarTab
-                                                icon={Fa6SolidBuilding}
-                                                title="Company"
-                                                active={asideindex === SideBarTabs.Company}
-                                            ></SidebarTab>
-                                        </Link>
-                                        <Link
-                                            to={"/home/project/"}
-                                            onClick={() => {
-                                                achangeindex(SideBarTabs.Project);
-                                                changeMobile(false);
-                                            }}
-                                        >
-                                            <SidebarTab
-                                                icon={Fa6SolidBook}
-                                                title="Project"
-                                                active={asideindex === SideBarTabs.Project}
-                                            ></SidebarTab>
-                                        </Link>
-                                        <Link
-                                            to={"/home/principle/"}
-                                            onClick={() => {
-                                                achangeindex(SideBarTabs.Principle);
-                                                changeMobile(false);
-                                            }}
-                                        >
-                                            <SidebarTab
-                                                icon={Fa6SolidStar}
-                                                title="Principle"
-                                                active={asideindex === SideBarTabs.Principle}
-                                            ></SidebarTab>
-                                        </Link>
-                                        <Link
-                                            to={"/home/license/"}
-                                            onClick={() => {
-                                                achangeindex(SideBarTabs.License);
-                                                changeMobile(false);
-                                            }}
-                                        >
-                                            <SidebarTab
-                                                icon={Fa6SolidPaintbrush}
-                                                title="License"
-                                                active={asideindex === SideBarTabs.License}
-                                            ></SidebarTab>
-                                        </Link>
-                                        <Link
-                                            to={"/home/licenseslave/"}
-                                            onClick={() => {
-                                                achangeindex(SideBarTabs.LicenseSlave);
-                                                changeMobile(false);
-                                            }}
-                                        >
-                                            <SidebarTab
-                                                icon={Fa6RegularStarHalfStroke}
-                                                title="License Purchased"
-                                                active={asideindex === SideBarTabs.LicenseSlave}
-                                            ></SidebarTab>
-                                        </Link>
-                                        <Link
-                                            to={"/home/compliance/"}
-                                            onClick={() => {
-                                                achangeindex(SideBarTabs.Compliance);
-                                                changeMobile(false);
-                                            }}
-                                        >
-                                            <SidebarTab
-                                                icon={Fa6SolidObjectUngroup}
-                                                title="Compliance"
-                                                active={asideindex === SideBarTabs.Compliance}
-                                            ></SidebarTab>
-                                        </Link>
-                                        <Link
-                                            to={"/home/questions/"}
-                                            onClick={() => {
-                                                achangeindex(SideBarTabs.Questions);
-                                                changeMobile(false);
-                                            }}
-                                        >
-                                            <SidebarTab
-                                                icon={Fa6SolidCircleQuestion}
-                                                title="Questions"
-                                                active={asideindex === SideBarTabs.Questions}
-                                            ></SidebarTab>
-                                        </Link>
-                                    </>
-                                ) : (
+                                {isUser ? (
                                     <>
                                         <Link
                                             to={"/home/services"}
@@ -182,6 +82,60 @@ const Home: React.FC = (): JSX.Element => {
                                                 active={asideindex === SideBarTabs.Services}
                                             ></SidebarTab>
                                         </Link>
+                                    </>
+                                ) : (
+                                    <>
+                                        <div className="w-full h-[2px] bg-gray-800 my-4"></div>
+                                        <Link
+                                            to={"/home/vzoneinfo"}
+                                            onClick={() => achangeindex(SideBarTabs.ZoneInfo)}
+                                        >
+                                            <SidebarTab
+                                                icon={MaterialSymbolsActivityZone}
+                                                title="Zone Info"
+                                                active={asideindex === SideBarTabs.ZoneInfo}
+                                            ></SidebarTab>
+                                        </Link>
+                                        <Link
+                                            to={"/home/vrti"}
+                                            onClick={() => achangeindex(SideBarTabs.Rti)}
+                                        >
+                                            <SidebarTab
+                                                icon={MaterialSymbolsAlignHorizontalRight}
+                                                title="RTI"
+                                                active={asideindex === SideBarTabs.Rti}
+                                            ></SidebarTab>
+                                        </Link>
+                                        <Link
+                                            to={"/home/vpetroleum"}
+                                            onClick={() => achangeindex(SideBarTabs.Petroleum)}
+                                        >
+                                            <SidebarTab
+                                                icon={MaterialSymbolsFluidBalance}
+                                                title="Petroleum"
+                                                active={asideindex === SideBarTabs.Petroleum}
+                                            ></SidebarTab>
+                                        </Link>
+                                        <Link
+                                            to={"/home/voldcopy"}
+                                            onClick={() => achangeindex(SideBarTabs.OldCopy)}
+                                        >
+                                            <SidebarTab
+                                                icon={MaterialSymbolsOralDisease}
+                                                title="Old Copy"
+                                                active={asideindex === SideBarTabs.OldCopy}
+                                            ></SidebarTab>
+                                        </Link>
+                                        <div className="w-full h-[2px] bg-gray-800 my-4"></div>
+                                        <button
+                                            onClick={() => achangeindex(SideBarTabs.DesignPoint)}
+                                        >
+                                            <SidebarTab
+                                                icon={Fa6SolidCodeBranch}
+                                                title="Design Point"
+                                                active={asideindex === SideBarTabs.DesignPoint}
+                                            ></SidebarTab>
+                                        </button>
                                     </>
                                 )}
 

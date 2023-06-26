@@ -25,13 +25,13 @@ const OldCopy: React.FC = (): JSX.Element => {
     return (
         <>
             <div className="bg-white rounded-md shadow-lg p-4 my-4 w-full">
-                <h1 className="text-gray-800 text-3xl font-semibold text-center">Old Copy Of CP Maps OC</h1>
+                <h1 className="text-gray-800 text-3xl font-semibold text-center">Re -Issuance Of CP / Maps / OC</h1>
                 <div className="w-full flex gap-4 my-4">
                     <div className="grow bg-gray-700 h-[2px]"></div>
                     <div className="w-10 bg-gray-500 h-[3px]"></div>
                     <div className="grow bg-gray-700 h-[2px]"></div>
                 </div>
-                <p className="text-center font-semibold text-xl text-gray-800"> SUBJECT  :  Application for grant of permission for Issuance of Old Copy Of CP Maps OC.</p>
+                <p className="text-center font-semibold text-xl text-gray-800"> SUBJECT  :  Application for obtaining of Old Copy Of Construction Permission / Maps / Occupancy Certificate.</p>
 
                 {/*--------------------- section 1 start here ------------------------- */}
                 <div className="w-full bg-indigo-500 py-2 rounded-md px-4 mt-4">
@@ -75,7 +75,7 @@ const OldCopy: React.FC = (): JSX.Element => {
                 </div>
                 <div className="flex  flex-wrap gap-4 gap-y-2 px-4 py-2 my-2">
                     <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal text-left text-gray-700 ">
-                        <span className="mr-2">1.4</span> Applicant Email
+                        <span className="mr-2">1.4</span> Applicant E-mail
                     </div>
                     <div className="flex-none lg:flex-1 w-full lg:w-auto">
                         <input
@@ -120,7 +120,7 @@ const OldCopy: React.FC = (): JSX.Element => {
                 </div>
                 <div className="flex  flex-wrap gap-4 gap-y-2 px-4 py-2 my-2">
                     <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal text-left text-gray-700 ">
-                        <span className="mr-2">2.2</span> Survey No
+                        <span className="mr-2">2.2</span> Survey No.
                     </div>
                     <div className="flex-none lg:flex-1 w-full lg:w-auto">
                         <input
@@ -191,12 +191,12 @@ const OldCopy: React.FC = (): JSX.Element => {
                 {/*--------------------- section 4 start here ------------------------- */}
 
                 <div className="w-full bg-indigo-500 py-2 rounded-md px-4 mt-4">
-                    <p className="text-left font-semibold text-xl text-white"> 4. Docoument Attachment </p>
+                    <p className="text-left font-semibold text-xl text-white"> 4. Document Attachment </p>
                 </div>
 
                 <div className="flex flex-wrap gap-4 gap-y-2 items-center px-4 py-2 my-2">
                     <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal text-left text-gray-700">
-                        <span className="mr-2">4.1</span> 1/14 Nakal
+                        <span className="mr-2">4.1</span> Aadhar Card and Land Documents
                         <p className="text-rose-500 text-sm">
                             ( Maximum Upload Size 2MB & Allowed Format JPG / PDF / PNG )</p>
                     </div>
