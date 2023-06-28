@@ -1,3 +1,4 @@
+import { Link } from "@remix-run/react";
 import { useRef, useState } from "react";
 import { Fa6SolidLink } from "~/components/icons/icons";
 
@@ -194,11 +195,11 @@ const ZoneInofrmation: React.FC = (): JSX.Element => {
                 </div>
                 {/*--------------------- section 4 end here ------------------------- */}
                 <div className="flex flex-wrap gap-6 mt-4">
-                    <button
+                    <Link to={"/home/"}
                         className="py-1 w-full sm:w-auto text-white text-lg px-4 bg-rose-500 text-center rounded-md font-medium"
                     >
                         Discard & Close
-                    </button>
+                    </Link>
                     <button
                         className="py-1 w-full sm:w-auto text-white text-lg px-4 bg-green-500 text-center rounded-md font-medium"
                     >

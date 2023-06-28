@@ -1,6 +1,7 @@
 import { LoaderArgs, LoaderFunction, json, redirect } from "@remix-run/node";
 import { Link, Outlet, useLoaderData, useNavigate } from "@remix-run/react";
-import { useEffect } from "react";
+import axios from "axios";
+import { useEffect, useRef } from "react";
 import { Fa6RegularStarHalfStroke, Fa6SolidBars, Fa6SolidBook, Fa6SolidBookTanakh, Fa6SolidBuilding, Fa6SolidChartArea, Fa6SolidCircleQuestion, Fa6SolidCodeBranch, Fa6SolidHouse, Fa6SolidObjectUngroup, Fa6SolidPaintbrush, Fa6SolidStar, Fa6SolidUser, Fa6SolidXmark, MaterialSymbolsActivityZone, MaterialSymbolsAlignHorizontalRight, MaterialSymbolsFluidBalance, MaterialSymbolsLogoutRounded, MaterialSymbolsOralDisease } from "~/components/icons/icons";
 import { userPrefs } from "~/cookies";
 import { ApiCall } from "~/services/api";
@@ -39,6 +40,13 @@ const Home: React.FC = (): JSX.Element => {
     const logoutHandle = () => {
         navigator("/logout");
     };
+
+    const submitRef = useRef<HTMLButtonElement>(null);
+    const switchtodesignpoint = async () => {
+        achangeindex(SideBarTabs.DesignPoint);
+        submitRef!.current!.click();
+    }
+
     return (
         <>
             <section className="h-screen w-full relative">
@@ -128,7 +136,7 @@ const Home: React.FC = (): JSX.Element => {
                                         </Link>
                                         <div className="w-full h-[2px] bg-gray-800 my-4"></div>
                                         <button
-                                            onClick={() => achangeindex(SideBarTabs.DesignPoint)}
+                                            onClick={switchtodesignpoint}
                                         >
                                             <SidebarTab
                                                 icon={Fa6SolidCodeBranch}
@@ -157,8 +165,8 @@ const Home: React.FC = (): JSX.Element => {
                             </div>
                         </div>
                     </div>
-                    <div className="flex flex-col grow min-h-screen relative bg-[#eeeeee] ">
-                        <div className="pb-14 px-4 mt-4">
+                    <div className="flex flex-col min-h-screen relative bg-[#eeeeee] flex-grow overflow-y-auto">
+                        <div className="pb-14 px-4 mt-4 h-full">
                             <TopNavBar
                                 name={username}
                                 pic={"/images/logo.jpg"}
@@ -169,11 +177,17 @@ const Home: React.FC = (): JSX.Element => {
                     </div>
                 </div>
             </section>
+            <div className="hidden">
+                <form method="POST" action="http://77.75.120.70:8073/Home/AuthenticateFromLandRecord">
+                    <input type="text" value={"10121"} name="UserId" readOnly />
+                    <input type="text" value={"DIDMSIX234M4L23939"} name="AccessKey" readOnly />
+                    <button type="submit" ref={submitRef}>submit</button>
+                </form>
+            </div>
         </>
     );
 }
 export default Home;
-
 
 type SideBarTabProps = {
     title: string;
@@ -184,7 +198,7 @@ const SidebarTab = (props: SideBarTabProps) => {
     return (
         <div
             className={`w-60 md:w-auto font-semibold flex gap-2 items-center my-1 b  py-1 px-2 rounded-md text-xl cursor-pointer ${props.active
-                ? "bg-green-500 text-white"
+                ? "bg-indigo-500 text-white"
                 : "text-gray-800 hover:text-white hover:bg-indigo-500"
                 }`}
         >
@@ -215,7 +229,6 @@ const TopNavBar = (props: TopNavBarProps) => {
             <div className="grow"></div>
             <p className="text-gray-800">{new Date().toDateString()}</p>
             <div className="w-[2px] bg-gray-800 h-10"></div>
-
             <div className="flex gap-2 relative group items-center">
                 <div className="cursor-pointer">
                     <img

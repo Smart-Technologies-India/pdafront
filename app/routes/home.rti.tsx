@@ -128,7 +128,6 @@ const RightToInformation: React.FC = (): JSX.Element => {
             const nakal_url = await UploadFile(nakal!);
             const sign_url = await UploadFile(sigimg!);
 
-
             if (nakal_url.status && sign_url.status) {
                 const data = await ApiCall({
                     query: `
@@ -153,7 +152,6 @@ const RightToInformation: React.FC = (): JSX.Element => {
                             signature_url: sign_url.data,
                             iagree: remarkRef!.current!.value ? "YES" : "NO",
                             status: "ACTIVE",
-                            form_status: 1,
                             from_date: rtiScheme.from_date,
                             to_date: rtiScheme.to_date
                         }

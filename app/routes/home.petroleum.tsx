@@ -1,3 +1,4 @@
+import { Link } from "@remix-run/react";
 import { useRef, useState } from "react";
 import { Fa6SolidLink } from "~/components/icons/icons";
 
@@ -8,18 +9,18 @@ const Petroleum: React.FC = (): JSX.Element => {
     const addressRef = useRef<HTMLTextAreaElement>(null);
     const emailRef = useRef<HTMLInputElement>(null);
     const uidRef = useRef<HTMLInputElement>(null);
-	const companyRef = useRef<HTMLInputElement>(null);
-	const designationRef = useRef<HTMLInputElement>(null);
-	const locationRef = useRef<HTMLInputElement>(null);
+    const companyRef = useRef<HTMLInputElement>(null);
+    const designationRef = useRef<HTMLInputElement>(null);
+    const locationRef = useRef<HTMLInputElement>(null);
 
     const villageRef = useRef<HTMLSelectElement>(null);
     const surveyRef = useRef<HTMLInputElement>(null);
-	
-	
-	const nocRef = useRef<HTMLSelectElement>(null);
-	const classRef = useRef<HTMLSelectElement>(null);
-	const outletRef = useRef<HTMLSelectElement>(null);
-	const capacityRef = useRef<HTMLInputElement>(null);
+
+
+    const nocRef = useRef<HTMLSelectElement>(null);
+    const classRef = useRef<HTMLSelectElement>(null);
+    const outletRef = useRef<HTMLSelectElement>(null);
+    const capacityRef = useRef<HTMLInputElement>(null);
 
 
     const [nakal, setNakal] = useState<File>();
@@ -102,7 +103,7 @@ const Petroleum: React.FC = (): JSX.Element => {
                         />
                     </div>
                 </div>
-				<div className="flex  flex-wrap gap-4 gap-y-2 px-4 py-2 my-2">
+                <div className="flex  flex-wrap gap-4 gap-y-2 px-4 py-2 my-2">
                     <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal text-left text-gray-700 ">
                         <span className="mr-2">1.6</span> Company Region
                     </div>
@@ -114,7 +115,7 @@ const Petroleum: React.FC = (): JSX.Element => {
                         />
                     </div>
                 </div>
-				<div className="flex  flex-wrap gap-4 gap-y-2 px-4 py-2 my-2">
+                <div className="flex  flex-wrap gap-4 gap-y-2 px-4 py-2 my-2">
                     <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal text-left text-gray-700 ">
                         <span className="mr-2">1.7</span> Designation
                     </div>
@@ -126,7 +127,7 @@ const Petroleum: React.FC = (): JSX.Element => {
                         />
                     </div>
                 </div>
-				
+
                 {/*--------------------- section 1 end here ------------------------- */}
 
                 {/*--------------------- section 2 start here ------------------------- */}
@@ -160,7 +161,7 @@ const Petroleum: React.FC = (): JSX.Element => {
                         />
                     </div>
                 </div>
-				
+
                 {/*--------------------- section 2 end here ------------------------- */}
 
                 {/*--------------------- section 3 start here ------------------------- */}
@@ -180,7 +181,7 @@ const Petroleum: React.FC = (): JSX.Element => {
                         </select>
                     </div>
                 </div>
-				<div className="flex flex-wrap gap-4 gap-y-2 items-center px-4 py-2 my-2">
+                <div className="flex flex-wrap gap-4 gap-y-2 items-center px-4 py-2 my-2">
                     <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal text-left text-gray-700">
                         <span className="mr-2">3.2</span> Class Type
                     </div>
@@ -193,7 +194,7 @@ const Petroleum: React.FC = (): JSX.Element => {
                         </select>
                     </div>
                 </div>
-				<div className="flex flex-wrap gap-4 gap-y-2 items-center px-4 py-2 my-2">
+                <div className="flex flex-wrap gap-4 gap-y-2 items-center px-4 py-2 my-2">
                     <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal text-left text-gray-700">
                         <span className="mr-2">3.3</span> Outlet Type
                     </div>
@@ -206,7 +207,7 @@ const Petroleum: React.FC = (): JSX.Element => {
                         </select>
                     </div>
                 </div>
-				 <div className="flex  flex-wrap gap-4 gap-y-2 px-4 py-2 my-2">
+                <div className="flex  flex-wrap gap-4 gap-y-2 px-4 py-2 my-2">
                     <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal text-left text-gray-700 ">
                         <span className="mr-2">3.4</span> Capacity
                     </div>
@@ -218,7 +219,7 @@ const Petroleum: React.FC = (): JSX.Element => {
                         />
                     </div>
                 </div>
-				
+
                 {/*--------------------- section 3 end here ------------------------- */}
 
                 {/*--------------------- section 4 start here ------------------------- */}
@@ -228,23 +229,6 @@ const Petroleum: React.FC = (): JSX.Element => {
                 </div>
 
                 <div className="flex flex-wrap gap-4 gap-y-2 items-center px-4 py-2 my-2">
-                    <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal text-left text-gray-700">
-                        <span className="mr-2">4.1</span> 1/14 Nakal
-                        <p className="text-rose-500 text-sm">
-                            ( Maximum Upload Size 2MB & Allowed Format JPG / PDF / PNG )</p>
-                    </div>
-                    <div className="flex-none lg:flex-1 w-full lg:w-auto">
-                        <button
-                            className="py-1 w-full sm:w-auto text-white text-lg px-4 bg-green-500 text-center rounded-md font-medium"
-                        >
-                            <div className="flex items-center gap-2">
-                                <Fa6SolidLink></Fa6SolidLink> Attach Doc.
-                            </div>
-                        </button>
-                    </div>
-                </div>
-				
-				 <div className="flex flex-wrap gap-4 gap-y-2 items-center px-4 py-2 my-2">
                     <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal text-left text-gray-700">
                         <span className="mr-2">4.1</span> NOC Fire
                         <p className="text-rose-500 text-sm">
@@ -260,9 +244,9 @@ const Petroleum: React.FC = (): JSX.Element => {
                         </button>
                     </div>
                 </div>
-				 <div className="flex flex-wrap gap-4 gap-y-2 items-center px-4 py-2 my-2">
+                <div className="flex flex-wrap gap-4 gap-y-2 items-center px-4 py-2 my-2">
                     <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal text-left text-gray-700">
-                        <span className="mr-2">4.1</span> NA Order
+                        <span className="mr-2">4.2</span> NA Order
                         <p className="text-rose-500 text-sm">
                             ( Maximum Upload Size 2MB & Allowed Format JPG / PDF / PNG )</p>
                     </div>
@@ -276,9 +260,9 @@ const Petroleum: React.FC = (): JSX.Element => {
                         </button>
                     </div>
                 </div>
-				 <div className="flex flex-wrap gap-4 gap-y-2 items-center px-4 py-2 my-2">
+                <div className="flex flex-wrap gap-4 gap-y-2 items-center px-4 py-2 my-2">
                     <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal text-left text-gray-700">
-                        <span className="mr-2">4.1</span> Sanad Order
+                        <span className="mr-2">4.3</span> Sanad Order
                         <p className="text-rose-500 text-sm">
                             ( Maximum Upload Size 2MB & Allowed Format JPG / PDF / PNG )</p>
                     </div>
@@ -292,9 +276,9 @@ const Petroleum: React.FC = (): JSX.Element => {
                         </button>
                     </div>
                 </div>
-				 <div className="flex flex-wrap gap-4 gap-y-2 items-center px-4 py-2 my-2">
+                <div className="flex flex-wrap gap-4 gap-y-2 items-center px-4 py-2 my-2">
                     <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal text-left text-gray-700">
-                        <span className="mr-2">4.1</span> Coast Guard NOC
+                        <span className="mr-2">4.4</span> Coast Guard NOC
                         <p className="text-rose-500 text-sm">
                             ( Maximum Upload Size 2MB & Allowed Format JPG / PDF / PNG )</p>
                     </div>
@@ -308,9 +292,9 @@ const Petroleum: React.FC = (): JSX.Element => {
                         </button>
                     </div>
                 </div>
-				 <div className="flex flex-wrap gap-4 gap-y-2 items-center px-4 py-2 my-2">
+                <div className="flex flex-wrap gap-4 gap-y-2 items-center px-4 py-2 my-2">
                     <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal text-left text-gray-700">
-                        <span className="mr-2">4.1</span> Site Plan Attachment
+                        <span className="mr-2">4.5</span> Site Plan Attachment
                         <p className="text-rose-500 text-sm">
                             ( Maximum Upload Size 2MB & Allowed Format JPG / PDF / PNG )</p>
                     </div>
@@ -324,9 +308,9 @@ const Petroleum: React.FC = (): JSX.Element => {
                         </button>
                     </div>
                 </div>
-				 <div className="flex flex-wrap gap-4 gap-y-2 items-center px-4 py-2 my-2">
+                <div className="flex flex-wrap gap-4 gap-y-2 items-center px-4 py-2 my-2">
                     <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal text-left text-gray-700">
-                        <span className="mr-2">4.1</span> Explosive Attachment
+                        <span className="mr-2">4.6</span> Explosive Attachment
                         <p className="text-rose-500 text-sm">
                             ( Maximum Upload Size 2MB & Allowed Format JPG / PDF / PNG )</p>
                     </div>
@@ -380,11 +364,11 @@ const Petroleum: React.FC = (): JSX.Element => {
                 {/*--------------------- section 5 end here ------------------------- */}
 
                 <div className="flex flex-wrap gap-6 mt-4">
-                    <button
+                    <Link to={"/home/"}
                         className="py-1 w-full sm:w-auto text-white text-lg px-4 bg-rose-500 text-center rounded-md font-medium"
                     >
                         Discard & Close
-                    </button>
+                    </Link>
                     <button
                         className="py-1 w-full sm:w-auto text-white text-lg px-4 bg-green-500 text-center rounded-md font-medium"
                     >

@@ -3,7 +3,7 @@ import { Link } from "@remix-run/react";
 const Services: React.FC = (): JSX.Element => {
     return (
         <>
-            <div className="bg-[#F5F5F5] rounded-md shadow-lg p-4 my-4 w-full">
+            <div className=" p-4 my-4 w-full">
                 <h1 className="text-gray-800 text-3xl font-semibold text-center">Services</h1>
                 <div className="w-full flex gap-4 my-4">
                     <div className="grow bg-gray-700 h-[2px]"></div>
@@ -17,7 +17,7 @@ const Services: React.FC = (): JSX.Element => {
                 </div>
                 <div className="flex gap-6 flex-wrap justify-center mt-6">
                     <ServiceCard title="Zone Information" description="Land maps are used by planning authorities to advice the zone and usage pattern. You may apply here for getting online zone information." apply="/home/zoneinformation/" view="/home" />
-                    <ServiceCard title="Old Copy Of CP Maps OC" description="Obtain online a copy of any document with the Planning and Development Authority of the daman goverment through this platform." apply="/home/oldcopy" view="/home" />
+                    <ServiceCard title="Old Copy Of CP / Maps / OC" description="Obtain online a copy of any document with the Planning and Development Authority of the daman goverment through this platform." apply="/home/oldcopy" view="/home" />
                 </div>
             </div>
         </>
@@ -44,12 +44,12 @@ const ServiceCard: React.FC<ServiceCardProps> = (props: ServiceCardProps): JSX.E
                 <p className="text-lg text-center font-normal ">Action</p>
                 <div className="flex w-full gap-4 mt-2">
                     <Link to={props.view}
-                        className="py-1 text-white text-lg grow bg-rose-500 text-center rounded-md font-medium"
+                        className="py-1 text-white text-lg grow bg-indigo-500 text-center rounded-md font-medium"
                     >
                         View
                     </Link>
                     <Link to={props.apply}
-                        className="py-1 text-white text-lg grow bg-cyan-500 text-center rounded-md font-medium"
+                        className="py-1 text-white text-lg grow bg-indigo-500 text-center rounded-md font-medium"
                     >
                         Apply
                     </Link>

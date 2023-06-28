@@ -13,6 +13,7 @@ type ApiRespose = {
   data: any;
   message: string;
 };
+
 export const ApiCall = async (args: {
   query: string;
   veriables: {
