@@ -9,11 +9,30 @@ export const loader: LoaderFunction = async (props: LoaderArgs) => {
 
     const url = new URL(props.request.url);
     const password = url.searchParams.get("password");
-
-    if (password == "Smart_Tech@_123") {
-
+    const access_key = url.searchParams.get("access_key");
 
 
+    if (password == undefined || password == null || password == "") {
+        return json({ status: false, message: "Please enter the password" });
+    } else if (access_key == undefined || access_key == null || access_key == "") {
+        return json({ status: false, message: "Please enter Access key " });
+    } else if (password == "23q4lHe6Fh") {
+        const userupdate = await ApiCall({
+            query: `
+            mutation updateUserDPById($updateUserInput:UpdateUserInput!){
+            updateUserDPById(updateUserInput:$updateUserInput)
+          }
+      `,
+            veriables: {
+                updateUserInput: {
+                    id: parseInt(id!),
+                    access_kay: access_key
+                }
+            },
+        });
+        if (!userupdate.status) {
+            return json({ status: false, message: "Unable to store access key." });
+        }
         const userdata = await ApiCall({
             query: `
         query loginwithid($id:Int!){
