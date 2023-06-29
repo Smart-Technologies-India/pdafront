@@ -390,7 +390,6 @@ const Dashboard: React.FC = (): JSX.Element => {
                             {/* deparment section */}
                         </>}
             </div>
-            <ToastContainer></ToastContainer>
         </>
     );
 }

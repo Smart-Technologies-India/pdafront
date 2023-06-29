@@ -7,6 +7,17 @@ import { userPrefs } from "~/cookies";
 import { ApiCall } from "~/services/api";
 import sideBarStore, { SideBarTabs } from "~/state/sidebar";
 
+
+import { ToastContainer, toast } from "react-toastify";
+
+import styles from "react-toastify/dist/ReactToastify.css";
+
+export function links() {
+    return [{ rel: "stylesheet", href: styles }];
+}
+
+
+
 export const loader: LoaderFunction = async (props: LoaderArgs) => {
     const cookieHeader = props.request.headers.get("Cookie");
     const cookie: any = await userPrefs.parse(cookieHeader);
@@ -18,14 +29,33 @@ export const loader: LoaderFunction = async (props: LoaderArgs) => {
         return redirect("/");
     }
 
+    const userdata = await ApiCall({
+        query: `
+        query getUserById($id:Int!){
+            getUserById(id:$id){
+                id,
+                access_kay,
+                design_point_id,
+                role,
+                name
+            }   
+        }
+        `,
+        veriables: {
+            id: parseInt(cookie.id!)
+        },
+    });
+
+
     return json({
-        user: cookie,
+        user: userdata.data.getUserById,
         isAdmin: cookie.role == "ADMIN" ? true : false,
     });
 };
 
 
 const Home: React.FC = (): JSX.Element => {
+
     const isMobile = sideBarStore((state) => state.isOpen);
     const changeMobile = sideBarStore((state) => state.change);
     const asideindex = sideBarStore((state) => state.currentIndex);
@@ -42,9 +72,20 @@ const Home: React.FC = (): JSX.Element => {
     };
 
     const submitRef = useRef<HTMLButtonElement>(null);
+    const accesskeyRef = useRef<HTMLInputElement>(null);
+    const designpointRef = useRef<HTMLInputElement>(null);
+
     const switchtodesignpoint = async () => {
-        achangeindex(SideBarTabs.DesignPoint);
-        submitRef!.current!.click();
+        if (user.design_point_id == "" || user.design_point_id == undefined || user.design_point_id == null) {
+            toast.error("Design Point does not have this user", { theme: "light" });
+        } else if (user.access_kay == "" || user.access_kay == undefined || user.access_kay == null) {
+            toast.error("Something whent wrong, Try again!", { theme: "light" });
+        } else {
+            accesskeyRef!.current!.value = user.access_kay;
+            designpointRef!.current!.value = user.design_point_id;
+            achangeindex(SideBarTabs.DesignPoint);
+            submitRef!.current!.click();
+        }
     }
 
     return (
@@ -179,11 +220,12 @@ const Home: React.FC = (): JSX.Element => {
             </section>
             <div className="hidden">
                 <form method="POST" action="http://77.75.120.70:8073/Home/AuthenticateFromLandRecord">
-                    <input type="text" value={"10121"} name="UserId" readOnly />
-                    <input type="text" value={"DIDMSIX234M4L23939"} name="AccessKey" readOnly />
+                    <input type="text" name="UserId" ref={designpointRef} />
+                    <input type="text" name="AccessKey" ref={accesskeyRef} />
                     <button type="submit" ref={submitRef}>submit</button>
                 </form>
             </div>
+            <ToastContainer></ToastContainer>
         </>
     );
 }
