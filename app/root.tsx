@@ -11,6 +11,9 @@ import {
   useRouteError,
 } from "@remix-run/react";
 
+import { ToastContainer } from "react-toastify";
+
+
 
 export const meta: V2_MetaFunction = () => {
   return [
@@ -21,11 +24,14 @@ export const meta: V2_MetaFunction = () => {
 
 
 import stylesheet from "~/tailwind.css";
+import styles from 'react-toastify/dist/ReactToastify.css';
+
 
 export const links: LinksFunction = () => [
   // ...(cssBundleHref ? [{ rel: "stylesheet", href: cssBundleHref }] : []),
   { rel: "stylesheet", href: stylesheet },
   { rel: "icon", type: "image/jpg", href: "/logo.jpg" },
+  { rel: "stylesheet", href: styles }
 ];
 
 export default function App() {
@@ -42,6 +48,7 @@ export default function App() {
         <ScrollRestoration />
         <Scripts />
         <LiveReload />
+        <ToastContainer />
       </body>
     </html>
   );

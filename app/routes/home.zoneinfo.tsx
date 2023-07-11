@@ -1,12 +1,11 @@
-import { LoaderArgs, LoaderFunction, json } from "@remix-run/node";
 import { Link, useLoaderData, useNavigate } from "@remix-run/react";
 import { useEffect, useRef, useState } from "react";
-import { toast } from "react-toastify";
 import { Fa6SolidFileLines, Fa6SolidLink } from "~/components/icons/icons";
-import { userPrefs } from "~/cookies";
 import { ApiCall, UploadFile } from "~/services/api";
+import { toast } from "react-toastify";
+import { LoaderArgs, LoaderFunction, json } from "@remix-run/node";
+import { userPrefs } from "~/cookies";
 import { z } from "zod";
-
 
 export const loader: LoaderFunction = async (props: LoaderArgs) => {
     const cookieHeader = props.request.headers.get("Cookie");
@@ -14,14 +13,15 @@ export const loader: LoaderFunction = async (props: LoaderArgs) => {
     return json({ user: cookie });
 };
 
-const OldCopy: React.FC = (): JSX.Element => {
+
+
+const ZoneInofrmation: React.FC = (): JSX.Element => {
     const user = useLoaderData().user;
     const nameRef = useRef<HTMLInputElement>(null);
     const mobileRef = useRef<HTMLInputElement>(null);
     const addressRef = useRef<HTMLTextAreaElement>(null);
     const emailRef = useRef<HTMLInputElement>(null);
     const uidRef = useRef<HTMLInputElement>(null);
-
 
     const villageRef = useRef<HTMLSelectElement>(null);
     const [village, setVillage] = useState<any[]>([]);
@@ -39,14 +39,8 @@ const OldCopy: React.FC = (): JSX.Element => {
     const [landDetails, setLandDetails] = useState<landDetailsType>({ area: null, land: null });
 
 
-
-    const typeOfInfoRef = useRef<HTMLSelectElement>(null);
-    const remarkRef = useRef<HTMLTextAreaElement>(null);
-    const applicationDateRef = useRef<HTMLInputElement>(null);
-    const applicationNameRef = useRef<HTMLInputElement>(null);
-
-    const adarRef = useRef<HTMLInputElement>(null);
-    const [adhar, setAdhar] = useState<File>();
+    const nakalRef = useRef<HTMLInputElement>(null);
+    const [nakal, setNakal] = useState<File>();
 
 
 
@@ -55,6 +49,8 @@ const OldCopy: React.FC = (): JSX.Element => {
     const [sigimg, setSigimg] = useState<File>();
 
     const navigator = useNavigate();
+
+
 
     const getSurveyNumber = async () => {
         if (villageRef!.current!.value == "0") {
@@ -152,9 +148,8 @@ const OldCopy: React.FC = (): JSX.Element => {
     }
 
 
-
     const submit = async () => {
-        const OldCopyScheme = z
+        const ZoneScheme = z
             .object({
                 name: z
                     .string()
@@ -177,31 +172,19 @@ const OldCopy: React.FC = (): JSX.Element => {
                     .optional(),
                 survey_no: z
                     .string()
-                    .nonempty("Select survey numbers."),
+                    .nonempty("I solemnly affirm & hereby."),
                 sub_division: z
                     .string()
-                    .nonempty("Select sub division."),
-                prev_application_date: z
-                    .date({ required_error: "Enter Prev application date", invalid_type_error: "Enter a valid prev application date" })
-                    .optional(),
-                prev_application_number: z
-                    .string()
-                    .optional(),
-                type_of_information: z
-                    .string()
-                    .nonempty("Select type of information."),
-                information_needed: z
-                    .string()
-                    .nonempty("Informaton needed is required."),
+                    .nonempty("I solemnly affirm & hereby."),
                 iagree: z
                     .string()
-                    .nonempty("Check the  agree box"),
+                    .nonempty("I solemnly affirm & hereby."),
             })
             .strict();
 
-        type OldCopyScheme = z.infer<typeof OldCopyScheme>;
+        type ZoneScheme = z.infer<typeof ZoneScheme>;
 
-        const oldCopyScheme: OldCopyScheme = {
+        const zoneScheme: ZoneScheme = {
             name: nameRef!.current!.value,
             address: addressRef!.current!.value,
             mobile: mobileRef!.current!.value,
@@ -209,53 +192,42 @@ const OldCopy: React.FC = (): JSX.Element => {
             user_uid: uidRef!.current!.value,
             village_id: parseInt(villageRef!.current!.value),
             survey_no: surveyRef!.current!.value,
-            prev_application_date: new Date(applicationDateRef!.current!.value),
-            prev_application_number: applicationNameRef!.current!.value,
-            type_of_information: typeOfInfoRef!.current!.value,
-            information_needed: remarkRef!.current!.value,
             sub_division: divisionRef!.current!.value,
             iagree: isChecked ? "YES" : "NO",
         };
 
-        const parsed = OldCopyScheme.safeParse(oldCopyScheme);
-
+        const parsed = ZoneScheme.safeParse(zoneScheme);
         if (parsed.success) {
-            if (adhar == null || adhar == undefined) { toast.error("Select Poverty Line Document.", { theme: "light" }); }
+            if (nakal == null || nakal == undefined) { toast.error("Select Poverty Line Document.", { theme: "light" }); }
             if (sigimg == null || sigimg == undefined) { toast.error("Select Signature Image.", { theme: "light" }); }
 
-            const adhar_url = await UploadFile(adhar!);
+            const nakal_url = await UploadFile(nakal!);
             const sign_url = await UploadFile(sigimg!);
 
-
-
-            if (adhar_url.status && sign_url.status) {
+            if (nakal_url.status && sign_url.status) {
 
                 const data = await ApiCall({
                     query: `
-                    mutation createOldCopy($createOldcopyInput:CreateOldcopyInput!){
-                        createOldCopy(createOldcopyInput:$createOldcopyInput){
+                    mutation createZone($createZoneinfoInput:CreateZoneinfoInput!){
+                        createZone(createZoneinfoInput:$createZoneinfoInput){
                           id
                         }
                       }
                     `,
                     veriables: {
-                        createOldcopyInput: {
+                        createZoneinfoInput: {
                             userId: Number(user.id),
-                            name: oldCopyScheme.name,
-                            address: oldCopyScheme.address,
-                            email: oldCopyScheme.email,
-                            mobile: oldCopyScheme.mobile,
-                            user_uid: oldCopyScheme.user_uid,
-                            prev_application_date: oldCopyScheme.prev_application_date,
-                            prev_application_number: oldCopyScheme.prev_application_number,
-                            type_of_information: oldCopyScheme.type_of_information,
-                            information_needed: oldCopyScheme.information_needed,
-                            village_id: oldCopyScheme.village_id,
-                            survey_no: oldCopyScheme.survey_no,
-                            sub_division: oldCopyScheme.sub_division,
-                            aadhar_url: adhar_url.data,
+                            name: zoneScheme.name,
+                            address: zoneScheme.address,
+                            email: zoneScheme.email,
+                            mobile: zoneScheme.mobile,
+                            user_uid: zoneScheme.user_uid,
+                            village_id: zoneScheme.village_id,
+                            survey_no: zoneScheme.survey_no,
+                            sub_division: zoneScheme.sub_division,
+                            nakel_url_1_14: nakal_url.data,
                             signature_url: sign_url.data,
-                            iagree: oldCopyScheme.iagree,
+                            iagree: zoneScheme.iagree,
                             status: "ACTIVE",
                         }
                     },
@@ -263,27 +235,25 @@ const OldCopy: React.FC = (): JSX.Element => {
                 if (!data.status) {
                     toast.error(data.message, { theme: "light" });
                 } else {
-                    navigator(`/home/oldcopyview/${data.data.createOldCopy.id}`);
+                    navigator(`/home/zoneinfoview/${data.data.createZone.id}`);
                 }
-
-
             }
             else {
                 toast.error("Something want wrong unable to upload images.", { theme: "light" });
             }
         } else { toast.error(parsed.error.errors[0].message, { theme: "light" }); }
-
     }
+
     return (
         <>
             <div className="bg-white rounded-md shadow-lg p-4 my-4 w-full">
-                <h1 className="text-gray-800 text-3xl font-semibold text-center">Re -Issuance Of CP / Maps / OC</h1>
+                <h1 className="text-gray-800 text-3xl font-semibold text-center">Zone Infomation</h1>
                 <div className="w-full flex gap-4 my-4">
                     <div className="grow bg-gray-700 h-[2px]"></div>
                     <div className="w-10 bg-gray-500 h-[3px]"></div>
                     <div className="grow bg-gray-700 h-[2px]"></div>
                 </div>
-                <p className="text-center font-semibold text-xl text-gray-800"> SUBJECT  :  Application for obtaining of Old Copy Of Construction Permission / Maps / Occupancy Certificate.</p>
+                <p className="text-center font-semibold text-xl text-gray-800"> SUBJECT  :  Request for Obtaining Zone Information. </p>
 
 
                 {/*--------------------- section 1 start here ------------------------- */}
@@ -390,7 +360,7 @@ const OldCopy: React.FC = (): JSX.Element => {
                 </div>
                 <div className="flex  flex-wrap gap-4 gap-y-2 px-4 py-2 my-2">
                     <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal text-left text-gray-700 ">
-                        <span className="mr-2">2.4</span> Applicant E-mail
+                        <span className="mr-2">2.4</span> Applicant Email
                     </div>
                     <div className="flex-none lg:flex-1 w-full lg:w-auto">
                         <input
@@ -415,88 +385,35 @@ const OldCopy: React.FC = (): JSX.Element => {
                 {/*--------------------- section 2 end here ------------------------- */}
 
 
+
+
                 {/*--------------------- section 3 start here ------------------------- */}
-                <div className="w-full bg-indigo-500 py-2 rounded-md px-4 mt-4">
-                    <p className="text-left font-semibold text-xl text-white"> 3. Permisstion Details </p>
-                </div>
-                <div className="flex flex-wrap gap-4 gap-y-2 items-center px-4 py-2 my-2">
-                    <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal text-left text-gray-700">
-                        <span className="mr-2">3.1</span> Type of Information
-                    </div>
-                    <div className="flex-none lg:flex-1 w-full lg:w-auto">
-                        <select ref={typeOfInfoRef} defaultValue={"0"} className="w-full bg-transparent fill-none outline-none border-2 border-black text-black p-2">
-                            <option value="0" className="bg-white text-blakc text-lg" disabled>Type Of Information</option>
-                            <option value="CP" className="bg-white text-black text-lg">Construction Permission</option>
-                            <option value="OC" className="bg-white text-black text-lg">Occupancy Certificate</option>
-                            <option value="MAPS" className="bg-white text-black text-lg">Maps</option>
-                        </select>
-                    </div>
-                </div>
 
-                <div className="flex flex-wrap gap-4 gap-y-2 px-4 py-2 my-2">
-                    <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal text-left text-gray-700 ">
-                        <span className="mr-2">3.2</span> Information Needed
-                    </div>
-                    <div className="flex-none lg:flex-1 w-full lg:w-auto">
-                        <textarea
-                            ref={remarkRef}
-                            placeholder="Information Needed"
-                            className=" w-full border-2 border-gray-600 bg-transparent outline-none fill-none text-slate-800 p-2 h-28 resize-none"
-                        ></textarea>
-                    </div>
-                </div>
-                <div className="flex  flex-wrap gap-4 gap-y-2 px-4 py-2 my-2">
-                    <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal text-left text-gray-700 ">
-                        <span className="mr-2">3.3</span> Previous application date
-                    </div>
-                    <div className="flex-none lg:flex-1 w-full lg:w-auto">
-                        <input
-                            type="date"
-                            ref={applicationDateRef}
-                            className=" w-full border-2 border-gray-600 bg-transparent outline-none fill-none text-slate-800 p-2"
-                        />
-                    </div>
-                </div>
-                <div className="flex  flex-wrap gap-4 gap-y-2 px-4 py-2 my-2">
-                    <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal text-left text-gray-700 ">
-                        <span className="mr-2">3.4</span> Previous application number
-                    </div>
-                    <div className="flex-none lg:flex-1 w-full lg:w-auto">
-                        <input
-                            ref={applicationNameRef}
-                            placeholder="Previous application number"
-                            className=" w-full border-2 border-gray-600 bg-transparent outline-none fill-none text-slate-800 p-2"
-                        />
-                    </div>
-                </div>
-                {/*--------------------- section 3 end here ------------------------- */}
-
-                {/*--------------------- section 4 start here ------------------------- */}
                 <div className="w-full bg-indigo-500 py-2 rounded-md px-4 mt-4">
-                    <p className="text-left font-semibold text-xl text-white"> 4. Document Attachment </p>
+                    <p className="text-left font-semibold text-xl text-white"> 3. Document Attachment </p>
                 </div>
 
                 <div className="flex flex-wrap gap-4 gap-y-2 items-center px-4 py-2 my-2">
                     <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal text-left text-gray-700">
-                        <span className="mr-2">4.1</span> Aadhar Card and Land Documents
+                        <span className="mr-2">3.1</span> 1/14 Nakal
                         <p className="text-rose-500 text-sm">
                             ( Maximum Upload Size 2MB & Allowed Format JPG / PDF / PNG )</p>
                     </div>
                     <div className="flex-none flex gap-4 lg:flex-1 w-full lg:w-auto">
                         <div className="hidden">
-                            <input type="file" ref={adarRef} accept="*/*" onChange={(e) => handleLogoChange(e, setAdhar)} />
+                            <input type="file" ref={nakalRef} accept="*/*" onChange={(e) => handleLogoChange(e, setNakal)} />
                         </div>
                         <button
-                            onClick={() => adarRef.current?.click()}
+                            onClick={() => nakalRef.current?.click()}
                             className="py-1 w-full sm:w-auto text-white text-lg px-4 bg-green-500 text-center rounded-md font-medium"
                         >
                             <div className="flex items-center gap-2">
-                                <Fa6SolidLink></Fa6SolidLink> {adhar == null ? "Attach Doc." : "Update Doc."}
+                                <Fa6SolidLink></Fa6SolidLink> {nakal == null ? "Attach Doc." : "Update Doc."}
                             </div>
                         </button>
                         {
-                            adhar != null ?
-                                <a target="_blank" href={URL.createObjectURL(adhar)}
+                            nakal != null ?
+                                <a target="_blank" href={URL.createObjectURL(nakal)}
                                     className="py-1 w-full sm:w-auto flex items-center gap-2  text-white text-lg px-4 bg-green-500 text-center rounded-md font-medium">
                                     <Fa6SolidFileLines></Fa6SolidFileLines>
                                     <p>
@@ -507,18 +424,17 @@ const OldCopy: React.FC = (): JSX.Element => {
                         }
                     </div>
                 </div>
-                {/*--------------------- section 4 end here ------------------------- */}
+                {/*--------------------- section 3 end here ------------------------- */}
 
-
-                {/*--------------------- section 5 start here ------------------------- */}
+                {/*--------------------- section 4 start here ------------------------- */}
                 <div className="w-full bg-indigo-500 py-2 rounded-md px-4 mt-4">
                     <p className="text-left font-semibold text-xl text-white">
-                        5. Applicant / Occupant Declaration and Signature </p>
+                        4. Applicant / Occupant Declaration and Signature </p>
                 </div>
 
                 <div className="flex gap-4 gap-y-2 px-4 py-2 my-2">
                     <div className="text-xl font-normal text-left text-gray-700 ">
-                        5.1
+                        4.1
                     </div>
                     <div className="flex items-start">
                         <input type="checkbox" className="mr-2 my-2" checked={isChecked}
@@ -530,7 +446,7 @@ const OldCopy: React.FC = (): JSX.Element => {
                 </div>
                 <div className="flex flex-wrap gap-4 gap-y-2 items-center px-4 py-2 my-2">
                     <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal text-left text-gray-700">
-                        <span className="mr-2">5.2</span> Applicant Signature Image
+                        <span className="mr-2">4.2</span> Applicant Signature Image
                         <p className="text-rose-500 text-sm">
                             ( Maximum Upload Size 2MB & Allowed Format JPG / PDF / PNG )</p>
                     </div>
@@ -559,7 +475,7 @@ const OldCopy: React.FC = (): JSX.Element => {
                         }
                     </div>
                 </div>
-                {/*--------------------- section 5 end here ------------------------- */}
+                {/*--------------------- section 4 end here ------------------------- */}
                 <div className="flex flex-wrap gap-6 mt-4">
                     <Link to={"/home/"}
                         className="py-1 w-full sm:w-auto text-white text-lg px-4 bg-rose-500 text-center rounded-md font-medium"
@@ -578,4 +494,5 @@ const OldCopy: React.FC = (): JSX.Element => {
     );
 }
 
-export default OldCopy;
+
+export default ZoneInofrmation;

@@ -1,19 +1,11 @@
 import { useRef, useState } from "react";
 import { Fa6SolidFileLines, Fa6SolidLink } from "~/components/icons/icons";
-import { ToastContainer, toast } from "react-toastify";
-
-import styles from "react-toastify/dist/ReactToastify.css";
+import { toast } from "react-toastify";
 import { z } from "zod";
 import { ApiCall, UploadFile } from "~/services/api";
 import { Link, useLoaderData, useNavigate } from "@remix-run/react";
 import { LoaderArgs, LoaderFunction, json } from "@remix-run/node";
 import { userPrefs } from "~/cookies";
-
-export function links() {
-    return [{ rel: "stylesheet", href: styles }];
-}
-
-
 
 export const loader: LoaderFunction = async (props: LoaderArgs) => {
     const cookieHeader = props.request.headers.get("Cookie");
@@ -38,10 +30,10 @@ const RightToInformation: React.FC = (): JSX.Element => {
 
 
     const nakalRef = useRef<HTMLInputElement>(null);
-    const povertyLine = useRef<HTMLInputElement>(null);
+    const [povertyLine, setPovertyLine] = useState(false);
     const [nakal, setNakal] = useState<File>();
 
-    const agreeRef = useRef<HTMLInputElement>(null);
+    const [isChecked, setIsChecked] = useState(false);
     const sigimgRef = useRef<HTMLInputElement>(null);
     const [sigimg, setSigimg] = useState<File>();
 
@@ -92,14 +84,9 @@ const RightToInformation: React.FC = (): JSX.Element => {
                 information: z
                     .string()
                     .optional(),
-                proverty_line_url: z
-                    .string(),
                 iagree: z
                     .string()
                     .nonempty("I solemnly affirm & hereby."),
-                signature_url: z
-                    .string()
-                    .nonempty("Select signature mark url."),
             })
             .strict();
 
@@ -116,58 +103,112 @@ const RightToInformation: React.FC = (): JSX.Element => {
             to_date: new Date(applicationDateToRef!.current!.value),
             description: applicationNameRef!.current!.value,
             information: applicationDescRef!.current!.value,
-            proverty_line_url: remarkRef!.current!.value,
-            iagree: remarkRef!.current!.value,
-            signature_url: remarkRef!.current!.value,
+            iagree: isChecked ? "YES" : "NO",
         };
-
 
         const parsed = RTIScheme.safeParse(rtiScheme);
         if (parsed.success) {
 
-            const nakal_url = await UploadFile(nakal!);
-            const sign_url = await UploadFile(sigimg!);
+            if (povertyLine) {
+                // upload with proverty_line_url
+                if (nakal == null || nakal == undefined) { return toast.error("Select Poverty Line Document.", { theme: "light" }); }
+                if (sigimg == null || sigimg == undefined) { return toast.error("Select Signature Image.", { theme: "light" }); }
+                const nakal_url = await UploadFile(nakal!);
+                const sign_url = await UploadFile(sigimg!);
 
-            if (nakal_url.status && sign_url.status) {
-                const data = await ApiCall({
-                    query: `
+                if (nakal_url.status && sign_url.status) {
+                    const data = await ApiCall({
+                        query: `
                     mutation createRti($createRtiInput:CreateRtiInput!){
                         createRti(createRtiInput:$createRtiInput){
                           id
                         }
                       }
                     `,
-                    veriables: {
-                        createRtiInput: {
-                            userId: Number(user.id),
-                            name: rtiScheme.name,
-                            address: rtiScheme.address,
-                            email: rtiScheme.email,
-                            mobile: rtiScheme.mobile,
-                            user_uid: rtiScheme.user_uid,
-                            subject_info: rtiScheme.subject_info,
-                            description: rtiScheme.description,
-                            information: rtiScheme.information,
-                            proverty_line_url: nakal_url.data,
-                            signature_url: sign_url.data,
-                            iagree: remarkRef!.current!.value ? "YES" : "NO",
-                            status: "ACTIVE",
-                            from_date: rtiScheme.from_date,
-                            to_date: rtiScheme.to_date
-                        }
-                    },
-                });
-                if (!data.status) {
-                    toast.error(data.message, { theme: "light" });
+                        veriables: {
+                            createRtiInput: {
+                                userId: Number(user.id),
+                                name: rtiScheme.name,
+                                address: rtiScheme.address,
+                                email: rtiScheme.email,
+                                mobile: rtiScheme.mobile,
+                                user_uid: rtiScheme.user_uid,
+                                subject_info: rtiScheme.subject_info,
+                                description: rtiScheme.description,
+                                information: rtiScheme.information,
+                                proverty_line_url: nakal_url.data,
+                                signature_url: sign_url.data,
+                                iagree: rtiScheme.iagree,
+                                status: "ACTIVE",
+                                from_date: rtiScheme.from_date,
+                                to_date: rtiScheme.to_date
+                            }
+                        },
+                    });
+                    if (!data.status) {
+                        toast.error(data.message, { theme: "light" });
+                    } else {
+                        navigator(`/home/rtiview/${data.data.createRti.id}`);
+                    }
                 } else {
-                    navigator(`/home/rtiview/${data.data.createRti.id}`);
+                    toast.error("Something want wrong unable to upload images.", { theme: "light" });
                 }
             } else {
-                toast.error("Something want wrong unable to upload images.", { theme: "light" });
+                // upload without proverty_line_url
+                if (sigimg == null || sigimg == undefined) { return toast.error("Select Signature Image.", { theme: "light" }); }
+                const sign_url = await UploadFile(sigimg!);
+                if (sign_url.status) {
+                    const data = await ApiCall({
+                        query: `
+                    mutation createRti($createRtiInput:CreateRtiInput!){
+                        createRti(createRtiInput:$createRtiInput){
+                          id
+                        }
+                      }
+                    `,
+                        veriables: {
+                            createRtiInput: {
+                                userId: Number(user.id),
+                                name: rtiScheme.name,
+                                address: rtiScheme.address,
+                                email: rtiScheme.email,
+                                mobile: rtiScheme.mobile,
+                                user_uid: rtiScheme.user_uid,
+                                subject_info: rtiScheme.subject_info,
+                                description: rtiScheme.description,
+                                information: rtiScheme.information,
+                                signature_url: sign_url.data,
+                                iagree: rtiScheme.iagree,
+                                status: "ACTIVE",
+                                from_date: rtiScheme.from_date,
+                                to_date: rtiScheme.to_date
+                            }
+                        },
+                    });
+                    if (!data.status) {
+                        toast.error(data.message, { theme: "light" });
+                    } else {
+                        navigator(`/home/rtiview/${data.data.createRti.id}`);
+                    }
+                } else {
+                    toast.error("Something want wrong unable to upload images.", { theme: "light" });
+                }
+
             }
         }
         else { toast.error(parsed.error.errors[0].message, { theme: "light" }); }
     }
+
+    const handleFromDateChange = () => {
+        const fromDateValue = applicationDateRef.current!.value;
+        applicationDateToRef.current!.min = fromDateValue;
+    };
+
+    const handleToDateChange = () => {
+        const toDateValue = applicationDateToRef.current!.value;
+        applicationDateRef.current!.max = toDateValue;
+    };
+
 
 
     return (
@@ -273,7 +314,9 @@ const RightToInformation: React.FC = (): JSX.Element => {
                         <input
                             type="date"
                             ref={applicationDateRef}
+                            max={new Date().toISOString().split('T')[0]}
                             className=" w-full border-2 border-gray-600 bg-transparent outline-none fill-none text-slate-800 p-2"
+                            onInput={handleFromDateChange}
                         />
                     </div>
                 </div>
@@ -285,7 +328,9 @@ const RightToInformation: React.FC = (): JSX.Element => {
                         <input
                             type="date"
                             ref={applicationDateToRef}
+                            max={new Date().toISOString().split('T')[0]}
                             className=" w-full border-2 border-gray-600 bg-transparent outline-none fill-none text-slate-800 p-2"
+                            onInput={handleToDateChange}
                         />
                     </div>
                 </div>
@@ -325,51 +370,54 @@ const RightToInformation: React.FC = (): JSX.Element => {
                         3.1
                     </div>
                     <div className="flex items-start">
-                        <input ref={povertyLine} type="checkbox" id="checkbox" className="mr-2 my-2" />
+                        <input checked={povertyLine}
+                            onChange={(e) => setPovertyLine(e.target.checked)} type="checkbox" id="checkbox" className="mr-2 my-2" />
                         <label htmlFor="checkbox" className="text-xl font-normal text-left text-gray-700 ">
                             Whether the Applicant is below Poverty Line(Select if Yes)
                         </label>
                     </div>
                 </div>
 
-
-
-                <div className="flex flex-wrap gap-4 gap-y-2 items-center px-4 py-2 my-2">
-                    <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal text-left text-gray-700">
-                        <span className="mr-2">3.2</span> Poverty Line Document Upload
-                        <p className="text-rose-500 text-sm">
-                            ( Only Applicable in case Applicant is below Poverty Line.Maximum Upload Size 2MB & Allowed Format JPG / PDF / PNG )</p>
-                    </div>
-                    <div className="flex-none flex gap-4 lg:flex-1 w-full lg:w-auto">
-                        <div className="hidden">
-                            <input type="file" ref={nakalRef} accept="*/*" onChange={(e) => handleLogoChange(e, setNakal)} />
+                {povertyLine ?
+                    <div className="flex flex-wrap gap-4 gap-y-2 items-center px-4 py-2 my-2">
+                        <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal text-left text-gray-700">
+                            <span className="mr-2">3.2</span> Poverty Line Document Upload
+                            <p className="text-rose-500 text-sm">
+                                ( Only Applicable in case Applicant is below Poverty Line.Maximum Upload Size 2MB & Allowed Format JPG / PDF / PNG )</p>
                         </div>
-                        <button
-                            onClick={() => nakalRef.current?.click()}
-                            className="py-1 w-full sm:w-auto text-white text-lg px-4 bg-green-500 text-center rounded-md font-medium"
-                        >
-                            <div className="flex items-center gap-2">
-                                <Fa6SolidLink></Fa6SolidLink> {nakal == null ? "Attach Doc." : "Update Doc."}
+                        <div className="flex-none flex gap-4 lg:flex-1 w-full lg:w-auto">
+                            <div className="hidden">
+                                <input type="file" ref={nakalRef} accept="*/*" onChange={(e) => handleLogoChange(e, setNakal)} />
                             </div>
-                        </button>
-                        {
-                            nakal != null ?
-                                <a target="_blank" href={URL.createObjectURL(nakal)}
-                                    className="py-1 w-full sm:w-auto flex items-center gap-2  text-white text-lg px-4 bg-green-500 text-center rounded-md font-medium">
-                                    <Fa6SolidFileLines></Fa6SolidFileLines>
-                                    <p>
-                                        View Doc.
-                                    </p>
-                                </a>
-                                : null
-                        }
+                            <button
+                                onClick={() => nakalRef.current?.click()}
+                                className="py-1 w-full sm:w-auto text-white text-lg px-4 bg-green-500 text-center rounded-md font-medium"
+                            >
+                                <div className="flex items-center gap-2">
+                                    <Fa6SolidLink></Fa6SolidLink> {nakal == null ? "Attach Doc." : "Update Doc."}
+                                </div>
+                            </button>
+                            {
+                                nakal != null ?
+                                    <a target="_blank" href={URL.createObjectURL(nakal)}
+                                        className="py-1 w-full sm:w-auto flex items-center gap-2  text-white text-lg px-4 bg-green-500 text-center rounded-md font-medium">
+                                        <Fa6SolidFileLines></Fa6SolidFileLines>
+                                        <p>
+                                            View Doc.
+                                        </p>
+                                    </a>
+                                    : null
+                            }
+                        </div>
                     </div>
-                </div>
+                    : null
+
+                }
+
 
                 {/*--------------------- section 3 end here ------------------------- */}
 
                 {/*--------------------- section 4 start here ------------------------- */}
-
                 <div className="w-full bg-indigo-500 py-2 rounded-md px-4 mt-4">
                     <p className="text-left font-semibold text-xl text-white">
                         4. Applicant / Occupant Declaration and Signature </p>
@@ -380,7 +428,8 @@ const RightToInformation: React.FC = (): JSX.Element => {
                         4.1
                     </div>
                     <div className="flex items-start">
-                        <input ref={agreeRef} type="checkbox" id="checkbox" className="mr-2 my-2" />
+                        <input type="checkbox" checked={isChecked}
+                            onChange={(e) => setIsChecked(e.target.checked)} className="mr-2 my-2" />
                         <label htmlFor="checkbox" className="text-xl font-normal text-left text-gray-700 ">
                             I solemnly affirm & hereby give undertaking that the above information furnished by me are correct and true to the best of my knowledge and belief
                         </label>
@@ -434,7 +483,6 @@ const RightToInformation: React.FC = (): JSX.Element => {
                     </button>
                 </div>
             </div>
-            <ToastContainer></ToastContainer>
         </>
     );
 }

@@ -1,12 +1,11 @@
 import { LoaderArgs, LoaderFunction, json } from "@remix-run/node";
-import { Link, useLoaderData } from "@remix-run/react";
+import { useLoaderData } from "@remix-run/react";
 import { userPrefs } from "~/cookies";
 import { ApiCall } from "~/services/api";
 
 export const loader: LoaderFunction = async (props: LoaderArgs) => {
     const cookieHeader = props.request.headers.get("Cookie");
     const cookie = await userPrefs.parse(cookieHeader);
-
 
     const departmentdata = await ApiCall({
         query: `
@@ -32,33 +31,27 @@ export const loader: LoaderFunction = async (props: LoaderArgs) => {
             filterCommonInput: {
                 user_type: "DEPARTMENT",
                 user_id: parseInt(cookie.id!),
-                form_type: "RTI"
+                form_type: "UNAUTHORISED"
             }
         },
     });
-
     return json({
         user: cookie,
         department: departmentdata.data.filterCommon
     });
 };
-
-
-
-
-const Rti: React.FC = (): JSX.Element => {
+const Unauthorised: React.FC = (): JSX.Element => {
     const loader = useLoaderData();
     const department = loader.department;
     return (
         <>
             <div className="bg-white rounded-md shadow-lg p-4 my-4 w-full">
-                <h1 className="text-gray-800 text-3xl font-semibold text-center">Right to information</h1>
+                <h1 className="text-gray-800 text-3xl font-semibold text-center">Unauthorised Construction</h1>
                 <div className="w-full flex gap-4 my-4">
                     <div className="grow bg-gray-700 h-[2px]"></div>
                     <div className="w-10 bg-gray-500 h-[3px]"></div>
                     <div className="grow bg-gray-700 h-[2px]"></div>
                 </div>
-
                 {(department == undefined || department.length == 0 || department == null) ?
                     <h3 className="text-2xl font-semibold text-center bg-rose-500 bg-opacity-25 rounded-md border-l-4 border-rose-500 py-2  text-rose-500">You do not have any pending forms.</h3>
                     :
@@ -123,11 +116,11 @@ const Rti: React.FC = (): JSX.Element => {
                                                     }
                                                 </td>
                                                 <td className="text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap">
-                                                    <Link to={`/home/rtiview/${val.form_id}`}
+                                                    <button
                                                         className="py-1 w-full sm:w-auto block text-white text-lg px-4 bg-indigo-500 text-center rounded-md font-medium"
                                                     >
                                                         VIEW
-                                                    </Link>
+                                                    </button>
                                                 </td>
                                             </tr>
                                         );
@@ -141,4 +134,4 @@ const Rti: React.FC = (): JSX.Element => {
         </>
     );
 }
-export default Rti;
+export default Unauthorised;

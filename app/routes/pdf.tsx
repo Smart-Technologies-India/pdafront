@@ -1,4 +1,4 @@
-import { Page, Text, View, Document, StyleSheet, Font, PDFViewer, PDFDownloadLink } from '@react-pdf/renderer';
+import { Page, Text, View, Document, StyleSheet, Font, PDFViewer, PDFDownloadLink, renderToFile, usePDF, pdf } from '@react-pdf/renderer';
 import { useEffect, useState } from 'react';
 
 const ShowPdf = () => {
@@ -27,35 +27,60 @@ const ShowPdf = () => {
         },
         header: {
             marginTop: "15px",
-            backgroundColor: "#6366f1",
+            marginBottom: "10px",
+            backgroundColor: "#c1dafe",
             paddingVertical: '8px',
             fontSize: "14px",
-            color: "#ffffff",
+            color: "#1f2937",
             textAlign: "center",
-            fontWeight: "medium"
+            fontWeight: "normal"
         },
         myflex: {
-            marginVertical: "4px",
-            border: "2px solid #6b7280",
-            padding: "4px"
+            display: "flex",
+            flexDirection: "row",
+            width: "100%",
+            borderBottom: "1px solid #6b7280",
         },
         text1: {
-            fontSize: "14px",
-            fontWeight: 'medium',
-            marginBottom: "4px",
-            color: "#030712"
+            fontSize: "12px",
+            fontWeight: 'normal',
+            color: "#374151",
+            flex: 2,
+            padding: "4px 8px",
+            backgroundColor: "#f6f7f8",
+            borderRight: "1px solid #6b7280",
         },
         text2: {
             fontSize: "12px",
-            fontWeight: 'semibold',
-            color: "#374151"
+            fontWeight: 'normal',
+            color: "#374151",
+            flex: 3,
+            padding: "4px 8px",
         },
         divider: {
             width: "100%",
             height: "1px",
             backgroundColor: "#6b7280",
             marginVertical: "2px"
-        }
+        },
+        flexbox: {
+            display: "flex",
+            flexDirection: "row",
+            width: "100%",
+            marginTop: "55px"
+        },
+        flexbox1: {
+            fontSize: "12px",
+            fontWeight: 'normal',
+            color: "#374151",
+            flex: 4,
+        },
+        flexbox2: {
+            fontSize: "12px",
+            fontWeight: 'normal',
+            color: "#374151",
+            flex: 2,
+        },
     });
 
 
@@ -79,7 +104,6 @@ const ShowPdf = () => {
                     <Text style={styles.text1}>
                         1.1 Applicant Name
                     </Text>
-                    <View style={styles.divider}></View>
                     <Text style={styles.text2}>
                         sombra
                     </Text>
@@ -88,7 +112,6 @@ const ShowPdf = () => {
                     <Text style={styles.text1}>
                         1.2 Applicant Contact Number
                     </Text>
-                    <View style={styles.divider}></View>
                     <Text style={styles.text2}>
                         Applicant details
                     </Text>
@@ -97,7 +120,6 @@ const ShowPdf = () => {
                     <Text style={styles.text1}>
                         1.3 Applicant Survey Number
                     </Text>
-                    <View style={styles.divider}></View>
                     <Text style={styles.text2}>
                         Applicant details
                     </Text>
@@ -106,7 +128,6 @@ const ShowPdf = () => {
                     <Text style={styles.text1}>
                         1.4 Applicant Contact Number
                     </Text>
-                    <View style={styles.divider}></View>
                     <Text style={styles.text2}>
                         Applicant Village
                     </Text>
@@ -115,7 +136,6 @@ const ShowPdf = () => {
                     <Text style={styles.text1}>
                         1.5 Applicant Contact Number
                     </Text>
-                    <View style={styles.divider}></View>
                     <Text style={styles.text2}>
                         Applicant details
                     </Text>
@@ -124,7 +144,6 @@ const ShowPdf = () => {
                     <Text style={styles.text1}>
                         1.6 Applicant Area
                     </Text>
-                    <View style={styles.divider}></View>
                     <Text style={styles.text2}>
                         Applicant details
                     </Text>
@@ -138,7 +157,6 @@ const ShowPdf = () => {
                     <Text style={styles.text1}>
                         2.1 Applicant Area
                     </Text>
-                    <View style={styles.divider}></View>
                     <Text style={styles.text2}>
                         Applicant details
                     </Text>
@@ -147,7 +165,6 @@ const ShowPdf = () => {
                     <Text style={styles.text1}>
                         2.2 Applicant Area
                     </Text>
-                    <View style={styles.divider}></View>
                     <Text style={styles.text2}>
                         Applicant details
                     </Text>
@@ -156,7 +173,6 @@ const ShowPdf = () => {
                     <Text style={styles.text1}>
                         2.3 Applicant Area
                     </Text>
-                    <View style={styles.divider}></View>
                     <Text style={styles.text2}>
                         Applicant details
                     </Text>
@@ -165,7 +181,6 @@ const ShowPdf = () => {
                     <Text style={styles.text1}>
                         2.4 Applicant Area
                     </Text>
-                    <View style={styles.divider}></View>
                     <Text style={styles.text2}>
                         Applicant details
                     </Text>
@@ -174,7 +189,6 @@ const ShowPdf = () => {
                     <Text style={styles.text1}>
                         2.5 Applicant Area
                     </Text>
-                    <View style={styles.divider}></View>
                     <Text style={styles.text2}>
                         Applicant details
                     </Text>
@@ -183,7 +197,6 @@ const ShowPdf = () => {
                     <Text style={styles.text1}>
                         2.6 Applicant Area
                     </Text>
-                    <View style={styles.divider}></View>
                     <Text style={styles.text2}>
                         Applicant details
                     </Text>
@@ -192,7 +205,6 @@ const ShowPdf = () => {
                     <Text style={styles.text1}>
                         2.7 Applicant Area
                     </Text>
-                    <View style={styles.divider}></View>
                     <Text style={styles.text2}>
                         Applicant details
                     </Text>
@@ -201,7 +213,6 @@ const ShowPdf = () => {
                     <Text style={styles.text1}>
                         2.8 Applicant Area
                     </Text>
-                    <View style={styles.divider}></View>
                     <Text style={styles.text2}>
                         Applicant details
                     </Text>
@@ -210,7 +221,6 @@ const ShowPdf = () => {
                     <Text style={styles.text1}>
                         2.9 Applicant Area
                     </Text>
-                    <View style={styles.divider}></View>
                     <Text style={styles.text2}>
                         Applicant details
                     </Text>
@@ -219,7 +229,6 @@ const ShowPdf = () => {
                     <Text style={styles.text1}>
                         2.10 Applicant Area
                     </Text>
-                    <View style={styles.divider}></View>
                     <Text style={styles.text2}>
                         Applicant details
                     </Text>
@@ -228,42 +237,67 @@ const ShowPdf = () => {
                     <Text style={styles.text1}>
                         2.11 Applicant Area
                     </Text>
-                    <View style={styles.divider}></View>
                     <Text style={styles.text2}>
                         Applicant details
+                    </Text>
+                </View>
+                <View style={styles.flexbox}>
+                    <Text style={styles.flexbox1}>
+                        AD(SP)
+                    </Text>
+                    <Text style={styles.flexbox2}>
+                        JTP
                     </Text>
                 </View>
             </Page>
         </Document >
     );
 
-
     const [isClient, setIsClient] = useState(false)
 
-    useEffect(() => {
-        setIsClient(true)
-    }, [])
+    const init = async () => {
 
-    const download = () => {
-        <PDFDownloadLink document={<Quixote />} fileName="somename.pdf">
-            {({ blob, url, loading, error }) => (loading ? 'Loading document...' : 'Download now!')}
-        </PDFDownloadLink>
+        const file = await pdf(<Quixote />).toBlob();
+        const mypdffile: File = new File([file], "data");
+
     }
 
-    const [pdfFile, setPdfFile] = useState<File>();
+    useEffect(() => {
+        setIsClient(true);
+        init();
+    }, [])
+
+
+
+    const getfile = async () => {
+        const file: NodeJS.ReadableStream = await renderToFile(<Quixote />, "test", (output, filePath) => {
+            // Optional callback logic
+            console.log(`File saved at ${filePath}`);
+        });
+
+        // console.log(file);
+
+    }
+
+    // useEffect(() => {
+    //     getfile();
+    // }, []);
 
     return (
         <>
             <div className='grid place-items-center'>
-                <button className='text-white bg-cyan-500 px-4 py-1 rounded-md my-2'>Download</button>
+                <button className='text-white bg-cyan-500 px-4 py-1 rounded-md my-2' onClick={getfile}>Download</button>
             </div>
+            {isClient ? <PDFDownloadLink document={<Quixote />} fileName="somename.pdf">
+                {({ blob, url, loading, error }) => (loading ? 'Loading document...' : 'Download now!')}
+            </PDFDownloadLink> : null}
             {isClient ?
-                <div className='w-full h-scree'>
+                < div className='w-full h-scree'>
                     {/* <PDFViewer width={"100%"} height={"100vh"}> */}
                     <PDFViewer style={{ width: '100%', height: '100vh' }}>
                         <Quixote />
                     </PDFViewer>
-                </div>
+                </div >
                 : null}
 
         </>

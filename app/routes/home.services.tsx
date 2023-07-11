@@ -11,12 +11,12 @@ const Services: React.FC = (): JSX.Element => {
                     <div className="grow bg-gray-700 h-[2px]"></div>
                 </div>
 
-                <div className="flex gap-6 flex-wrap justify-center">
+                {/* <div className="flex gap-6 flex-wrap justify-center">
                     <ServiceCard title="Petroleum NOC" description="This service is to apply for petroleum storage noc from the govenrment. check process or obtaning noc for petroleum storage from disctrict magistrate." apply="/home/petroleum/" view="/home" />
-                    <ServiceCard title="Right To Information Applicaton" description="File your RTI application online fro the departments. Users have to fill this online applicaton form for availing this service" apply="/home/rti/" view="/home" />
-                </div>
+                </div> */}
                 <div className="flex gap-6 flex-wrap justify-center mt-6">
-                    <ServiceCard title="Zone Information" description="Land maps are used by planning authorities to advice the zone and usage pattern. You may apply here for getting online zone information." apply="/home/zoneinformation/" view="/home" />
+                    <ServiceCard title="Right To Information Applicaton" description="File your RTI application online fro the departments. Users have to fill this online applicaton form for availing this service" apply="/home/rti/" view="/home" />
+                    <ServiceCard title="Zone Information" description="Land maps are used by planning authorities to advice the zone and usage pattern. You may apply here for getting online zone information." apply="/home/zoneinfo/" view="/home" />
                     <ServiceCard title="Old Copy Of CP / Maps / OC" description="Obtain online a copy of any document with the Planning and Development Authority of the daman goverment through this platform." apply="/home/oldcopy" view="/home" />
                 </div>
             </div>

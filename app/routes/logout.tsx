@@ -2,7 +2,7 @@ import { LoaderArgs, redirect } from "@remix-run/node";
 import { userPrefs } from "~/cookies";
 
 export async function loader({ request }: LoaderArgs) {
-    return redirect("/", {
+    return redirect("/mobilelogin", {
         headers: {
             "Set-Cookie": await userPrefs.serialize({}),
         },

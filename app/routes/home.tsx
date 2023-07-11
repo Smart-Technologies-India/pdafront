@@ -2,20 +2,11 @@ import { LoaderArgs, LoaderFunction, json, redirect } from "@remix-run/node";
 import { Link, Outlet, useLoaderData, useNavigate } from "@remix-run/react";
 import axios from "axios";
 import { useEffect, useRef } from "react";
-import { Fa6RegularStarHalfStroke, Fa6SolidBars, Fa6SolidBook, Fa6SolidBookTanakh, Fa6SolidBuilding, Fa6SolidChartArea, Fa6SolidCircleQuestion, Fa6SolidCodeBranch, Fa6SolidHouse, Fa6SolidObjectUngroup, Fa6SolidPaintbrush, Fa6SolidStar, Fa6SolidUser, Fa6SolidXmark, MaterialSymbolsActivityZone, MaterialSymbolsAlignHorizontalRight, MaterialSymbolsFluidBalance, MaterialSymbolsLogoutRounded, MaterialSymbolsOralDisease } from "~/components/icons/icons";
+import { Fa6RegularStarHalfStroke, Fa6SolidArrowsUpDownLeftRight, Fa6SolidBars, Fa6SolidBook, Fa6SolidBookTanakh, Fa6SolidBuilding, Fa6SolidCalendarDays, Fa6SolidChartArea, Fa6SolidCircleQuestion, Fa6SolidCodeBranch, Fa6SolidFile, Fa6SolidHouse, Fa6SolidMapLocationDot, Fa6SolidObjectUngroup, Fa6SolidPaintbrush, Fa6SolidPersonMilitaryPointing, Fa6SolidStar, Fa6SolidUser, Fa6SolidXmark, MaterialSymbolsActivityZone, MaterialSymbolsAlignHorizontalRight, MaterialSymbolsFluidBalance, MaterialSymbolsLogoutRounded, MaterialSymbolsOralDisease } from "~/components/icons/icons";
 import { userPrefs } from "~/cookies";
 import { ApiCall } from "~/services/api";
 import sideBarStore, { SideBarTabs } from "~/state/sidebar";
-
-
-import { ToastContainer, toast } from "react-toastify";
-
-import styles from "react-toastify/dist/ReactToastify.css";
-
-export function links() {
-    return [{ rel: "stylesheet", href: styles }];
-}
-
+import { toast } from "react-toastify";
 
 
 export const loader: LoaderFunction = async (props: LoaderArgs) => {
@@ -26,8 +17,9 @@ export const loader: LoaderFunction = async (props: LoaderArgs) => {
         cookie == undefined ||
         Object.keys(cookie).length == 0
     ) {
-        return redirect("/");
+        return redirect("/mobilelogin");
     }
+
 
     const userdata = await ApiCall({
         query: `
@@ -55,12 +47,11 @@ export const loader: LoaderFunction = async (props: LoaderArgs) => {
 
 
 const Home: React.FC = (): JSX.Element => {
-
+    const user = useLoaderData().user;
     const isMobile = sideBarStore((state) => state.isOpen);
     const changeMobile = sideBarStore((state) => state.change);
     const asideindex = sideBarStore((state) => state.currentIndex);
     const achangeindex = sideBarStore((state) => state.changeTab);
-    const user = useLoaderData().user;
 
     const isUser = user.role == "USER";
     const username = user.name;
@@ -88,12 +79,21 @@ const Home: React.FC = (): JSX.Element => {
         }
     }
 
+
+    // useEffect(() => {
+    //     if (isUser) {
+    //         navigator("/home/files/");
+    //     } else {
+    //         navigator("/home/");
+    //     }
+    // }, []);
+
     return (
         <>
             <section className="h-screen w-full relative">
                 <div className="flex min-h-screen relative flex-nowrap w-full">
                     <div
-                        className={`z-50 w-full md:w-60 shrink-0 bg-white p-2 md:flex flex-col md:relative fixed top-0 left-0 min-h-screen md:min-h-full md:h-auto shadow-xl ${isMobile ? "grid place-items-center" : "hidden"
+                        className={`z-40 w-full md:w-60 shrink-0 bg-white p-2 md:flex flex-col md:relative fixed top-0 left-0 min-h-screen md:min-h-full md:h-auto shadow-xl ${isMobile ? "grid place-items-center" : "hidden"
                             }`}
                     >
                         <div className="md:flex flex-col md:h-full">
@@ -105,8 +105,7 @@ const Home: React.FC = (): JSX.Element => {
                                 />
                             </div>
                             <div className="flex flex-col grow">
-
-                                <Link
+                                {/* <Link
                                     to={"/home/"}
                                     onClick={() => {
                                         achangeindex(SideBarTabs.Dashborad);
@@ -118,9 +117,22 @@ const Home: React.FC = (): JSX.Element => {
                                         title="Dashboard"
                                         active={asideindex === SideBarTabs.Dashborad}
                                     ></SidebarTab>
-                                </Link>
+                                </Link> */}
                                 {isUser ? (
                                     <>
+                                        <Link
+                                            to={"/home/files"}
+                                            onClick={() => {
+                                                achangeindex(SideBarTabs.Dashborad);
+                                                changeMobile(false);
+                                            }}
+                                        >
+                                            <SidebarTab
+                                                icon={Fa6SolidObjectUngroup}
+                                                title="Dashboard"
+                                                active={asideindex === SideBarTabs.Dashborad}
+                                            ></SidebarTab>
+                                        </Link>
                                         <Link
                                             to={"/home/services"}
                                             onClick={() => achangeindex(SideBarTabs.Services)}
@@ -134,6 +146,32 @@ const Home: React.FC = (): JSX.Element => {
                                     </>
                                 ) : (
                                     <>
+                                        <Link
+                                            to={"/home/"}
+                                            onClick={() => {
+                                                achangeindex(SideBarTabs.Dashborad);
+                                                changeMobile(false);
+                                            }}
+                                        >
+                                            <SidebarTab
+                                                icon={Fa6SolidObjectUngroup}
+                                                title="Dashboard"
+                                                active={asideindex === SideBarTabs.Dashborad}
+                                            ></SidebarTab>
+                                        </Link>
+                                        <Link
+                                            to={"/home/files"}
+                                            onClick={() => {
+                                                achangeindex(SideBarTabs.Files);
+                                                changeMobile(false);
+                                            }}
+                                        >
+                                            <SidebarTab
+                                                icon={Fa6SolidFile}
+                                                title="All Files"
+                                                active={asideindex === SideBarTabs.Files}
+                                            ></SidebarTab>
+                                        </Link>
                                         <div className="w-full h-[2px] bg-gray-800 my-4"></div>
                                         <Link
                                             to={"/home/vzoneinfo"}
@@ -156,16 +194,6 @@ const Home: React.FC = (): JSX.Element => {
                                             ></SidebarTab>
                                         </Link>
                                         <Link
-                                            to={"/home/vpetroleum"}
-                                            onClick={() => achangeindex(SideBarTabs.Petroleum)}
-                                        >
-                                            <SidebarTab
-                                                icon={MaterialSymbolsFluidBalance}
-                                                title="Petroleum"
-                                                active={asideindex === SideBarTabs.Petroleum}
-                                            ></SidebarTab>
-                                        </Link>
-                                        <Link
                                             to={"/home/voldcopy"}
                                             onClick={() => achangeindex(SideBarTabs.OldCopy)}
                                         >
@@ -173,6 +201,39 @@ const Home: React.FC = (): JSX.Element => {
                                                 icon={MaterialSymbolsOralDisease}
                                                 title="Old Copy"
                                                 active={asideindex === SideBarTabs.OldCopy}
+                                            ></SidebarTab>
+                                        </Link>
+                                        <div className="w-full h-[2px] bg-gray-800 my-4"></div>
+                                        <Link
+                                            to={"/home/vpetroleum"}
+                                            onClick={() => achangeindex(SideBarTabs.Petroleum)}
+                                        >
+                                            <SidebarTab
+                                                icon={Fa6SolidPersonMilitaryPointing}
+                                                title="Petroleum"
+                                                active={asideindex === SideBarTabs.Petroleum}
+                                            ></SidebarTab>
+                                        </Link>
+                                        <Link
+                                            to={"/home/vunauthorised"}
+                                            onClick={() => achangeindex(SideBarTabs.Unauthorisd
+                                            )}
+                                        >
+                                            <SidebarTab
+                                                icon={Fa6SolidArrowsUpDownLeftRight}
+                                                title="Unauthorised"
+                                                active={asideindex === SideBarTabs.Unauthorisd}
+                                            ></SidebarTab>
+                                        </Link>
+                                        <div className="w-full h-[2px] bg-gray-800 my-4"></div>
+                                        <Link
+                                            to={"/home/vlandsection"}
+                                            onClick={() => achangeindex(SideBarTabs.landSection)}
+                                        >
+                                            <SidebarTab
+                                                icon={Fa6SolidMapLocationDot}
+                                                title="Land Section"
+                                                active={asideindex === SideBarTabs.landSection}
                                             ></SidebarTab>
                                         </Link>
                                         <div className="w-full h-[2px] bg-gray-800 my-4"></div>
@@ -187,8 +248,6 @@ const Home: React.FC = (): JSX.Element => {
                                         </button>
                                     </>
                                 )}
-
-                                {/* <div className="grow"></div> */}
                                 <button onClick={logoutHandle}>
                                     <SidebarTab
                                         icon={MaterialSymbolsLogoutRounded}
@@ -210,7 +269,6 @@ const Home: React.FC = (): JSX.Element => {
                         <div className="pb-14 px-4 mt-4 h-full">
                             <TopNavBar
                                 name={username}
-                                pic={"/images/logo.jpg"}
                             ></TopNavBar>
                             <Outlet></Outlet>
                         </div>
@@ -225,7 +283,6 @@ const Home: React.FC = (): JSX.Element => {
                     <button type="submit" ref={submitRef}>submit</button>
                 </form>
             </div>
-            <ToastContainer></ToastContainer>
         </>
     );
 }
@@ -252,7 +309,6 @@ const SidebarTab = (props: SideBarTabProps) => {
 
 type TopNavBarProps = {
     name: string;
-    pic: string;
 };
 
 const TopNavBar = (props: TopNavBarProps) => {
@@ -269,15 +325,16 @@ const TopNavBar = (props: TopNavBarProps) => {
             </div>
             <div className="text-center text-gray-900 text-2xl hidden md:block">Home</div>
             <div className="grow"></div>
-            <p className="text-gray-800">{new Date().toDateString()}</p>
+            <div className="text-gray-800 flex gap-2 items-center">
+                <Fa6SolidCalendarDays></Fa6SolidCalendarDays>
+                <p>
+                    {new Date().toDateString()}
+                </p>
+            </div>
             <div className="w-[2px] bg-gray-800 h-10"></div>
             <div className="flex gap-2 relative group items-center">
-                <div className="cursor-pointer">
-                    <img
-                        src={props.pic}
-                        alt="avatar"
-                        className="w-10 h-10 rounded-md object-cover object-center"
-                    />
+                <div className="shrink-0 rounded-full w-10 h-10 bg-indigo-500 grid place-items-center">
+                    {props.name.toString().slice(0, 1).toUpperCase()}
                 </div>
                 <div className="text-gray-900 font-medium text-2xl text-center cursor-pointer">
                     {props.name}

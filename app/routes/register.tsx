@@ -1,18 +1,12 @@
 import { Form, Link, useNavigate } from "@remix-run/react";
 import { number, z } from "zod";
 
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import { useRef, useState } from "react";
 import { ApiCall } from "~/services/api";
 import { Fa6SolidEye, Fa6SolidEyeSlash, Fa6SolidUser } from "~/components/icons/icons";
 import { ActionArgs, LoaderArgs, LoaderFunction, redirect } from "@remix-run/node";
 import { userPrefs } from "~/cookies";
-
-import styles from "react-toastify/dist/ReactToastify.css";
-
-export function links() {
-    return [{ rel: "stylesheet", href: styles }];
-}
 
 export const loader: LoaderFunction = async (props: LoaderArgs) => {
     const cookieHeader = props.request.headers.get("Cookie");
@@ -228,7 +222,7 @@ export default function register() {
                     </button>
                     <h5 className="text-slate-800 text-center mt-6">
                         Already have an account?{" "}
-                        <Link to={"/"} className="text-blue-500">
+                        <Link to={"/login"} className="text-blue-500">
                             Sign In
                         </Link>
                     </h5>
@@ -246,7 +240,6 @@ export default function register() {
                     </button>
                 </Form>
             </div>
-            <ToastContainer></ToastContainer>
         </div>
     );
 }

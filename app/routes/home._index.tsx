@@ -1,202 +1,329 @@
-import { LoaderArgs, LoaderFunction, json } from "@remix-run/node";
-import { Link, useLoaderData, useNavigate } from "@remix-run/react";
-import { useEffect, useState } from "react";
-import { userPrefs } from "~/cookies";
+import { Link, useLoaderData } from "@remix-run/react";
+
+import { Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale, LinearScaleOptions, LinearScale, registerables } from 'chart.js';
+import { Bar, Doughnut, Pie } from 'react-chartjs-2';
+import ChartDataLabels from "chartjs-plugin-datalabels";
+import { LoaderArgs, LoaderFunction, json, redirect } from "@remix-run/node";
 import { ApiCall } from "~/services/api";
-import styles from "react-toastify/dist/ReactToastify.css";
-
-
-import { ToastContainer, toast } from "react-toastify";
-
-export function links() {
-    return [{ rel: "stylesheet", href: styles }];
-}
+import { userPrefs } from "~/cookies";
+ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, ...registerables, ChartDataLabels);
 
 export const loader: LoaderFunction = async (props: LoaderArgs) => {
     const cookieHeader = props.request.headers.get("Cookie");
     const cookie: any = await userPrefs.parse(cookieHeader);
+    if (cookie.role == "USER") {
+        return redirect("/home/files/");
+    }
 
-    const userdata = await ApiCall({
+
+    const filecount = await ApiCall({
         query: `
-        query searchCommon($searchCommonInput:SearchCommonInput!){
-            searchCommon(searchCommonInput:$searchCommonInput){
-              id,
-              village,
-              name,
-              form_type,
-              user_id,
-              auth_user_id,
-              focal_user_id,
-              intra_user_id,
-              inter_user_id,
-              number,
-              form_status,
-              query_status,
-              form_id
+        query getFileCount{
+            getFileCount{
+              RTI,
+              ZONE,
+              OLDCOPY,
+              PETROLEUM,
+              UNAUTHORIZED,
+              LANDRECORDS,
             }
           }
       `,
-        veriables: {
-            searchCommonInput: {
-                user_id: parseInt(cookie.id!)
-            }
-        },
+        veriables: {},
     });
-
-    const departmentdata = await ApiCall({
+    const villagecount = await ApiCall({
         query: `
-        query searchCommon($searchCommonInput:SearchCommonInput!){
-            searchCommon(searchCommonInput:$searchCommonInput){
-              id,
-              village,
-              name,
-              form_type,
-              user_id,
-              auth_user_id,
-              focal_user_id,
-              intra_user_id,
-              inter_user_id,
-              number,
-              form_status,
-              query_status,
-              form_id
+        query villageFileCount{
+            villageFileCount{
+              count,
+              village
             }
           }
       `,
-        veriables: {
-            searchCommonInput: {}
-        },
+        veriables: {},
     });
+    const officercount = await ApiCall({
+        query: `
+        query officerFileCount{
+            officerFileCount{
+                count,
+                auth_user_id
+            }
+          }
+      `,
+        veriables: {},
+    });
+    const processcount = await ApiCall({
+        query: `
+        query officerFileProgress{
+            officerFileProgress{
+            RTI{
+              pending,
+              completed,
+              rejected
+            },
+            ZONE{
+              pending,
+              completed,
+              rejected
+            },
+            OLDCOPY{
+              pending,
+              completed,
+              rejected
+            },
+            PETROLEUM{
+              pending,
+              completed,
+              rejected
+            },
+            UNAUTHORIZED{
+              pending,
+              completed,
+              rejected
+            },
+            LANDRECORDS{
+              pending,
+              completed,
+              rejected
+            },
+            MAMLATDAR{
+              pending,
+              completed,
+              rejected
+            },
+            DEMOLITION{
+              pending,
+              completed,
+              rejected
+            }
+        }
+        }
+      `,
+        veriables: {},
+    });
+    return json({
+        filecount: filecount.data.getFileCount,
+        villagecount: villagecount.data.villageFileCount,
+        officercount: officercount.data.officerFileCount,
+        processcount: processcount.data.officerFileProgress
+    });
+}
+const DashBoard = (): JSX.Element => {
 
-    return json({ user: cookie, userdata: userdata.data.searchCommon, departmentdata: departmentdata.data.searchCommon });
-};
-
-const Dashboard: React.FC = (): JSX.Element => {
     const loader = useLoaderData();
+    const filecount = loader.filecount;
+    const villagecount = loader.villagecount;
+    const officercount = loader.officercount;
+    const processcount = loader.processcount;
 
-    const user = loader.user;
-    const id = user.id;
-    const userdata = loader.userdata;
-    const departmentdata = loader.departmentdata;
+    villagecount.sort((a: any, b: any) => b.count - a.count);
 
-    const navigator = useNavigate();
-    const [department, setDepartment] = useState<any[]>([]);
+    const topItems = villagecount.slice(0, 10);
 
+    const otherCount = villagecount.slice(10).reduce((sum: any, item: any) => sum + item.count, 0);
 
+    const otherDataset = otherCount !== 0 ? {
+        label: 'Other',
+        data: [otherCount],
+        backgroundColor: 'rgba(192, 192, 192, 0.75)',
+        borderColor: 'rgba(255, 255, 255, 1)',
+        borderWidth: 1,
+    } : null;
 
-    useEffect(() => {
-        if (!(departmentdata == undefined || departmentdata == null || departmentdata.length == 0)) {
-            const departmentload = departmentdata.filter((val: any) => {
-                if (val.auth_user_id.toString().split(",").includes(id.toString())) return true;
-                if (val.focal_user_id.toString().split(",").includes(id.toString())) return true;
-                if (val.intra_user_id.toString().split(",").includes(id.toString())) return true;
-                if (val.inter_user_id.toString().split(",").includes(id.toString())) return true;
-                return false;
-            });
-            setDepartment(departmentload);
+    const dynamicColors = (numColors: any) => {
+        const colors = [];
+        for (let i = 0; i < numColors; i++) {
+            const r = Math.floor(Math.random() * 256);
+            const g = Math.floor(Math.random() * 256);
+            const b = Math.floor(Math.random() * 256);
+            const color = `rgba(${r}, ${g}, ${b}, 0.75)`;
+            colors.push(color);
         }
-    }, []);
+        return colors;
+    };
 
-    const view = async (id: number) => {
-        navigator(`/home/rtiview/${id}`);
-    }
-    const accept = async (id: number) => {
-        const data = await ApiCall({
-            query: `
-            mutation updateCommonById($updateCommonInput:UpdateCommonInput!){
-                updateCommonById(updateCommonInput:$updateCommonInput){
-                  id,
-                }
-              }
-          `,
-            veriables: {
-                updateCommonInput: {
-                    id: id,
-                    query_status: "APPROVED"
+    const topItemColors = dynamicColors(topItems.length);
+    const villageData = {
+        labels: [...topItems.map((item: any) => item.village), ...(otherDataset ? ['Other'] : [])],
+        datasets: [
+            {
+                label: '# of Votes',
+                data: [...topItems.map((item: any) => item.count), ...(otherDataset ? [otherCount] : [])],
+                backgroundColor: [...topItemColors, ...(otherDataset ? ['rgba(192, 192, 192, 0.75)'] : [])],
+                borderColor: [...topItemColors.map((color) => color.replace('0.2', '1')), ...(otherDataset ? ['rgba(255, 255, 255, 1)'] : [])],
+                borderWidth: 1,
+            },
+        ],
+    };
+
+
+
+    const villageOptions: any = {
+        responsive: true,
+        plugins: {
+            datalabels: {
+                anchor: 'center',
+                align: 'center',
+                color: '#1e293b',
+                font: {
+                    size: 30
+                },
+                formatter: function (value: any) {
+                    return value;
                 }
             },
-        });
-
-        if (!data.status) {
-            toast.error(data.message, { theme: "light" });
-        } else {
-            window.location.reload();
-        }
-    }
-    const reject = async (id: number) => {
-        const data = await ApiCall({
-            query: `
-            mutation updateCommonById($updateCommonInput:UpdateCommonInput!){
-                updateCommonById(updateCommonInput:$updateCommonInput){
-                  id,
+            legend: {
+                labels: {
+                    font: {
+                        size: 25
+                    }
                 }
-              }
-          `,
-            veriables: {
-                updateCommonInput: {
-                    id: id,
-                    query_status: "REJCTED"
+            }
+        },
+    };
+
+
+    const officerDataColors = dynamicColors(officercount.length);
+
+    const officerData = {
+        labels: officercount.map((val: any) => val.auth_user_id),
+        datasets: [
+            {
+                data: officercount.map((val: any) => val.count),
+                backgroundColor: officerDataColors,
+                borderColor: officerDataColors,
+                borderWidth: 1,
+            },
+        ],
+    };
+
+    const officerOptions: any = {
+        responsive: true,
+        plugins: {
+            datalabels: {
+                anchor: 'center',
+                align: 'center',
+                color: '#1e293b',
+                font: {
+                    size: 30
+                },
+                formatter: function (value: any) {
+                    return value;
                 }
             },
-        });
-
-        if (!data.status) {
-            toast.error(data.message, { theme: "light" });
-        } else {
-            window.location.reload();
-        }
-    }
-    const query = async (id: number) => {
-        const data = await ApiCall({
-            query: `
-            mutation updateCommonById($updateCommonInput:UpdateCommonInput!){
-                updateCommonById(updateCommonInput:$updateCommonInput){
-                  id,
+            legend: {
+                labels: {
+                    font: {
+                        size: 25
+                    }
                 }
-              }
-          `,
-            veriables: {
-                updateCommonInput: {
-                    id: id,
-                    query_status: "QUERYRAISED"
+            }
+        },
+    };
+
+
+
+
+    const options: any = {
+        scales: {
+            x: {
+                barThickness: 10,
+                categoryPercentage: 0.8,
+                barPercentage: 0.9,
+                ticks: {
+                    font: {
+                        size: 24,
+                    },
+                    precision: 0,
+                },
+            },
+            y: {
+                ticks: {
+                    font: {
+                        size: 24,
+                    },
+                },
+            },
+
+        },
+        indexAxis: "y",
+        elements: {
+            bar: {
+                borderWidth: 2,
+                categorySpacing: 10
+            },
+        },
+        responsive: true,
+        plugins: {
+            datalabels: {
+                anchor: 'end',
+                align: 'end',
+                color: '#1e293b',
+                font: {
+                    size: 18
+                },
+                formatter: function (value: any) {
+                    return value;
                 }
             },
-        });
 
-        if (!data.status) {
-            toast.error(data.message, { theme: "light" });
-        } else {
-            window.location.reload();
-        }
-    }
+            labels: {
+                color: "white",
+            },
+            title: {
+                display: false,
+            },
+            legend: {
+                labels: {
+                    font: {
+                        size: 25
+                    }
+                }
+            }
+        },
+    };
+
+    const labels = ["RTI", 'Old Copy', 'Zone', 'Petroleum', 'Unauthorized', 'Land Section'];
 
 
+    const pendingData: number[] = [];
+    const completedData: number[] = [];
+    const rejectedData: number[] = [];
 
-    const getViewLink = (value: string, id: number): string => {
+    const processlabels: string[] = Object.keys(processcount);
 
-        if (value == "PETROLEUM") {
-            return "/home";
-        } else if (value == "RTI") {
-            return `/home/rtiview/${id}`;
-        } else if (value == "ZONE") {
-            return "/home";
-        } else if (value == "DEMOLITION") {
-            return "/home";
-        } else if (value == "OLDCOPY") {
-            return "/home";
-        } else if (value == "LANDRECORDS") {
-            return `/home/landsection/${id}`;
-        } else if (value == "MAMLATDAR") {
-            return "/home";
-        } else {
-            return "/home";
-        }
-    }
 
+    processlabels.forEach((label: string) => {
+        pendingData.push(processcount[label].pending);
+        completedData.push(processcount[label].completed);
+        rejectedData.push(processcount[label].rejected);
+    });
+
+    const data = {
+        labels: labels,
+        datasets: [
+            {
+                label: 'In Process',
+                data: pendingData,
+                backgroundColor: "#3b82f6",
+            },
+            {
+                label: 'Approved',
+                data: completedData,
+                backgroundColor: "#10b981",
+            },
+            {
+                label: 'Rejected',
+                data: rejectedData,
+                backgroundColor: "#f43f5e",
+            },
+        ],
+    };
 
     return (
         <>
-            <div className="bg-white rounded-md shadow-lg p-4 my-4 mb-10">
+            <div className="bg-white rounded-md shadow-lg px-8 py-4 my-4 mb-10">
                 <h1 className="text-gray-800 text-3xl font-semibold text-center">Dashboard</h1>
                 <div className="w-full flex gap-4 my-4">
                     <div className="grow bg-gray-700 h-[2px]"></div>
@@ -204,193 +331,67 @@ const Dashboard: React.FC = (): JSX.Element => {
                     <div className="grow bg-gray-700 h-[2px]"></div>
                 </div>
 
-                {user.role == "USER" ?
-                    (userdata == undefined || userdata.length == 0 || userdata == null) ?
-                        <h3 className="text-2xl font-semibold text-center bg-rose-500 bg-opacity-25 rounded-md border-l-4 border-rose-500 py-2  text-rose-500">You have not submitted any form.</h3>
-                        :
-                        <>
-                            {/* user section */}
-                            <div className="overflow-x-auto sm:mx-0.5 my-2 p-4">
-                                <table className="min-w-full rounded-md">
-                                    <thead>
-                                        <tr className="rounded-md bg-indigo-500 border-b border-t transition duration-300 ease-in-out hover:bg-indigo-600">
-                                            <th className="px-6 py-4 whitespace-nowrap font-medium text-white text-xl">ID</th>
-                                            <th className="px-6 py-4 whitespace-nowrap font-medium text-white text-xl">Purpose</th>
-                                            <th className="px-6 py-4 whitespace-nowrap font-medium text-white text-xl">Form Id</th>
-                                            <th className="px-6 py-4 whitespace-nowrap font-medium text-white text-xl">Applicant</th>
-                                            <th className="px-6 py-4 whitespace-nowrap font-medium text-white text-xl">Village</th>
-                                            <th className="px-6 py-4 whitespace-nowrap font-medium text-white text-xl">Status</th>
-                                            <th className="px-6 py-4 whitespace-nowrap font-medium text-white text-xl">ACTION</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {userdata.map((val: any, index: number) => {
-                                            return (
-                                                <tr key={index} className="bg-white border-b border-t transition duration-300 ease-in-out hover:bg-gray-100">
-                                                    <td className="px-6 py-4 whitespace-nowrap text-lg font-medium text-gray-900">1</td>
-                                                    <td className="text-lg text-gray-900 font-medium px-6 py-4 whitespace-nowrap">
-                                                        {val.form_type}
-                                                    </td>
-                                                    <td className="text-lg text-gray-900 font-medium px-6 py-4 whitespace-nowrap">
-                                                        {val.form_id}
-                                                    </td>
-                                                    <td className="text-lg text-gray-900 font-medium px-6 py-4 whitespace-nowrap">
-                                                        {val.name}
-                                                    </td>
-                                                    <td className="text-lg text-gray-900 font-medium px-6 py-4 whitespace-nowrap">
-                                                        {val.village}
-                                                    </td>
-                                                    <td className="text-lg text-gray-900 font-medium px-6 py-4 whitespace-nowrap">
-
-                                                        {val.query_status == "REJCTED" ?
-                                                            <div
-                                                                className="py-1 text-white text-lg px-4 bg-rose-500 text-center rounded-md font-medium"
-                                                            >
-                                                                {val.query_status}
-                                                            </div>
-                                                            :
-                                                            val.query_status == "INPROCESS" ?
-                                                                <div
-                                                                    className="py-1 text-white text-lg px-4 bg-yellow-500 text-center rounded-md font-medium"
-                                                                >
-                                                                    {val.query_status}
-                                                                </div>
-                                                                :
-                                                                val.query_status == "APPROVED" ?
-                                                                    <div
-                                                                        className="py-1 text-white text-lg px-4 bg-green-500 text-center rounded-md font-medium"
-                                                                    >
-                                                                        {val.query_status}
-                                                                    </div>
-                                                                    :
-                                                                    <div
-                                                                        className="py-1 text-white text-lg px-4 bg-indigo-500 text-center rounded-md font-medium"
-                                                                    >
-                                                                        {val.query_status}
-                                                                    </div>
-                                                        }
-                                                    </td>
-                                                    <td className="text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap">
-                                                        <Link to={getViewLink(val.form_type, val.form_id)}
-                                                            className="py-1 w-full sm:w-auto block text-white text-lg px-4 bg-indigo-500 text-center rounded-md font-medium"
-                                                        >
-                                                            VIEW
-                                                        </Link>
-                                                    </td>
-                                                </tr>
-                                            );
-                                        })}
-                                    </tbody>
-                                </table>
+                <div className="bg-white grow flex flex-col">
+                    <div className="my-8 bg-white flex gap-6 flex-wrap justify-between items-center">
+                        <DashboradCard title="Zone Info" color="bg-gradient-to-r from-rose-400 to-rose-600" textcolor="text-rose-500" link="/" value={filecount.ZONE} />
+                        <DashboradCard title="Old Copy" color="bg-gradient-to-r from-cyan-400 to-cyan-600" textcolor="text-cyan-500" link="/" value={filecount.OLDCOPY} />
+                        <DashboradCard title="RTI" color="bg-gradient-to-r from-blue-400 to-blue-600" textcolor="text-blue-500" link="/" value={filecount.RTI} />
+                        <DashboradCard title="Petroleum" color="bg-gradient-to-r from-green-400 to-green-600" textcolor="text-green-500" link="/" value={filecount.PETROLEUM} />
+                        <DashboradCard title="Unauthorized" color="bg-gradient-to-r from-slate-400 to-slate-600" textcolor="text-slate-500" link="/" value={filecount.UNAUTHORIZED} />
+                        <DashboradCard title="Land Section" color="bg-gradient-to-r from-indigo-400 to-indigo-600" textcolor="text-indigo-500" link="/" value={filecount.LANDRECORDS} />
+                    </div>
+                    <div className="flex flex-col lg:flex-row rounded-3xl mb-3 gap-8">
+                        <div className="flex-1">
+                            <h1 className="text-gray-800 text-3xl font-semibold text-center">Village Wise Files</h1>
+                            <div className="w-full flex gap-4 my-4">
+                                <div className="grow bg-gray-700 h-[2px]"></div>
+                                <div className="w-10 bg-gray-500 h-[3px]"></div>
+                                <div className="grow bg-gray-700 h-[2px]"></div>
                             </div>
-                            {/* user section */}
-                        </>
-                    :
-                    (department == undefined || department.length == 0 || department == null) ?
-                        <h3 className="text-2xl font-semibold text-center bg-rose-500 bg-opacity-25 rounded-md border-l-4 border-rose-500 py-2  text-rose-500">You have not submitted any form.</h3>
-                        :
-                        <>
-                            {/* deparment section */}
-                            <div className="overflow-x-scroll overflow-y-visible sm:mx-0.5 my-2">
-                                <table className="min-w-full rounded-md">
-                                    <thead>
-                                        <tr className="rounded-md bg-indigo-500 border-b border-t transition duration-300 ease-in-out hover:bg-indigo-600">
-                                            <th className="px-6 py-4 whitespace-nowrap font-medium text-white text-xl">ID</th>
-                                            <th className="px-6 py-4 whitespace-nowrap font-medium text-white text-xl">Purpose</th>
-                                            <th className="px-6 py-4 whitespace-nowrap font-medium text-white text-xl">Form Id</th>
-                                            <th className="px-6 py-4 whitespace-nowrap font-medium text-white text-xl">Applicant</th>
-                                            <th className="px-6 py-4 whitespace-nowrap font-medium text-white text-xl">Village</th>
-                                            <th className="px-6 py-4 whitespace-nowrap font-medium text-white text-xl">Status</th>
-                                            <th className="px-6 py-4 whitespace-nowrap font-medium text-white text-xl">ACTION</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {department.map((val: any, index: number) => {
-                                            return (
-                                                <tr key={index} className="bg-white border-b border-t transition duration-300 ease-in-out hover:bg-gray-100">
-                                                    <td className="px-6 py-4 whitespace-nowrap text-lg font-medium text-gray-900">1</td>
-                                                    <td className="text-lg text-gray-900 font-medium px-6 py-4 whitespace-nowrap">
-                                                        {val.form_type}
-                                                    </td>
-                                                    <td className="text-lg text-gray-900 font-medium px-6 py-4 whitespace-nowrap">
-                                                        {val.form_id}
-                                                    </td>
-                                                    <td className="text-lg text-gray-900 font-medium px-6 py-4 whitespace-nowrap">
-                                                        {val.name}
-                                                    </td>
-                                                    <td className="text-lg text-gray-900 font-medium px-6 py-4 whitespace-nowrap">
-                                                        {val.village}
-                                                    </td>
-                                                    <td className="text-lg text-gray-900 font-medium px-6 py-4 whitespace-nowrap">
-
-                                                        {val.query_status == "REJCTED" ?
-                                                            <div
-                                                                className="py-1 text-white text-lg px-4 bg-rose-500 text-center rounded-md font-medium"
-                                                            >
-                                                                {val.query_status}
-                                                            </div>
-                                                            :
-                                                            val.query_status == "INPROCESS" ?
-                                                                <div
-                                                                    className="py-1 text-white text-lg px-4 bg-yellow-500 text-center rounded-md font-medium"
-                                                                >
-                                                                    {val.query_status}
-                                                                </div>
-                                                                :
-                                                                val.query_status == "APPROVED" ?
-                                                                    <div
-                                                                        className="py-1 text-white text-lg px-4 bg-green-500 text-center rounded-md font-medium"
-                                                                    >
-                                                                        {val.query_status}
-                                                                    </div>
-                                                                    :
-                                                                    <div
-                                                                        className="py-1 text-white text-lg px-4 bg-indigo-500 text-center rounded-md font-medium"
-                                                                    >
-                                                                        {val.query_status}
-                                                                    </div>
-                                                        }
-                                                    </td>
-                                                    <td className="text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap">
-
-                                                        <Link to={getViewLink(val.form_type, val.form_id)}
-                                                            className="py-1 w-full sm:w-auto block text-white text-lg px-4 bg-indigo-500 text-center rounded-md font-medium"
-                                                        >
-                                                            VIEW
-                                                        </Link>
-
-                                                        {/* {val.form_type == "LANDRECORDS" ?
-                                                            <Link to={`/home/landsection/${val.form_id}`} className="py-1 text-white text-lg px-4 bg-indigo-500 text-center rounded-md font-medium inline-block">VIEW</Link>
-                                                            :
-                                                            <div>
-                                                                <button className="peer py-1 text-white text-lg px-4 bg-indigo-500 text-center rounded-md font-medium">ACTION</button>
-                                                                <div className=" hidden peer-hover:flex hover:flex flex-col bg-white drop-shadow-lg">
-                                                                    <button
-                                                                        onClick={() => view(val.form_id)}
-                                                                        className="py-2 px-2 inline-block hover:bg-gray-200 text-center">VIEW</button>
-                                                                    <button
-                                                                        onClick={() => accept(val.id)}
-                                                                        className="py-2 px-2 inline-block hover:bg-gray-200 text-center">ACCEPT</button>
-                                                                    <button
-                                                                        onClick={() => query(val.id)}
-                                                                        className="py-2 px-2 inline-block hover:bg-gray-200 text-center">RAISE QUERY</button>
-                                                                    <button
-                                                                        onClick={() => reject(val.id)}
-                                                                        className="py-2 px-2 inline-block hover:bg-gray-200 text-center">REJECT</button>
-                                                                </div>
-                                                            </div>
-                                                        } */}
-                                                    </td>
-                                                </tr>
-                                            );
-                                        })}
-                                    </tbody>
-                                </table>
+                            <div className="w-[30rem] h-[30rem] mx-auto">
+                                <Doughnut data={villageData} options={villageOptions} />
                             </div>
-                            {/* deparment section */}
-                        </>}
+                        </div>
+                        <div className="flex-1">
+                            <h1 className="text-gray-800 text-3xl font-semibold text-center">Officer Wise Files</h1>
+                            <div className="w-full flex gap-4 my-4">
+                                <div className="grow bg-gray-700 h-[2px]"></div>
+                                <div className="w-10 bg-gray-500 h-[3px]"></div>
+                                <div className="grow bg-gray-700 h-[2px]"></div>
+                            </div>
+                            <div className="w-[30rem] h-[30rem] mx-auto">
+                                <Doughnut data={officerData} options={officerOptions} />
+                            </div>
+                        </div>
+                    </div>
+                    <h1 className="text-gray-800 text-3xl font-semibold text-center">File status</h1>
+                    <div className="w-full flex gap-4 my-4">
+                        <div className="grow bg-gray-700 h-[2px]"></div>
+                        <div className="w-10 bg-gray-500 h-[3px]"></div>
+                        <div className="grow bg-gray-700 h-[2px]"></div>
+                    </div>
+                    <Bar options={options} data={data} />
+                </div>
             </div>
         </>
     );
 }
-export default Dashboard;
+export default DashBoard;
+
+interface DashboradCardProps {
+    title: string;
+    link: string;
+    value: number;
+    color: string;
+    textcolor: string;
+}
+
+const DashboradCard: React.FC<DashboradCardProps> = (props: DashboradCardProps): JSX.Element => {
+    return (
+        <div className="h-32 w-52 rounded-md bg-white shadow-lg border-2 flex flex-col">
+            <p className={`grow text-2xl ${props.textcolor} font-semibold text-center`}>{props.title}</p>
+            <p className={`grow text-5xl ${props.textcolor} font-semibold text-center`}>{props.value}</p>
+            <Link to={props.link} className={`rounded-b-lg w-full py-2 ${props.color} text-white font-semibold text-xl inline-block text-center`}>VIEW</Link>
+        </div>
+    );
+}

@@ -3,10 +3,13 @@ import { create } from "zustand";
 enum SideBarTabs {
     Dashborad,
     Services,
+    Files,
     ZoneInfo,
     Rti,
     Petroleum,
     OldCopy,
+    landSection,
+    Unauthorisd,
     DesignPoint
 }
 

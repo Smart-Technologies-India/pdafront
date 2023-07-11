@@ -1,21 +1,20 @@
-import { useEffect, useRef, useState } from "react";
-import { Fa6SolidFileLines, Fa6SolidLink } from "~/components/icons/icons";
-import { toast } from "react-toastify";
-
-import { ApiCall, UploadFile } from "~/services/api";
-import { Link, useLoaderData, useNavigate } from "@remix-run/react";
 import { LoaderArgs, LoaderFunction, json } from "@remix-run/node";
+import { Link, useLoaderData, useNavigate } from "@remix-run/react";
+import { useEffect, useRef, useState } from "react";
+import { toast } from "react-toastify";
+import { Fa6SolidFileLines, Fa6SolidLink } from "~/components/icons/icons";
 import { userPrefs } from "~/cookies";
+import { ApiCall, UploadFile } from "~/services/api";
+import { QueryTabs } from "./home.rtiview.$id";
 
 export const loader: LoaderFunction = async (props: LoaderArgs) => {
     const id = props.params.id;
     const cookieHeader = props.request.headers.get("Cookie");
     const cookie: any = await userPrefs.parse(cookieHeader);
-
     const data = await ApiCall({
         query: `
-        query getAllRtiById($id:Int!){
-            getAllRtiById(id:$id){
+        query getOldCopyById($id:Int!){
+            getOldCopyById(id:$id){
               id,
               name,
               address,
@@ -23,22 +22,24 @@ export const loader: LoaderFunction = async (props: LoaderArgs) => {
               email,
               user_uid,
               userId,
-              subject_info,
-              from_date,
-              to_date,
-              description,
-              information,
-              proverty_line_url,
+              survey_no,
+              village_id,
+              sub_division,
+              prev_application_date,
+              prev_application_number,
+              type_of_information,
+              information_needed
+              aadhar_url,
               iagree,
               signature_url
             }
           }
       `,
         veriables: {
-            id: parseInt(id!)
+            id: parseInt(id!),
+            form_type: "OLDCOPY"
         },
     });
-
 
     const submit = await ApiCall({
         query: `
@@ -60,32 +61,101 @@ export const loader: LoaderFunction = async (props: LoaderArgs) => {
           }
       `,
         veriables: {
-            searchCommonInput: {
-                form_id: parseInt(id!),
-                form_type: "RTI"
+            "searchCommonInput": {
+                "form_id": parseInt(id!)
             }
         },
     });
 
-    return json({ user: cookie, formid: id, from_data: data.data.getAllRtiById, submit: submit.status, common: submit.data.searchCommon });
+    const village = await ApiCall({
+        query: `
+        query getAllVillageById($id:Int!){
+            getAllVillageById(id:$id){
+              id,
+              name
+            }
+          }
+      `,
+        veriables: {
+            id: parseInt(id!)
+        },
+    });
+
+    const subdivision = await ApiCall({
+        query: `
+        query getSubDivision($searchSurveyInput:SearchSurveyInput!){
+            getSubDivision(searchSurveyInput:$searchSurveyInput){
+              sub_division,
+              owner_name,
+              area,
+              zone
+            }
+          }
+      `,
+        veriables: {
+            searchSurveyInput: {
+                villageId: parseInt(data.data.getOldCopyById.village_id),
+                survey_no: data.data.getOldCopyById.survey_no,
+            }
+        },
+    });
+
+
+    return json({
+        user: cookie,
+        from_data: data.data.getOldCopyById,
+        submit: submit.status,
+        village: village.data.getAllVillageById,
+        subdivision: subdivision.data.getSubDivision,
+        common: submit.data.searchCommon
+    });
 
 };
 
 
-const RightToInformationView = (): JSX.Element => {
-
+const OldCopyView: React.FC = (): JSX.Element => {
     const loader = useLoaderData();
-
     const user = loader.user;
-    const isUser = user.role == "USER";
+    const villagedata = loader.village;
     const from_data = loader.from_data;
-
-    const navigator = useNavigate();
+    const division = loader.subdivision;
 
     const isSubmited = loader.submit;
-    const common = isSubmited ? loader.common[0] : null;
-    const submit = async () => {
 
+    const isUser = user.role == "USER";
+
+    const common = isSubmited ? loader.common[0] : null;
+
+
+
+
+    interface landDetailsType {
+        land: string | null;
+        area: string | null;
+        zone: string | null;
+    }
+
+    const [landDetails, setLandDetails] = useState<landDetailsType>({ area: null, land: null, zone: null });
+    const navigator = useNavigate();
+
+    const setlanddetails = (value: string) => {
+        const selectedSubdivision = division.find((val: any) => val.sub_division === value);
+        if (selectedSubdivision) {
+            setLandDetails(val => ({ land: selectedSubdivision.owner_name, area: selectedSubdivision.area, zone: selectedSubdivision.zone }))
+        }
+    };
+
+
+
+    useEffect(() => {
+        setlanddetails(from_data.sub_division);
+    }, []);
+
+
+
+
+
+    const submit = async () => {
         const data = await ApiCall({
             query: `
             mutation createCommon($createCommonInput:CreateCommonInput!){
@@ -102,11 +172,11 @@ const RightToInformationView = (): JSX.Element => {
                     "focal_user_id": "5",
                     "intra_user_id": "3,4",
                     "inter_user_id": "0",
-                    "village": "Daman",
+                    "village": villagedata.name,
                     "name": from_data.name,
                     "number": from_data.mobile.toString(),
                     "form_status": 1,
-                    "form_type": "RTI",
+                    "form_type": "OLDCOPY",
                     "query_status": "SUBMIT"
                 }
             },
@@ -117,6 +187,12 @@ const RightToInformationView = (): JSX.Element => {
             navigator("/home/");
         }
     }
+
+
+    const [querybox, setQueryBox] = useState<boolean>(false);
+    const queryRef = useRef<HTMLTextAreaElement>(null);
+    const attachmentRef = useRef<HTMLInputElement>(null);
+    const [attachment, setAttachment] = useState<File>();
 
     const handleLogoChange = (value: React.ChangeEvent<HTMLInputElement>, setvalue: Function) => {
         let file_size = parseInt(
@@ -129,16 +205,11 @@ const RightToInformationView = (): JSX.Element => {
         }
     }
 
-    const [querybox, setQueryBox] = useState<boolean>(false);
-    const queryRef = useRef<HTMLTextAreaElement>(null);
-    const attachmentRef = useRef<HTMLInputElement>(null);
-    const [attachment, setAttachment] = useState<File>();
-
 
     const submitQuery = async () => {
         if (queryRef.current?.value == null || queryRef.current?.value == "") return toast.error("Remark is required", { theme: "light" });
         const req: { [key: string]: any } = {
-            "stage": "RTI",
+            "stage": "OLDCOPY",
             "form_id": from_data.id,
             "from_user_id": Number(user.id),
             "to_user_id": from_data.userId,
@@ -209,7 +280,7 @@ const RightToInformationView = (): JSX.Element => {
     const forwardQuery = async (args: forwardqueryType) => {
         if (forwardRef.current?.value == null || forwardRef.current?.value == "") return toast.error("Remark is required", { theme: "light" });
         const req: { [key: string]: any } = {
-            "stage": "RTI",
+            "stage": "OLDCOPY",
             "form_id": from_data.id,
             "from_user_id": Number(user.id),
             "to_user_id": args.touserid,
@@ -279,10 +350,10 @@ const RightToInformationView = (): JSX.Element => {
     }
 
 
+
     const [notings, setNotings] = useState<any[]>([]);
 
     const getNotings = async () => {
-
         const data = await ApiCall({
             query: `
                 query searchQuery($searchQueryInput:SearchQueryInput!){
@@ -308,11 +379,12 @@ const RightToInformationView = (): JSX.Element => {
             veriables: {
                 searchQueryInput: {
                     form_id: from_data.id,
-                    stage: "RTI",
+                    stage: "PETROLEUM",
                     query_type: isUser ? "PUBLIC" : "INTRA"
                 }
             },
         });
+
         if (data.status) {
             setNotings(val => data.data.searchQuery);
         }
@@ -433,7 +505,7 @@ const RightToInformationView = (): JSX.Element => {
             {/* forward box start here */}
             <div className={`fixed top-0 left-0 bg-black bg-opacity-20 min-h-screen w-full  z-50 ${forwardbox ? "grid place-items-center" : "hidden"}`}>
                 <div className="bg-white p-4 rounded-md w-80">
-                    <h3 className="text-2xl text-center font-semibold">{nextdata.title}</h3>
+                    <h3 className="text-2xl text-center font-semibold">Forward to JTP</h3>
                     <textarea
                         ref={forwardRef}
                         placeholder="Information Needed"
@@ -483,21 +555,69 @@ const RightToInformationView = (): JSX.Element => {
             </div>
             {/* forward box end here */}
             <div className="bg-white rounded-md shadow-lg p-4 my-4 w-full">
-                <h1 className="text-gray-800 text-3xl font-semibold text-center">Right to Information Application</h1>
+                <h1 className="text-gray-800 text-3xl font-semibold text-center">Re -Issuance Of CP / Maps / OC</h1>
                 <div className="w-full flex gap-4 my-4">
                     <div className="grow bg-gray-700 h-[2px]"></div>
                     <div className="w-10 bg-gray-500 h-[3px]"></div>
                     <div className="grow bg-gray-700 h-[2px]"></div>
                 </div>
-                <p className="text-center font-semibold text-xl text-gray-800"> Format of Application for obtaining Information under Right to Information Act ,2005. </p>
+                <p className="text-center font-semibold text-xl text-gray-800"> SUBJECT  :  Application for obtaining of Old Copy Of Construction Permission / Maps / Occupancy Certificate.</p>
+
 
                 {/*--------------------- section 1 start here ------------------------- */}
                 <div className="w-full bg-indigo-500 py-2 rounded-md px-4 mt-4">
-                    <p className="text-left font-semibold text-xl text-white"> 1. Applicant Details(s) </p>
+                    <p className="text-left font-semibold text-xl text-white">1. Land Details </p>
+                </div>
+                <div className="flex flex-wrap gap-4 gap-y-2 items-center px-4 py-2 my-2">
+                    <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal text-left text-gray-700">
+                        <span className="mr-2">1.1</span> Applicant village
+                    </div>
+                    <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal">
+                        {villagedata.name}
+                    </div>
                 </div>
                 <div className="flex  flex-wrap gap-4 gap-y-2 px-4 py-2 my-2">
                     <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal text-left text-gray-700 ">
-                        <span className="mr-2">1.1</span> Applicant Name
+                        <span className="mr-2">1.2</span> Survey No
+                    </div>
+                    <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal">
+                        {from_data.survey_no}
+                    </div>
+                </div>
+                <div className="flex  flex-wrap gap-4 gap-y-2 px-4 py-2 my-2">
+                    <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal text-left text-gray-700 ">
+                        <span className="mr-2">1.3</span> Sub Division
+                    </div>
+                    <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal">
+                        {from_data.sub_division}
+                    </div>
+                </div>
+                <div className="flex  flex-wrap gap-4 gap-y-2 px-4 py-2 my-2">
+                    <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal text-left text-gray-700 ">
+                        <span className="mr-2">1.4</span> Land Owner
+                    </div>
+                    <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal">
+                        {landDetails.land == null || landDetails.land == undefined || landDetails.land == "" ? "-" : landDetails.land}
+                    </div>
+                </div>
+                <div className="flex  flex-wrap gap-4 gap-y-2 px-4 py-2 my-2">
+                    <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal text-left text-gray-700 ">
+                        <span className="mr-2">2.5</span> Area
+                    </div>
+                    <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal">
+                        {landDetails.area == null || landDetails.area == undefined || landDetails.area == "" ? "-" : landDetails.area}
+                    </div>
+                </div>
+
+                {/*--------------------- section 1 end here ------------------------- */}
+
+                {/*--------------------- section 2 start here ------------------------- */}
+                <div className="w-full bg-indigo-500 py-2 rounded-md px-4 mt-4">
+                    <p className="text-left font-semibold text-xl text-white"> 2. Applicant Details(s) </p>
+                </div>
+                <div className="flex  flex-wrap gap-4 gap-y-2 px-4 py-2 my-2">
+                    <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal text-left text-gray-700 ">
+                        <span className="mr-2">2.1</span> Applicant Name
                     </div>
                     <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal">
                         {from_data.name}
@@ -505,7 +625,7 @@ const RightToInformationView = (): JSX.Element => {
                 </div>
                 <div className="flex flex-wrap gap-4 gap-y-2 px-4 py-2 my-2">
                     <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal text-left text-gray-700 ">
-                        <span className="mr-2">1.2</span> Applicant address
+                        <span className="mr-2">2.2</span> Applicant address
                     </div>
                     <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal">
                         {from_data.address}
@@ -513,7 +633,7 @@ const RightToInformationView = (): JSX.Element => {
                 </div>
                 <div className="flex  flex-wrap gap-4 gap-y-2 px-4 py-2 my-2">
                     <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal text-left text-gray-700 ">
-                        <span className="mr-2">1.3</span> Applicant Contact Number
+                        <span className="mr-2">2.3</span> Applicant Contact Number
                     </div>
                     <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal">
                         {from_data.mobile}
@@ -521,7 +641,7 @@ const RightToInformationView = (): JSX.Element => {
                 </div>
                 <div className="flex  flex-wrap gap-4 gap-y-2 px-4 py-2 my-2">
                     <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal text-left text-gray-700 ">
-                        <span className="mr-2">1.4</span> Applicant Email
+                        <span className="mr-2">2.4</span> Applicant E-mail
                     </div>
                     <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal">
                         {from_data.email}
@@ -529,102 +649,88 @@ const RightToInformationView = (): JSX.Element => {
                 </div>
                 <div className="flex  flex-wrap gap-4 gap-y-2 px-4 py-2 my-2">
                     <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal text-left text-gray-700 ">
-                        <span className="mr-2">1.5</span> Applicant UID
+                        <span className="mr-2">2.5</span> Applicant UID
                     </div>
                     <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal">
                         {from_data.user_uid}
                     </div>
                 </div>
-                {/*--------------------- section 1 end here ------------------------- */}
+                {/*--------------------- section 2 end here ------------------------- */}
 
 
-                {/*--------------------- section 2 start here ------------------------- */}
+                {/*--------------------- section 3 start here ------------------------- */}
                 <div className="w-full bg-indigo-500 py-2 rounded-md px-4 mt-4">
-                    <p className="text-left font-semibold text-xl text-white"> 2. R.T.I. Details </p>
+                    <p className="text-left font-semibold text-xl text-white"> 3. Permisstion Details </p>
+                </div>
+                <div className="flex flex-wrap gap-4 gap-y-2 items-center px-4 py-2 my-2">
+                    <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal text-left text-gray-700">
+                        <span className="mr-2">3.1</span> Type of Information
+                    </div>
+                    <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal">
+                        {from_data.type_of_information}
+                    </div>
                 </div>
 
                 <div className="flex flex-wrap gap-4 gap-y-2 px-4 py-2 my-2">
                     <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal text-left text-gray-700 ">
-                        <span className="mr-2">2.1</span> Subject matter of Information
+                        <span className="mr-2">3.2</span> Information Needed
                     </div>
                     <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal">
-                        {from_data.subject_info}
+                        {from_data.information_needed}
                     </div>
                 </div>
                 <div className="flex  flex-wrap gap-4 gap-y-2 px-4 py-2 my-2">
                     <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal text-left text-gray-700 ">
-                        <span className="mr-2">2.2</span> From Date
+                        <span className="mr-2">3.3</span> Previous application date
                     </div>
                     <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal">
-                        {new Date(from_data.from_date).toLocaleString()}
+                        {from_data.prev_application_date}
                     </div>
                 </div>
                 <div className="flex  flex-wrap gap-4 gap-y-2 px-4 py-2 my-2">
                     <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal text-left text-gray-700 ">
-                        <span className="mr-2">2.3</span> To Date
+                        <span className="mr-2">3.4</span> Previous application number
                     </div>
                     <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal">
-                        {new Date(from_data.to_date).toLocaleString()}
+                        {from_data.prev_application_number}
                     </div>
                 </div>
-                <div className="flex  flex-wrap gap-4 gap-y-2 px-4 py-2 my-2">
-                    <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal text-left text-gray-700 ">
-                        <span className="mr-2">2.4</span> Description Of Information Required
-                    </div>
-                    <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal">
-                        {from_data.description}
-                    </div>
-                </div>
-                <div className="flex  flex-wrap gap-4 gap-y-2 px-4 py-2 my-2">
-                    <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal text-left text-gray-700 ">
-                        <span className="mr-2">2.5</span> Additional Information Required
-                    </div>
-                    <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal">
-                        {from_data.information}
-                    </div>
-                </div>
-                {/*--------------------- section 2 end here ------------------------- */}
-
-                {/*--------------------- section 3 start here ------------------------- */}
-
-                {from_data.proverty_line_url == null || from_data.undefined ? null :
-
-                    <>
-                        <div className="w-full bg-indigo-500 py-2 rounded-md px-4 mt-4">
-                            <p className="text-left font-semibold text-xl text-white"> 3. Document Attachment </p>
-                        </div>
-
-                        <div className="flex flex-wrap gap-4 gap-y-2 items-center px-4 py-2 my-2">
-                            <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal text-left text-gray-700">
-                                <span className="mr-2">3.1</span> Poverty Line Document Upload
-                                <p className="text-rose-500 text-sm">
-                                    ( Only Applicable in case Applicant is below Poverty Line.Maximum Upload Size 2MB & Allowed Format JPG / PDF / PNG )</p>
-                            </div>
-                            <div className="flex-none flex gap-4 lg:flex-1 w-full lg:w-auto">
-                                <a target="_blank"
-                                    href={from_data.proverty_line_url}
-                                    className="py-1 w-full sm:w-auto text-white text-lg px-4 bg-green-500 text-center rounded-md font-medium"
-                                >
-                                    <div className="flex items-center gap-2">
-                                        <Fa6SolidLink></Fa6SolidLink> View Doc.
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                    </>
-                }
                 {/*--------------------- section 3 end here ------------------------- */}
 
                 {/*--------------------- section 4 start here ------------------------- */}
+                <div className="w-full bg-indigo-500 py-2 rounded-md px-4 mt-4">
+                    <p className="text-left font-semibold text-xl text-white"> 4. Document Attachment </p>
+                </div>
 
+                <div className="flex flex-wrap gap-4 gap-y-2 items-center px-4 py-2 my-2">
+                    <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal text-left text-gray-700">
+                        <span className="mr-2">4.1</span> Aadhar Card and Land Documents
+                        <p className="text-rose-500 text-sm">
+                            ( Maximum Upload Size 2MB & Allowed Format JPG / PDF / PNG )</p>
+                    </div>
+                    <div className="flex-none flex gap-4 lg:flex-1 w-full lg:w-auto">
+                        <a target="_blank"
+                            href={from_data.aadhar_url}
+                            className="py-1 w-full sm:w-auto text-white text-lg px-4 bg-green-500 text-center rounded-md font-medium"
+                        >
+                            <div className="flex items-center gap-2">
+                                <Fa6SolidLink></Fa6SolidLink> View Doc.
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                {/*--------------------- section 4 end here ------------------------- */}
+
+
+                {/*--------------------- section 5 start here ------------------------- */}
                 <div className="w-full bg-indigo-500 py-2 rounded-md px-4 mt-4">
                     <p className="text-left font-semibold text-xl text-white">
-                        4. Applicant / Occupant Declaration and Signature </p>
+                        5. Applicant / Occupant Declaration and Signature </p>
                 </div>
 
                 <div className="flex gap-4 gap-y-2 px-4 py-2 my-2">
                     <div className="text-xl font-normal text-left text-gray-700 ">
-                        4.1
+                        5.1
                     </div>
                     <div className="flex items-start">
                         <p className="text-xl font-normal text-left text-gray-700 pr-2">{from_data.iagree}</p>
@@ -633,12 +739,11 @@ const RightToInformationView = (): JSX.Element => {
                         </label>
                     </div>
                 </div>
-
                 <div className="flex flex-wrap gap-4 gap-y-2 items-center px-4 py-2 my-2">
                     <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal text-left text-gray-700">
-                        <span className="mr-2">4.2</span> Applicant Signature Image
+                        <span className="mr-2">5.2</span> Applicant Signature Image
                         <p className="text-rose-500 text-sm">
-                            ( Maximum Upload Size 4MB & Allowed Format JPG / PDF / PNG )</p>
+                            ( Maximum Upload Size 2MB & Allowed Format JPG / PDF / PNG )</p>
                     </div>
                     <div className="flex-none flex gap-4 lg:flex-1 w-full lg:w-auto">
                         <a target="_blank"
@@ -651,7 +756,7 @@ const RightToInformationView = (): JSX.Element => {
                         </a>
                     </div>
                 </div>
-                {/*--------------------- section 4 end here ------------------------- */}
+                {/*--------------------- section 5 end here ------------------------- */}
                 {isSubmited ?
                     user.id == from_data.userId ? null :
                         <>
@@ -692,7 +797,6 @@ const RightToInformationView = (): JSX.Element => {
                                                 interuserid: "0",
                                                 touserid: 6,
                                                 querystatus: "INPROCESS"
-
                                             }));
                                         }}
                                         className="py-1 w-full sm:w-auto text-white text-lg px-4 bg-cyan-500 text-center rounded-md font-medium"
@@ -703,9 +807,11 @@ const RightToInformationView = (): JSX.Element => {
                                     null
                                 }
                                 {common.form_status == 50 && user.id == 5 ?
+
                                     <button
                                         onClick={() => {
-                                            forwardRef!.current!.value = `The RTI documents requested as per application number ${from_data.id} pertaining to your request is as attached below.`;
+                                            forwardRef!.current!.value = `The zone info requested as per application number ${from_data.id} pertaining to your land with survey No. ${from_data.survey_no} & sub Division ${from_data.sub_division} of village ${villagedata.name} is ${landDetails.zone} zone.`;
+
                                             setForwardBox(val => true);
                                             setNextData(val => ({
                                                 title: "Convey to Applicant",
@@ -730,7 +836,7 @@ const RightToInformationView = (): JSX.Element => {
                                 {common.form_status == 25 && user.id == 6 ?
                                     <button
                                         onClick={() => {
-
+                                            forwardRef!.current!.value = `The zone info pertaining to land with survey No. ${from_data.survey_no} & sub Division ${from_data.sub_division} of village ${villagedata.name} is ${landDetails.zone} zone.`;
                                             setForwardBox(val => true);
                                             setNextData(val => ({
                                                 title: "Forward to ATP",
@@ -774,6 +880,7 @@ const RightToInformationView = (): JSX.Element => {
                         null
                 }
             </div>
+
             <div className="p-6 bg-white rounded-lg shadow-lg my-8">
                 <h1 className="text-gray-800 text-3xl font-semibold text-center">Notings</h1>
                 <div className="w-full flex gap-4 my-4">
@@ -798,45 +905,4 @@ const RightToInformationView = (): JSX.Element => {
     );
 }
 
-
-export default RightToInformationView;
-
-interface QueryTabsProps {
-    isUser: boolean;
-    message: string;
-    date: string;
-    from_user: string;
-    to_user: string;
-    doc: null | undefined | string;
-}
-
-const QueryTabs: React.FC<QueryTabsProps> = (props: QueryTabsProps): JSX.Element => {
-    return (
-        <div className={`flex ${props.isUser ? "justify-end" : "justify-start"} gap-4 items-center my-4`}>
-            <div className={`w-10 h-10 shrink-0 rounded-full text-white font-semibold text-xl ${props.isUser ? "order-2 bg-green-500" : "order-1 bg-cyan-500"} grid place-items-center`}>
-                {props.isUser ? props.from_user.toString().slice(0, 1).toUpperCase() : props.to_user.toString().slice(0, 1).toUpperCase()}
-            </div>
-            <div className={`px-4 py-2 rounded-md ${props.isUser ? "bg-[#e2eaf0] order-1" : "bg-[#dbf4fe] order-2"}`}>
-                <div className="flex w-full border-b-2 border-gray-500 pb-2 mb-2">
-                    <p className={`text-sm text-gray-700`}>{new Date(props.date).toDateString()} {new Date(props.date).toLocaleTimeString()}</p>
-                    <div className="grow w-20"></div>
-                    <p className={`text-sm text-gray-700 `}>{props.from_user} to {props.to_user}</p>
-                </div>
-                <p className={`text-xl text-gray-700`}>{props.message}</p>
-                {(props.doc == null || props.doc == undefined || props.doc == "") ? null :
-                    <div>
-                        <a target="_blank" href={props.doc}
-                            className=" py-1 mt-2 inline-block w-full sm:w-auto text-white text-lg px-4 bg-cyan-500 text-center rounded-md font-medium"
-                        >
-                            View Doc
-                        </a>
-                    </div>
-                }
-            </div>
-        </div>
-    );
-}
-
-
-export { QueryTabs }
-
+export default OldCopyView;
