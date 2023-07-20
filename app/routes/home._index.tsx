@@ -102,11 +102,29 @@ export const loader: LoaderFunction = async (props: LoaderArgs) => {
       `,
         veriables: {},
     });
+
+
+    const villageprocess = await ApiCall({
+        query: `
+        query villageFileProgress{
+            villageFileProgress{
+              village,
+              fileCounts{
+                      formType,
+                count
+              }
+            }
+          }
+      `,
+        veriables: {},
+    });
+
     return json({
         filecount: filecount.data.getFileCount,
         villagecount: villagecount.data.villageFileCount,
         officercount: officercount.data.officerFileCount,
-        processcount: processcount.data.officerFileProgress
+        processcount: processcount.data.officerFileProgress,
+        villageprocess: villageprocess.data.villageFileProgress
     });
 }
 const DashBoard = (): JSX.Element => {
@@ -116,11 +134,13 @@ const DashBoard = (): JSX.Element => {
     const villagecount = loader.villagecount;
     const officercount = loader.officercount;
     const processcount = loader.processcount;
+    const villageprocess = loader.villageprocess;
+
+
 
     villagecount.sort((a: any, b: any) => b.count - a.count);
 
     const topItems = villagecount.slice(0, 10);
-
     const otherCount = villagecount.slice(10).reduce((sum: any, item: any) => sum + item.count, 0);
 
     const otherDataset = otherCount !== 0 ? {
@@ -321,6 +341,66 @@ const DashBoard = (): JSX.Element => {
         ],
     };
 
+
+
+
+    const villageNames = villageprocess.map((data: any) => data.village);
+
+    const fileTypes = villageprocess[0].fileCounts.map((fileCount: any) => fileCount.formType);
+
+    const datasets: any = [];
+
+    fileTypes.forEach((fileType: any) => {
+        const fileData = villageprocess.map((data: any) => {
+            const countObj = data.fileCounts.find((fileCount: any) => fileCount.formType === fileType);
+            return countObj ? countObj.count : 0;
+        });
+
+        const dataset = {
+            label: fileType,
+            data: fileData,
+            borderWidth: 1,
+        };
+
+        datasets.push(dataset);
+    });
+
+    const villageprocessdata = {
+        labels: villageNames,
+        datasets: datasets,
+    };
+
+
+
+    const villageprocessoptions = {
+        tooltips: {
+            enabled: true,
+        },
+        responsive: true,
+        datalabels: {
+            display: false,
+        },
+        scales: {
+            x: {
+                ticks: {
+                    font: {
+                        size: 14,
+                    },
+                    precision: 0,
+                },
+                stacked: true,
+            },
+            y: {
+                ticks: {
+                    font: {
+                        size: 14,
+                    },
+                    precision: 0,
+                },
+                stacked: true,
+            },
+        },
+    }
     return (
         <>
             <div className="bg-white rounded-md shadow-lg px-8 py-4 my-4 mb-10">
@@ -340,8 +420,12 @@ const DashBoard = (): JSX.Element => {
                         <DashboradCard title="Unauthorized" color="bg-gradient-to-r from-slate-400 to-slate-600" textcolor="text-slate-500" link="/" value={filecount.UNAUTHORIZED} />
                         <DashboradCard title="Land Section" color="bg-gradient-to-r from-indigo-400 to-indigo-600" textcolor="text-indigo-500" link="/" value={filecount.LANDRECORDS} />
                     </div>
-                    <div className="flex flex-col lg:flex-row rounded-3xl mb-3 gap-8">
-                        <div className="flex-1">
+                </div>
+            </div>
+
+            <div className="bg-white rounded-md shadow-lg px-8 py-4 my-4 mb-10">
+                <div className="flex flex-col lg:flex-row rounded-3xl mb-3 gap-8">
+                    {/* <div className="flex-1">
                             <h1 className="text-gray-800 text-3xl font-semibold text-center">Village Wise Files</h1>
                             <div className="w-full flex gap-4 my-4">
                                 <div className="grow bg-gray-700 h-[2px]"></div>
@@ -351,28 +435,42 @@ const DashBoard = (): JSX.Element => {
                             <div className="w-[30rem] h-[30rem] mx-auto">
                                 <Doughnut data={villageData} options={villageOptions} />
                             </div>
+                        </div> */}
+                    <div className="flex-1">
+                        <h1 className="text-gray-800 text-3xl font-semibold text-center">Officer Wise Files</h1>
+                        <div className="w-full flex gap-4 my-4">
+                            <div className="grow bg-gray-700 h-[2px]"></div>
+                            <div className="w-10 bg-gray-500 h-[3px]"></div>
+                            <div className="grow bg-gray-700 h-[2px]"></div>
                         </div>
-                        <div className="flex-1">
-                            <h1 className="text-gray-800 text-3xl font-semibold text-center">Officer Wise Files</h1>
-                            <div className="w-full flex gap-4 my-4">
-                                <div className="grow bg-gray-700 h-[2px]"></div>
-                                <div className="w-10 bg-gray-500 h-[3px]"></div>
-                                <div className="grow bg-gray-700 h-[2px]"></div>
-                            </div>
-                            <div className="w-[30rem] h-[30rem] mx-auto">
-                                <Doughnut data={officerData} options={officerOptions} />
-                            </div>
+                        <div className="w-[30rem] h-[30rem] mx-auto">
+                            <Doughnut data={officerData} options={officerOptions} />
                         </div>
                     </div>
-                    <h1 className="text-gray-800 text-3xl font-semibold text-center">File status</h1>
-                    <div className="w-full flex gap-4 my-4">
-                        <div className="grow bg-gray-700 h-[2px]"></div>
-                        <div className="w-10 bg-gray-500 h-[3px]"></div>
-                        <div className="grow bg-gray-700 h-[2px]"></div>
-                    </div>
-                    <Bar options={options} data={data} />
                 </div>
             </div>
+
+
+            <div className="bg-white rounded-md shadow-lg px-8 py-4 my-4 mb-10">
+                <h1 className="text-gray-800 text-3xl font-semibold text-center">File status</h1>
+                <div className="w-full flex gap-4 my-4">
+                    <div className="grow bg-gray-700 h-[2px]"></div>
+                    <div className="w-10 bg-gray-500 h-[3px]"></div>
+                    <div className="grow bg-gray-700 h-[2px]"></div>
+                </div>
+                <Bar options={options} data={data} />
+            </div>
+
+            <div className="bg-white rounded-md shadow-lg px-8 py-4 my-4 mb-10">
+                <h1 className="text-gray-800 text-3xl font-semibold text-center">Village vs FileType</h1>
+                <div className="w-full flex gap-4 my-4">
+                    <div className="grow bg-gray-700 h-[2px]"></div>
+                    <div className="w-10 bg-gray-500 h-[3px]"></div>
+                    <div className="grow bg-gray-700 h-[2px]"></div>
+                </div>
+                <Bar options={villageprocessoptions} data={villageprocessdata} />
+            </div>
+
         </>
     );
 }

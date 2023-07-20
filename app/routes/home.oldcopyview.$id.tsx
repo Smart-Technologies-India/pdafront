@@ -168,14 +168,19 @@ const OldCopyView: React.FC = (): JSX.Element => {
                 createCommonInput: {
                     "form_id": Number(from_data.id),
                     "user_id": Number(user.id),
-                    "auth_user_id": "5",
+                    // "auth_user_id": "5",
+                    // "focal_user_id": "5",
+                    // "intra_user_id": "3,4",
+                    // "inter_user_id": "0",
+                    "auth_user_id": "6",
                     "focal_user_id": "5",
-                    "intra_user_id": "3,4",
+                    "intra_user_id": "5,6",
                     "inter_user_id": "0",
                     "village": villagedata.name,
                     "name": from_data.name,
                     "number": from_data.mobile.toString(),
-                    "form_status": 1,
+                    // "form_status": 1,
+                    "form_status": 25,
                     "form_type": "OLDCOPY",
                     "query_status": "SUBMIT"
                 }

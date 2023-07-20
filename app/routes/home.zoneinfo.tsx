@@ -131,7 +131,7 @@ const ZoneInofrmation: React.FC = (): JSX.Element => {
         const selectedSubdivision = subdivision.find((val) => val.sub_division === e.target.value);
         if (selectedSubdivision) {
             setLandDetails(val => ({ land: selectedSubdivision.owner_name, area: selectedSubdivision.area }));
-            nameRef!.current!.value = `${selectedSubdivision.owner_name.toString().split(",")[0]} ${selectedSubdivision.owner_name.toString().includes(",") ? " and others" : null}`;
+            nameRef!.current!.value = `${selectedSubdivision.owner_name.toString().split(",")[0]} ${selectedSubdivision.owner_name.toString().includes(",") ? " and others" : ""}`;
         }
     };
 

@@ -221,7 +221,7 @@ const LandSectionPdfView = (): JSX.Element => {
                 </View>
                 <View>
                     <Text style={styles.title} fixed>
-                        <b>Inspecition Report</b> Inspection Report for {getnatype(form.land_stageid)} of land bearing survey No {form.survey_no} of village {village}
+                        <b>Report</b> for {getnatype(form.land_stageid)} of land bearing survey No {form.survey_no} of village {village}
                     </Text>
                 </View>
                 <View>

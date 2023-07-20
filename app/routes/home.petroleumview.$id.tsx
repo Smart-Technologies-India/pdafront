@@ -180,14 +180,19 @@ const Petroleum: React.FC = (): JSX.Element => {
                 createCommonInput: {
                     "form_id": Number(from_data.id),
                     "user_id": Number(user.id),
-                    "auth_user_id": "5",
+                    // "auth_user_id": "5",
+                    // "focal_user_id": "5",
+                    // "intra_user_id": "3,4",
+                    // "inter_user_id": "0",
+                    "auth_user_id": "12",
                     "focal_user_id": "5",
-                    "intra_user_id": "3,4",
+                    "intra_user_id": "5,12",
                     "inter_user_id": "0",
                     "village": villagedata.name,
                     "name": from_data.name,
                     "number": from_data.mobile.toString(),
-                    "form_status": 1,
+                    // "form_status": 1,
+                    "form_status": 50,
                     "form_type": "PETROLEUM",
                     "query_status": "SUBMIT"
                 }
@@ -940,7 +945,7 @@ const Petroleum: React.FC = (): JSX.Element => {
                         ? <>
                             {/*--------------------- section 2 start here ------------------------- */}
                             <div className="w-full bg-indigo-500 py-2 rounded-md px-4 mt-4">
-                                <p className="text-left font-semibold text-xl text-white"> 5. Department Notings </p>
+                                <p className="text-left font-semibold text-xl text-white"> 5. Department Comments </p>
                             </div>
 
 

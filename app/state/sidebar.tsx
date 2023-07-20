@@ -10,7 +10,8 @@ enum SideBarTabs {
     OldCopy,
     landSection,
     Unauthorisd,
-    DesignPoint
+    DesignPoint,
+    Search
 }
 
 interface SideBarState {

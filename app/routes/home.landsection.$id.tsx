@@ -494,7 +494,7 @@ const LandSection: React.FC = (): JSX.Element => {
                 </View>
                 <View>
                     <Text style={styles.title} fixed>
-                        <b>Inspecition Report</b> Inspection Report for {getnatype(form.land_stageid)} of land bearing survey No {form.survey_no} of village {village}
+                        <b>Report</b>  for {getnatype(form.land_stageid)} of land bearing survey No {form.survey_no} of village {village}
                     </Text>
                 </View>
                 <View>
@@ -678,29 +678,47 @@ const LandSection: React.FC = (): JSX.Element => {
 
         const fileurl = await UploadFile(mypdffile);
         if (fileurl.status) {
-
-            const req = {
-                stageId: form.land_stageid.toString(),
-                formRefId: form.land_formid.toString(),
-                fromUserId: "6",
-                toUserId: "8",
-                documentUrl: fileurl.data,
-                remarkComment: "Attached scrutiny report from PDA.",
-                queryType: "20",
-                refFormActionId: "1",
-                queryStatus: 1
-            };
-            const response = await axios.post("http://localhost/ci4-land/cus-add-query", req);
-
-            if (!response.data.status) {
-                return toast.error(response.data.message, { theme: "light" });
+            const data = await ApiCall({
+                query: `
+                    query sendFileOutside($sendFileLandsectionInput:SendFileLandsectionInput!){
+                        sendFileOutside(sendFileLandsectionInput:$sendFileLandsectionInput)
+                      }
+                    `,
+                veriables: {
+                    sendFileLandsectionInput: {
+                        stageId: form.land_stageid.toString(),
+                        formRefId: form.land_formid.toString(),
+                        documentUrl: fileurl.data
+                    }
+                },
+            });
+            if (!data.data.sendFileOutside) {
+                return toast.error("Unable to send file to Land section.", { theme: "light" });
             }
+
+
+
+
+
+            // const req = {
+            //     stageId: form.land_stageid.toString(),
+            //     formRefId: form.land_formid.toString(),
+            //     fromUserId: "6",
+            //     toUserId: "8",
+            //     documentUrl: fileurl.data,
+            //     remarkComment: "Attached scrutiny report from PDA.",
+            //     queryType: "20",
+            //     refFormActionId: "1",
+            //     queryStatus: 1
+            // };
+            // const response = await axios.post("http://localhost/ci4-land/cus-add-query", req);
+            // if (!response.data.status) {
+            //     return toast.error(response.data.message, { theme: "light" });
+            // }
+
         } else {
             return toast.error(fileurl.message, { theme: "light" });
-
         }
-        const response = await axios.post("http://localhost/ci4-land/cus-add-query")
-
     }
 
 
