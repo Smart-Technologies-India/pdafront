@@ -85,7 +85,16 @@ const RightToInformationView = (): JSX.Element => {
     const isSubmited = loader.submit;
     const common = isSubmited ? loader.common[0] : null;
     const submit = async () => {
-
+        const authuserid = await ApiCall({
+            query: `
+            query getuserid($filetype:String!){
+                getuserid(filetype:$filetype)
+              }
+            `,
+            veriables: {
+                "filetype": "RTI"
+            }
+        });
         const data = await ApiCall({
             query: `
             mutation createCommon($createCommonInput:CreateCommonInput!){
@@ -102,7 +111,7 @@ const RightToInformationView = (): JSX.Element => {
                     // "focal_user_id": "5",
                     // "intra_user_id": "3,4",
                     // "inter_user_id": "0",
-                    "auth_user_id": "6",
+                    "auth_user_id": authuserid.data.getuserid.toString(),
                     "focal_user_id": "5",
                     "intra_user_id": "5,6",
                     "inter_user_id": "0",
@@ -110,7 +119,7 @@ const RightToInformationView = (): JSX.Element => {
                     "name": from_data.name,
                     "number": from_data.mobile.toString(),
                     // "form_status": 1,
-                    "form_status": 25,
+                    "form_status": 1,
                     "form_type": "RTI",
                     "query_status": "SUBMIT"
                 }
@@ -683,7 +692,7 @@ const RightToInformationView = (): JSX.Element => {
                                     null
                                 }
                                 {/* atp button */}
-                                {common.form_status == 1 && user.id == 5 ?
+                                {/* {common.form_status == 1 && user.id == 5 ?
                                     <button
                                         onClick={() => {
                                             setForwardBox(val => true);
@@ -703,6 +712,32 @@ const RightToInformationView = (): JSX.Element => {
                                         className="py-1 w-full sm:w-auto text-white text-lg px-4 bg-cyan-500 text-center rounded-md font-medium"
                                     >
                                         Forward to JTP
+                                    </button>
+                                    :
+                                    null
+                                } */}
+
+                                {/* jtp button */}
+                                {common.form_status == 1 && user.id == common.auth_user_id ?
+                                    <button
+                                        onClick={() => {
+
+                                            setForwardBox(val => true);
+                                            setNextData(val => ({
+                                                title: "Forward to ATP",
+                                                formstatus: 50,
+                                                querytype: "INTRA",
+                                                authuserid: "5",
+                                                foacaluserid: "5",
+                                                intrauserid: "5,6",
+                                                interuserid: "0",
+                                                touserid: 5,
+                                                querystatus: "INPROCESS"
+                                            }));
+                                        }}
+                                        className="py-1 w-full sm:w-auto text-white text-lg px-4 bg-cyan-500 text-center rounded-md font-medium"
+                                    >
+                                        Forward to ATP
                                     </button>
                                     :
                                     null
@@ -731,31 +766,7 @@ const RightToInformationView = (): JSX.Element => {
                                     :
                                     null
                                 }
-                                {/* jtp button */}
-                                {common.form_status == 25 && user.id == 6 ?
-                                    <button
-                                        onClick={() => {
 
-                                            setForwardBox(val => true);
-                                            setNextData(val => ({
-                                                title: "Forward to ATP",
-                                                formstatus: 50,
-                                                querytype: "INTRA",
-                                                authuserid: "5",
-                                                foacaluserid: "5",
-                                                intrauserid: "5,6",
-                                                interuserid: "0",
-                                                touserid: 5,
-                                                querystatus: "INPROCESS"
-                                            }));
-                                        }}
-                                        className="py-1 w-full sm:w-auto text-white text-lg px-4 bg-cyan-500 text-center rounded-md font-medium"
-                                    >
-                                        Forward to ATP
-                                    </button>
-                                    :
-                                    null
-                                }
                             </div>
                         </>
                     :

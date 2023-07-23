@@ -59,7 +59,6 @@ const search = () => {
         if (fromRef.current?.value != null && fromRef.current?.value != undefined && fromRef.current?.value != "") {
             res.form_id = parseInt(fromRef.current?.value);
         }
-        console.log(res);
 
         const departmentdata = await ApiCall({
             query: `

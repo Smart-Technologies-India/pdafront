@@ -272,10 +272,8 @@ const ShowPdf = () => {
     const getfile = async () => {
         const file: NodeJS.ReadableStream = await renderToFile(<Quixote />, "test", (output, filePath) => {
             // Optional callback logic
-            console.log(`File saved at ${filePath}`);
         });
 
-        // console.log(file);
 
     }
 

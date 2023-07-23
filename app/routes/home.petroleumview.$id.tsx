@@ -168,6 +168,17 @@ const Petroleum: React.FC = (): JSX.Element => {
     }, []);
 
     const submit = async () => {
+
+        const authuserid = await ApiCall({
+            query: `
+            query getuserid($filetype:String!){
+                getuserid(filetype:$filetype)
+              }
+            `,
+            veriables: {
+                "filetype": "PETROLEUM"
+            }
+        });
         const data = await ApiCall({
             query: `
             mutation createCommon($createCommonInput:CreateCommonInput!){
@@ -184,7 +195,7 @@ const Petroleum: React.FC = (): JSX.Element => {
                     // "focal_user_id": "5",
                     // "intra_user_id": "3,4",
                     // "inter_user_id": "0",
-                    "auth_user_id": "12",
+                    "auth_user_id": authuserid.data.getuserid.toString(),
                     "focal_user_id": "5",
                     "intra_user_id": "5,12",
                     "inter_user_id": "0",
@@ -1001,7 +1012,7 @@ const Petroleum: React.FC = (): JSX.Element => {
                                 </Link>
 
                                 {/* atp button */}
-                                {common.form_status == 1 && user.id == 5 ?
+                                {/* {common.form_status == 1 && user.id == 5 ?
                                     <button
                                         onClick={() => {
                                             setForwardBox(val => true);
@@ -1024,9 +1035,9 @@ const Petroleum: React.FC = (): JSX.Element => {
                                     </button>
                                     :
                                     null
-                                }
+                                } */}
                                 {/* jtp button */}
-                                {common.form_status == 25 && user.id == 6 ?
+                                {/* {common.form_status == 25 && user.id == 6 ?
                                     <button
                                         onClick={() => {
                                             setForwardBox(val => true);
@@ -1048,8 +1059,8 @@ const Petroleum: React.FC = (): JSX.Element => {
                                     </button>
                                     :
                                     null
-                                }
-                                {common.form_status == 50 && user.id == 12 ?
+                                } */}
+                                {common.form_status == 1 && user.id == common.auth_user_id ?
                                     <button
                                         onClick={async () => {
                                             const res = await updatesubmit();

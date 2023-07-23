@@ -108,6 +108,7 @@ const LandSection: React.FC = (): JSX.Element => {
     const id = loader.id;
     const user = loader.user;
 
+
     const common = loader.common[0];
     const isUser = user.role == "USER";
 
@@ -695,27 +696,6 @@ const LandSection: React.FC = (): JSX.Element => {
             if (!data.data.sendFileOutside) {
                 return toast.error("Unable to send file to Land section.", { theme: "light" });
             }
-
-
-
-
-
-            // const req = {
-            //     stageId: form.land_stageid.toString(),
-            //     formRefId: form.land_formid.toString(),
-            //     fromUserId: "6",
-            //     toUserId: "8",
-            //     documentUrl: fileurl.data,
-            //     remarkComment: "Attached scrutiny report from PDA.",
-            //     queryType: "20",
-            //     refFormActionId: "1",
-            //     queryStatus: 1
-            // };
-            // const response = await axios.post("http://localhost/ci4-land/cus-add-query", req);
-            // if (!response.data.status) {
-            //     return toast.error(response.data.message, { theme: "light" });
-            // }
-
         } else {
             return toast.error(fileurl.message, { theme: "light" });
         }
@@ -840,9 +820,9 @@ const LandSection: React.FC = (): JSX.Element => {
                 {/*--------------------- section 1 end here ------------------------- */}
 
                 {
-                    (common.form_status == 50 && (user.id == 12)) ||
-                        (common.form_status == 75 && (user.id == 6 || user.id == 12)) ||
-                        (common.form_status == 100 && (user.id == 5 || user.id == 6 || user.id == 12))
+                    (common.form_status == 1 && (user.id == common.auth_user_id)) ||
+                        (common.form_status == 75 && (user.id == 6 || user.id == common.auth_user_id)) ||
+                        (common.form_status == 100 && (user.id == 5 || user.id == 6 || user.id == common.auth_user_id))
                         ? <>
                             {/*--------------------- section 2 start here ------------------------- */}
                             <div className="w-full bg-indigo-500 py-2 rounded-md px-4 mt-4">
@@ -1083,7 +1063,7 @@ const LandSection: React.FC = (): JSX.Element => {
                                 </Link>
 
                                 {/* atp button */}
-                                {common.form_status == 1 && user.id == 5 ?
+                                {/* {common.form_status == 1 && user.id == 5 ?
                                     <button
                                         onClick={() => {
                                             setForwardBox(val => true);
@@ -1106,9 +1086,9 @@ const LandSection: React.FC = (): JSX.Element => {
                                     </button>
                                     :
                                     null
-                                }
+                                } */}
                                 {/* jtp button */}
-                                {common.form_status == 25 && user.id == 6 ?
+                                {/* {common.form_status == 25 && user.id == 6 ?
                                     <button
                                         onClick={() => {
                                             setForwardBox(val => true);
@@ -1130,8 +1110,8 @@ const LandSection: React.FC = (): JSX.Element => {
                                     </button>
                                     :
                                     null
-                                }
-                                {common.form_status == 50 && user.id == 12 ?
+                                } */}
+                                {common.form_status == 1 && user.id == common.auth_user_id ?
                                     <button
                                         onClick={async () => {
                                             const res = await submit();
