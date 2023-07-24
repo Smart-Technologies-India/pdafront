@@ -2,7 +2,7 @@ import { LoaderArgs, LoaderFunction, json, redirect } from "@remix-run/node";
 import { Link, Outlet, useLoaderData, useNavigate } from "@remix-run/react";
 import axios from "axios";
 import { useEffect, useRef } from "react";
-import { Fa6RegularStarHalfStroke, Fa6SolidArrowsUpDownLeftRight, Fa6SolidBars, Fa6SolidBook, Fa6SolidBookTanakh, Fa6SolidBuilding, Fa6SolidCalendarDays, Fa6SolidChartArea, Fa6SolidCircleQuestion, Fa6SolidCodeBranch, Fa6SolidFile, Fa6SolidHouse, Fa6SolidMagnifyingGlass, Fa6SolidMapLocationDot, Fa6SolidObjectUngroup, Fa6SolidPaintbrush, Fa6SolidPersonMilitaryPointing, Fa6SolidStar, Fa6SolidUser, Fa6SolidXmark, MaterialSymbolsActivityZone, MaterialSymbolsAlignHorizontalRight, MaterialSymbolsFluidBalance, MaterialSymbolsLogoutRounded, MaterialSymbolsOralDisease } from "~/components/icons/icons";
+import { CilCameraControl, Fa6RegularStarHalfStroke, Fa6SolidArrowsUpDownLeftRight, Fa6SolidBars, Fa6SolidBook, Fa6SolidBookTanakh, Fa6SolidBuilding, Fa6SolidCalendarDays, Fa6SolidChartArea, Fa6SolidCircleQuestion, Fa6SolidCodeBranch, Fa6SolidFile, Fa6SolidHouse, Fa6SolidMagnifyingGlass, Fa6SolidMapLocationDot, Fa6SolidObjectUngroup, Fa6SolidPaintbrush, Fa6SolidPersonMilitaryPointing, Fa6SolidStar, Fa6SolidUser, Fa6SolidXmark, MaterialSymbolsActivityZone, MaterialSymbolsAlignHorizontalRight, MaterialSymbolsFluidBalance, MaterialSymbolsLogoutRounded, MaterialSymbolsOralDisease } from "~/components/icons/icons";
 import { userPrefs } from "~/cookies";
 import { ApiCall } from "~/services/api";
 import sideBarStore, { SideBarTabs } from "~/state/sidebar";
@@ -68,7 +68,7 @@ const Home: React.FC = (): JSX.Element => {
 
     const switchtodesignpoint = async () => {
         if (user.design_point_id == "" || user.design_point_id == undefined || user.design_point_id == null) {
-            toast.error("Design Point does not have this user", { theme: "light" });
+            toast.error("This user does not exist", { theme: "light" });
         } else if (user.access_kay == "" || user.access_kay == undefined || user.access_kay == null) {
             toast.error("Something whent wrong, Try again!", { theme: "light" });
         } else {
@@ -242,26 +242,41 @@ const Home: React.FC = (): JSX.Element => {
                                         >
                                             <SidebarTab
                                                 icon={Fa6SolidCodeBranch}
-                                                title="Design Point"
+                                                title="Architcect Files"
                                                 active={asideindex === SideBarTabs.DesignPoint}
                                             ></SidebarTab>
                                         </button>
                                     </>
                                 )}
                                 {user.role == "ATP" || user.role == "JTP" ?
-                                    <Link
-                                        to={"/home/search"}
-                                        onClick={() => {
-                                            achangeindex(SideBarTabs.Search);
-                                            changeMobile(false);
-                                        }}
-                                    >
-                                        <SidebarTab
-                                            icon={Fa6SolidMagnifyingGlass}
-                                            title="Search"
-                                            active={asideindex === SideBarTabs.Search}
-                                        ></SidebarTab>
-                                    </Link>
+                                    <>
+                                        <Link
+                                            to={"/home/dealinghand"}
+                                            onClick={() => {
+                                                achangeindex(SideBarTabs.DealingHand);
+                                                changeMobile(false);
+                                            }}
+                                        >
+                                            <SidebarTab
+                                                icon={CilCameraControl}
+                                                title="Dealing Hand"
+                                                active={asideindex === SideBarTabs.DealingHand}
+                                            ></SidebarTab>
+                                        </Link>
+                                        <Link
+                                            to={"/home/search"}
+                                            onClick={() => {
+                                                achangeindex(SideBarTabs.Search);
+                                                changeMobile(false);
+                                            }}
+                                        >
+                                            <SidebarTab
+                                                icon={Fa6SolidMagnifyingGlass}
+                                                title="Search"
+                                                active={asideindex === SideBarTabs.Search}
+                                            ></SidebarTab>
+                                        </Link>
+                                    </>
                                     : null
                                 }
                                 <button onClick={logoutHandle}>

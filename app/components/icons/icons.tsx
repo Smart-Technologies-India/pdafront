@@ -325,3 +325,10 @@ export function Fa6SolidMagnifyingGlass(props: SVGProps<SVGSVGElement>) {
         <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 512 512" {...props}><path fill="currentColor" d="M416 208c0 45.9-14.9 88.3-40 122.7l126.6 126.7c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0s208 93.1 208 208zM208 352a144 144 0 1 0 0-288a144 144 0 1 0 0 288z"></path></svg>
     )
 }
+
+
+export function CilCameraControl(props: SVGProps<SVGSVGElement>) {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 512 512" {...props}><path fill="currentColor" d="M336 256a80 80 0 1 0-80 80a80.091 80.091 0 0 0 80-80Zm-128 0a48 48 0 1 1 48 48a48.055 48.055 0 0 1-48-48Zm-48 141.988L245.307 496h21.386L352 397.988V368H160ZM307.825 400L256 459.544L204.175 400ZM245.307 16L160 114.012V144h192v-29.988L266.693 16Zm-41.132 96L256 52.456L307.825 112ZM16 245.307v21.386L114.013 352H144V160h-29.987Zm96 62.519L52.455 256L112 204.174ZM397.987 160H368v192h29.987L496 266.693v-21.386ZM400 307.826V204.174L459.545 256Z"></path></svg>
+    )
+}

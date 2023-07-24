@@ -11,7 +11,8 @@ enum SideBarTabs {
     landSection,
     Unauthorisd,
     DesignPoint,
-    Search
+    Search,
+    DealingHand
 }
 
 interface SideBarState {

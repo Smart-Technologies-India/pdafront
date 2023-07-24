@@ -382,15 +382,21 @@ const LandSectionPdfView = (): JSX.Element => {
                 </View>
                 <View style={styles.flexbox}>
                     <View style={styles.flexbox1}>
-                        <Image src={"/images/signone.jpg"} style={styles.img}></Image>
-                        <Text style={styles.signtext}>
-                            AD(SP)
-                        </Text>
+
                     </View>
                     <View style={styles.flexbox2}>
+                        <Text style={styles.signtext}>
+                            Yours faithfullly,
+                        </Text>
                         <Image src={"/images/signtwo.jpg"} style={styles.img} ></Image>
                         <Text style={styles.signtext}>
-                            JTP
+                            &#123;P.P.Parmar&#125;
+                        </Text>
+                        <Text style={styles.signtext}>
+                            Assosciate Town Planer
+                        </Text>
+                        <Text style={styles.signtext}>
+                            Daman
                         </Text>
                     </View>
                 </View>
