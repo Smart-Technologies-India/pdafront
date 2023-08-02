@@ -692,7 +692,7 @@ const RightToInformationView = (): JSX.Element => {
                                     null
                                 }
                                 {/* atp button */}
-                                {/* {common.form_status == 1 && user.id == 5 ?
+                                {common.form_status == 1 && user.id == common.auth_user_id ?
                                     <button
                                         onClick={() => {
                                             setForwardBox(val => true);
@@ -715,10 +715,10 @@ const RightToInformationView = (): JSX.Element => {
                                     </button>
                                     :
                                     null
-                                } */}
+                                }
 
                                 {/* jtp button */}
-                                {common.form_status == 1 && user.id == common.auth_user_id ?
+                                {common.form_status == 25 && user.id == 6 ?
                                     <button
                                         onClick={() => {
 

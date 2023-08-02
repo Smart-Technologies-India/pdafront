@@ -741,9 +741,10 @@ const ZoneInofrmationView: React.FC = (): JSX.Element => {
                                     null
                                 }
                                 {/* atp button */}
-                                {/* {common.form_status == 1 && user.id == 5 ?
+                                {common.form_status == 1 && user.id == common.auth_user_id ?
                                     <button
                                         onClick={() => {
+                                            forwardRef!.current!.value = `The zone info pertaining to land with survey No. ${from_data.survey_no} & sub Division ${from_data.sub_division} of village ${villagedata.name} is ${landDetails.zone} zone.`;
                                             setForwardBox(val => true);
                                             setNextData(val => ({
                                                 title: "Forward to JTP",
@@ -763,9 +764,9 @@ const ZoneInofrmationView: React.FC = (): JSX.Element => {
                                     </button>
                                     :
                                     null
-                                } */}
+                                }
                                 {/* jtp button */}
-                                {/* {common.form_status == 25 && user.id == 6 ?
+                                {common.form_status == 25 && user.id == 6 ?
                                     <button
                                         onClick={() => {
                                             forwardRef!.current!.value = `The zone info pertaining to land with survey No. ${from_data.survey_no} & sub Division ${from_data.sub_division} of village ${villagedata.name} is ${landDetails.zone} zone.`;
@@ -788,12 +789,11 @@ const ZoneInofrmationView: React.FC = (): JSX.Element => {
                                     </button>
                                     :
                                     null
-                                } */}
-                                {common.form_status == 1 && user.id == common.auth_user_id ?
+                                }
+                                {common.form_status == 50 && user.id == 5 ?
                                     <button
                                         onClick={() => {
                                             forwardRef!.current!.value = `The zone info requested as per application number ${from_data.id} pertaining to your land with survey No. ${from_data.survey_no} & sub Division ${from_data.sub_division} of village ${villagedata.name} is ${landDetails.zone} zone.`;
-
                                             setForwardBox(val => true);
                                             setNextData(val => ({
                                                 title: "Convey to Applicant",
