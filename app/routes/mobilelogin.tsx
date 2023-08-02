@@ -105,9 +105,13 @@ const MobileLogin: React.FC = (): JSX.Element => {
 
 
     return (
-        <div>
-            <div className="min-h-screen w-full bg-[#eeeeee] grid place-items-center">
-                <div className="p-6 rounded-md shadow-md hover:shadow-xl hover:scale-105 transition-all bg-white border-t-4 border-purple-500">
+        <div className="relative min-h-screen w-full">
+            <div className="fixed top-0 left-0 h-screen w-full">
+                <img src="/images/login.jpg" alt="login background" className="h-full w-full object-cover object-center" />
+            </div>
+            <div className="min-h-screen w-full grid place-items-center relative">
+
+                <div className=" p-6 rounded-md shadow-md hover:shadow-xl hover:scale-105 transition-all bg-white border-t-4 border-purple-500">
                     <div className="w-full grid place-items-center">
 
                         <img src="/images/logo.jpg" alt="logo" className="w-80 h-80 object-cover object-center" />
