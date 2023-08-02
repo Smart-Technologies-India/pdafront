@@ -62,7 +62,6 @@ const Dealinghand = (): JSX.Element => {
         }
     }, []);
 
-    const nagivator = useNavigate();
 
     const getvalue = (index: number) => {
         let dealinghanddata: { [key: string]: boolean } = {};
@@ -94,6 +93,7 @@ const Dealinghand = (): JSX.Element => {
 
 
     const submit = async (value: number, index: number) => {
+        console.log(data[index]);
         const update = await ApiCall({
             query: `
             mutation updateDealingHandById($updateDealinghandInput:UpdateDealinghandInput!){
@@ -113,7 +113,7 @@ const Dealinghand = (): JSX.Element => {
             toast.success("Data updated sussufully", { theme: "light" })
             setTimeout(() => {
                 window.location.reload();
-            }, 1500)
+            }, 800)
 
         } else {
             toast.error(update.message, { theme: "light" });

@@ -92,6 +92,27 @@ const search = () => {
 
     }
 
+
+    const getViewLink = (value: string, id: number): string => {
+        if (value == "PETROLEUM") {
+            return `/home/petroleumview/${id}`;
+        } else if (value == "RTI") {
+            return `/home/rtiview/${id}`;
+        } else if (value == "ZONE") {
+            return `/home/zoneinfoview/${id}`;
+        } else if (value == "DEMOLITION") {
+            return "/home";
+        } else if (value == "OLDCOPY") {
+            return `/home/oldcopyview/${id}`;
+        } else if (value == "LANDRECORDS") {
+            return `/home/landsection/${id}`;
+        } else if (value == "MAMLATDAR") {
+            return "/home";
+        } else {
+            return "/home";
+        }
+    }
+
     return (
         <>
             <div className="bg-white rounded-md shadow-lg p-4 my-4 w-full">
@@ -241,7 +262,7 @@ const search = () => {
                                                         </td>
                                                         <td className="text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap">
                                                             <Link
-                                                                to={`/home/petroleumview/${val.form_id}`}
+                                                                to={getViewLink(val.form_type, val.form_id)}
                                                                 className="py-1 w-full sm:w-auto block text-white text-lg px-4 bg-indigo-500 text-center rounded-md font-medium"
                                                             >
                                                                 VIEW
