@@ -2,6 +2,7 @@ import { Page, Text, View, Document, StyleSheet, Font, PDFViewer, PDFDownloadLin
 import { LoaderArgs, LoaderFunction, json } from "@remix-run/node";
 import { useLoaderData } from '@remix-run/react';
 import { useEffect, useState } from "react";
+import { symbol } from 'zod';
 import { userPrefs } from "~/cookies";
 import { ApiCall } from "~/services/api";
 
@@ -11,51 +12,27 @@ export const loader: LoaderFunction = async (props: LoaderArgs) => {
     const cookie: any = await userPrefs.parse(cookieHeader);
     const data = await ApiCall({
         query: `
-        query getAllLandById($id:Int!){
-            getAllLandById(id:$id){
+        query getAllZoneById($id:Int!){
+            getAllZoneById(id:$id){
               id,
               name,
-              userId,
               address,
               mobile,
               email,
+              userId,
+              user_uid,
               survey_no,
               village_id,
-              area,
-              na_type,
-              zone,
-              road_access,
-              no_road_access,
-              width_adequate,
-              is_dimension_plot_adequate,
-              is_crz,
-              is_monument,
-              other_remark,
-              atp_recommendation,
-              comments_dept,
+              sub_division,
+              iagree,
+              nakel_url_1_14,
               condition_to_follow,
-              status,
-              illegal_sqmt,
-              recommend
+              comments_dept
             }
           }
       `,
         veriables: {
             id: parseInt(id!)
-        },
-    });
-
-    const village = await ApiCall({
-        query: `
-        query getAllVillageById($id:Int!){
-            getAllVillageById(id:$id){
-              id,
-              name,
-            }
-          }
-      `,
-        veriables: {
-            id: parseInt(data.data.getAllLandById.village_id!)
         },
     });
 
@@ -81,7 +58,41 @@ export const loader: LoaderFunction = async (props: LoaderArgs) => {
         veriables: {
             searchCommonInput: {
                 form_id: parseInt(id!),
-                form_type: "LANDRECORDS"
+                form_type: "ZONEINFO"
+            }
+        },
+    });
+
+
+    const village = await ApiCall({
+        query: `
+        query getAllVillageById($id:Int!){
+            getAllVillageById(id:$id){
+              id,
+              name
+            }
+          }
+      `,
+        veriables: {
+            id: parseInt(data.data.getAllZoneById.village_id)
+        },
+    });
+
+    const subdivision = await ApiCall({
+        query: `
+        query getSubDivision($searchSurveyInput:SearchSurveyInput!){
+            getSubDivision(searchSurveyInput:$searchSurveyInput){
+              sub_division,
+              owner_name,
+              area,
+              zone
+            }
+          }
+      `,
+        veriables: {
+            searchSurveyInput: {
+                villageId: parseInt(data.data.getAllZoneById.village_id),
+                survey_no: data.data.getAllZoneById.survey_no,
             }
         },
     });
@@ -89,23 +100,27 @@ export const loader: LoaderFunction = async (props: LoaderArgs) => {
     return json({
         id: id,
         user: cookie,
-        form: data.data.getAllLandById,
+        form: data.data.getAllZoneById,
         village: village.data.getAllVillageById.name,
-        common: common.data.searchCommon
+        common: common.data.searchCommon,
+        villagedata: village.data.getAllVillageById,
+        subdivision: subdivision.data.getSubDivision,
     });
 }
 
-const LandSectionPdfView = (): JSX.Element => {
+const ZonePdfView = (): JSX.Element => {
 
     const loader = useLoaderData();
     const form = loader.form;
     const village = loader.village;
-    const common = loader.common;
+    const division = loader.subdivision;
+    const villagedata = loader.villagedata;
+
+
     Font.register({
         family: 'Oswald',
         src: 'https://fonts.gstatic.com/s/oswald/v13/Y_TKV6o8WovbUd3m_X9aAA.ttf'
     });
-
     const styles = StyleSheet.create({
         body: {
             paddingTop: 15,
@@ -176,22 +191,13 @@ const LandSectionPdfView = (): JSX.Element => {
             marginTop: "55px"
         },
         flexbox1: {
-            flex: 1,
-            fontSize: "12px",
-            fontWeight: 'normal',
-            color: "#374151",
+            flex: 4,
         },
         flexbox2: {
-            flex: 1,
             fontSize: "12px",
             fontWeight: 'normal',
             color: "#374151",
-        },
-        flexbox3: {
-            flex: 1,
-            fontSize: "12px",
-            fontWeight: 'normal',
-            color: "#374151",
+            flex: 2,
         },
         img: {
             width: "140px",
@@ -218,8 +224,26 @@ const LandSectionPdfView = (): JSX.Element => {
         return "";
     }
 
+    interface landDetailsType {
+        land: string | null;
+        area: string | null;
+        zone: string | null;
+    }
 
-    const LandSectionPdf = () => (
+    const [landDetails, setLandDetails] = useState<landDetailsType>({ area: null, land: null, zone: null });
+
+    const setlanddetails = (value: string) => {
+        const selectedSubdivision = division.find((val: any) => val.sub_division === value);
+        if (selectedSubdivision) {
+            setLandDetails(val => ({ land: selectedSubdivision.owner_name, area: selectedSubdivision.area, zone: selectedSubdivision.zone }))
+        }
+    };
+
+    useEffect(() => {
+        setlanddetails(form.sub_division);
+    }, []);
+
+    const ZonePdf = () => (
         <Document>
             <Page style={styles.body} size={'A4'} >
                 <View>
@@ -233,19 +257,10 @@ const LandSectionPdfView = (): JSX.Element => {
                 </View>
                 <View>
                     <Text style={styles.title} fixed>
-                        Report for {getnatype(form.land_stageid)} of land bearing survey No {form.survey_no} of village {village}
+                        Report for Zone Info of land bearing survey No {form.survey_no} of village {village}
                     </Text>
                 </View>
-                <View>
-                    <Text style={styles.subtitle} fixed>
-                        With reference to the {form.land_formid}, the proposal of {getnatype(form.land_stageid)} permission for land bearing Survey No. {form.survey_no} of village {village}
-                    </Text>
-                </View>
-                <View>
-                    <Text style={styles.subtitle} fixed>
-                        for {form.na_type} use is scrutinized from the planning point of view and the following report is hereby submitted.
-                    </Text>
-                </View>
+
                 <View>
                     <Text style={styles.header}>
                         1. Applicant Details(s)
@@ -261,7 +276,15 @@ const LandSectionPdfView = (): JSX.Element => {
                 </View>
                 <View style={styles.myflex}>
                     <Text style={styles.text1}>
-                        1.2 Applicant Contact Number
+                        1.2 Applicant Address
+                    </Text>
+                    <Text style={styles.text2}>
+                        {form.address}
+                    </Text>
+                </View>
+                <View style={styles.myflex}>
+                    <Text style={styles.text1}>
+                        1.3 Applicant Contact Number
                     </Text>
                     <Text style={styles.text2}>
                         {form.mobile}
@@ -269,34 +292,18 @@ const LandSectionPdfView = (): JSX.Element => {
                 </View>
                 <View style={styles.myflex}>
                     <Text style={styles.text1}>
-                        1.3 Applicant Survey Number
+                        1.4 Applicant Email
                     </Text>
                     <Text style={styles.text2}>
-                        {form.survey_no}
+                        {form.email}
                     </Text>
                 </View>
                 <View style={styles.myflex}>
                     <Text style={styles.text1}>
-                        1.4 Applicant Village
+                        1.5 Applicant UID
                     </Text>
                     <Text style={styles.text2}>
-                        {village}
-                    </Text>
-                </View>
-                <View style={styles.myflex}>
-                    <Text style={styles.text1}>
-                        1.5 Applicant Area
-                    </Text>
-                    <Text style={styles.text2}>
-                        {form.area}
-                    </Text>
-                </View>
-                <View style={styles.myflex}>
-                    <Text style={styles.text1}>
-                        1.6 Purpose
-                    </Text>
-                    <Text style={styles.text2}>
-                        {form.na_type}
+                        {form.user_uid}
                     </Text>
                 </View>
                 <View>
@@ -304,155 +311,79 @@ const LandSectionPdfView = (): JSX.Element => {
                         2. Site Details
                     </Text>
                 </View>
+
                 <View style={styles.myflex}>
                     <Text style={styles.text1}>
-                        2.1 Zone in which the land falls as per the Regional plan of Daman
+                        2.1 Land Village
                     </Text>
                     <Text style={styles.text2}>
-                        {form.zone}
+                        {village}
                     </Text>
                 </View>
                 <View style={styles.myflex}>
                     <Text style={styles.text1}>
-                        2.2 Is there a road from where the land is easily accessible?
+                        2.2 Land Survey Number
                     </Text>
                     <Text style={styles.text2}>
-                        {form.road_access}
+                        {form.survey_no}
                     </Text>
                 </View>
                 <View style={styles.myflex}>
                     <Text style={styles.text1}>
-                        2.3 If there is no road adjoining the land, how is it proposed to provide access to the Site by the applicant?
+                        2.3 Land Subdivison
                     </Text>
                     <Text style={styles.text2}>
-                        {form.no_road_access}
+                        {form.sub_division}
                     </Text>
                 </View>
                 <View style={styles.myflex}>
                     <Text style={styles.text1}>
-                        2.4 Is the width of the road /Proposed road adequate from the planning point of view?
+                        2.4 Land Owner Details
                     </Text>
                     <Text style={styles.text2}>
-                        {form.width_adequate}
+                        {landDetails.land}
                     </Text>
                 </View>
                 <View style={styles.myflex}>
                     <Text style={styles.text1}>
-                        2.5 Whether dimensions & arrangement of the plot adequate?
+                        2.5 Land Area(in Sq.Mtrs)
                     </Text>
                     <Text style={styles.text2}>
-                        {form.is_dimension_plot_adequate}
+                        {landDetails.area}
+                    </Text>
+                </View>
+                <View>
+                    <Text style={styles.header}>
+                        3. Zone Details
                     </Text>
                 </View>
                 <View style={styles.myflex}>
                     <Text style={styles.text1}>
-                        2.6 Whether the land /plot falls within C.R.Z give C.R.Z Category and Comments if any Distance from H.T.L of the sea River, creek
+                        3.1 Zone in which the land falls as per the Regional plan of Daman
                     </Text>
                     <Text style={styles.text2}>
-                        {form.is_crz}
+                        {landDetails.zone}
                     </Text>
                 </View>
-                <View style={styles.myflex}>
-                    <Text style={styles.text1}>
-                        2.7 Whether the land is Situated near any protected monument of A.S.I? if yes, the distance from the monument? Comments ,If any.
-                    </Text>
-                    <Text style={styles.text2}>
-                        {form.is_crz}
-                    </Text>
-                </View>
-                <View style={styles.myflex}>
-                    <Text style={styles.text1}>
-                        2.8 Any other remarks /comments?
-                    </Text>
-                    <Text style={styles.text2}>
-                        {form.other_remark}
-                    </Text>
-                </View>
-                <View style={styles.myflex}>
-                    <Text style={styles.text1}>
-                        2.9 Whether the Town & Country Planning Department recommended the case from the planning point of view?
-                    </Text>
-                    <Text style={styles.text2}>
-                        {form.atp_recommendation}
-                    </Text>
-                </View>
-                <View style={styles.myflex}>
-                    <Text style={styles.text1}>
-                        2.10  Condition(s) is to be mentioned in N.A. Sanad/order if N.A is granted.
-                    </Text>
-                    <Text style={styles.text2}>
-                        {form.condition_to_follow}
-                    </Text>
-                </View>
-                <View style={styles.myflex}>
-                    <Text style={styles.text1}>
-                        2.11 If no, the reason thereof
-                    </Text>
-                    <Text style={styles.text2}>
-                        {form.comments_dept}
-                    </Text>
-                </View>
-                <View style={styles.myflex}>
-                    <Text style={styles.text1}>
-                        2.12 Illegal (sqmt)
-                    </Text>
-                    <Text style={styles.text2}>
-                        {form.illegal_sqmt}
-                    </Text>
-                </View>
-                <View style={styles.myflex}>
-                    <Text style={styles.text1}>
-                        2.13 Recommend status
-                    </Text>
-                    <Text style={styles.text2}>
-                        {form.recommend ? "YES" : "NO"}
-                    </Text>
-                </View>
+
                 <View style={styles.flexbox}>
                     <View style={styles.flexbox1}>
-                        {
-                            common.form_status == 25 || common.form_status == 50 || common.form_status == 75 ?
-                                <View>
-                                    <Image src={"/images/signtwo.jpg"} style={styles.img} ></Image>
-                                    <Text style={styles.signtext}>
-                                        Field Inspector Town Planning
-                                    </Text>
-                                    <Text style={styles.signtext}>
-                                        Daman
-                                    </Text>
-                                </View>
-                                : null
-                        }
+
                     </View>
                     <View style={styles.flexbox2}>
-                        {
-                            common.form_status == 50 || common.form_status == 75 ?
-                                <View>
-                                    <Image src={"/images/signtwo.jpg"} style={styles.img} ></Image>
-                                    <Text style={styles.signtext}>
-                                        Junior Town Planner
-                                    </Text>
-                                    <Text style={styles.signtext}>
-                                        Daman
-                                    </Text>
-                                </View>
-                                : null
-                        }
-                    </View>
-                    <View style={styles.flexbox3}>
-                        {
-                            common.form_status == 75 || common.form_status == 125 ?
-                                <View>
-                                    <Image src={"/images/signtwo.jpg"} style={styles.img} ></Image>
-                                    <Text style={styles.signtext}>
-                                        Assosciate Town Planner
-                                    </Text>
-                                    <Text style={styles.signtext}>
-                                        Daman
-                                    </Text>
-                                </View>
-                                : null
-                        }
+                        <Text style={styles.signtext}>
+                            Yours faithfullly,
+                        </Text>
+                        <Image src={"/images/signtwo.jpg"} style={styles.img} ></Image>
+                        <Text style={styles.signtext}>
+                            &#123;P.P.Parmar&#125;
+                        </Text>
+                        <Text style={styles.signtext}>
+                            Assosciate Town Planer
+                        </Text>
+                        <Text style={styles.signtext}>
+                            Daman
+                        </Text>
                     </View>
                 </View>
             </Page>
@@ -471,7 +402,7 @@ const LandSectionPdfView = (): JSX.Element => {
             {isClient ?
                 < div className='w-full h-scree'>
                     <PDFViewer style={{ width: '100%', height: '100vh' }}>
-                        <LandSectionPdf />
+                        <ZonePdf />
                     </PDFViewer>
                 </div >
                 :
@@ -483,4 +414,4 @@ const LandSectionPdfView = (): JSX.Element => {
 
 }
 
-export default LandSectionPdfView;
+export default ZonePdfView;

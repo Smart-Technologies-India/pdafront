@@ -78,7 +78,7 @@ export const loader: LoaderFunction = async (props: LoaderArgs) => {
           }
       `,
         veriables: {
-            id: parseInt(id!)
+            id: parseInt(data.data.getOldCopyById.village_id)
         },
     });
 
@@ -878,7 +878,6 @@ const OldCopyView: React.FC = (): JSX.Element => {
                                     :
                                     null
                                 }
-
                             </div>
                         </>
                     :

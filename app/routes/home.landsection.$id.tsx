@@ -8,7 +8,6 @@ import { toast } from "react-toastify";
 import { z } from "zod";
 import { Fa6SolidFileLines, Fa6SolidLink } from "~/components/icons/icons";
 import { QueryTabs } from "./home.rtiview.$id";
-import axios from 'axios';
 
 export const loader: LoaderFunction = async (props: LoaderArgs) => {
     const id = props.params.id;
@@ -41,7 +40,10 @@ export const loader: LoaderFunction = async (props: LoaderArgs) => {
               condition_to_follow,
               status,
               land_stageid,
-              land_formid
+              land_formid,
+              illegal_sqmt,
+              attachments,
+              recommend
             }
           }
       `,
@@ -80,7 +82,7 @@ export const loader: LoaderFunction = async (props: LoaderArgs) => {
               inter_user_id,
               number,
               form_status,
-              query_status, 
+              query_status,
             }
           }
       `,
@@ -125,6 +127,11 @@ const LandSection: React.FC = (): JSX.Element => {
     const atpRef = useRef<HTMLTextAreaElement>(null);
     const conditionRef = useRef<HTMLTextAreaElement>(null);
     const commentRef = useRef<HTMLTextAreaElement>(null);
+    const illegalRef = useRef<HTMLInputElement>(null);
+    const [recommend, setRecommend] = useState('recommend');
+
+    const attachmentsRef = useRef<HTMLInputElement>(null);
+    const [attachments, setAttachments] = useState<File>();
 
 
     const submit = async (): Promise<boolean> => {
@@ -165,6 +172,10 @@ const LandSection: React.FC = (): JSX.Element => {
                 comments_dept: z
                     .string()
                     .nonempty("Rejection reason is required."),
+                illegal_sqmt: z
+                    .string()
+                    .nonempty("Road access is required."),
+                recommend: z.boolean({ required_error: "Recommend is reqired." }),
             })
             .strict();
 
@@ -183,9 +194,23 @@ const LandSection: React.FC = (): JSX.Element => {
             atp_recommendation: atpRef!.current!.value,
             condition_to_follow: conditionRef!.current!.value,
             comments_dept: commentRef!.current!.value,
+            illegal_sqmt: illegalRef!.current!.value,
+            recommend: recommend === 'recommend'
         };
 
         const parsed = LandScheme.safeParse(landScheme);
+
+        let req: any = landScheme
+
+        if (attachments != null) {
+            const attach = await UploadFile(attachments);
+            if (attach.status) {
+                req.attachments = attach.data
+            } else {
+                toast.error("Unable to upload attachment", { theme: "light" });
+                return false;
+            }
+        }
 
 
         if (parsed.success) {
@@ -197,7 +222,7 @@ const LandSection: React.FC = (): JSX.Element => {
                     }
                 }`,
                 veriables: {
-                    updateLandsectionInput: landScheme
+                    updateLandsectionInput: req
                 },
             });
             if (!data.status) {
@@ -702,6 +727,28 @@ const LandSection: React.FC = (): JSX.Element => {
     }
 
 
+    const sendtolandillegal = async () => {
+        const data = await ApiCall({
+            query: `
+                    query sendFileOutsideillegal($sendFileLandsectionInput:SendFileLandsectionInput!){
+                        sendFileOutsideillegal(sendFileLandsectionInput:$sendFileLandsectionInput)
+                      }
+                    `,
+            veriables: {
+                sendFileLandsectionInput: {
+                    stageId: form.land_stageid.toString(),
+                    formRefId: form.land_formid.toString(),
+                    documentUrl: form.attachments
+                }
+            },
+        });
+        if (!data.data.sendFileOutsideillegal) {
+            return toast.error("Unable to send file to Land section.", { theme: "light" });
+        }
+
+    }
+
+
     return (
         <>
             {/* forward box start here */}
@@ -818,6 +865,32 @@ const LandSection: React.FC = (): JSX.Element => {
                     </div>
                 </div>
                 {/*--------------------- section 1 end here ------------------------- */}
+
+                {!((common.form_status == 1 && (user.id == common.auth_user_id)) ||
+                    (common.form_status == 75 && (user.id == 6 || user.id == common.auth_user_id)) ||
+                    (common.form_status == 100 && (user.id == 5 || user.id == 6 || user.id == common.auth_user_id))) ?
+                    <div className="flex  flex-wrap gap-4 gap-y-2 px-4 py-2 my-2">
+                        <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal text-left text-gray-700 ">
+                            <span className="mr-2">1.7</span> Recommend status
+                        </div>
+                        {form.recommend == undefined ?
+                            <div className="flex-none gap-10 lg:flex-1 w-full lg:w-auto flex">
+                                <label className='flex1'>
+                                    <input type="radio" value="recommend" checked={recommend === 'recommend'} onChange={(e) => setRecommend(e.target.value)} />
+                                    Recommended
+                                </label>
+                                <label className='flex1'>
+                                    <input type="radio" value="notrecommend" checked={recommend === 'notrecommend'} onChange={(e) => setRecommend(e.target.value)} />
+                                    Not Recommended
+                                </label>
+                            </div>
+                            :
+                            <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal p-2 bg-gray-200 rounded-md">
+                                {form.recommend ? "YES" : "NO"}
+                            </div>
+                        }
+                    </div>
+                    : null}
 
                 {
                     (common.form_status == 1 && (user.id == common.auth_user_id)) ||
@@ -1048,6 +1121,87 @@ const LandSection: React.FC = (): JSX.Element => {
                                     </div>
                                 }
                             </div>
+                            <div className="flex  flex-wrap gap-4 gap-y-2 px-4 py-2 my-2">
+                                <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal text-left text-gray-700 ">
+                                    <span className="mr-2">2.12</span> Illegal (sqmt)
+                                </div>
+                                {form.illegal_sqmt == undefined ?
+                                    <div className="flex-none lg:flex-1 w-full lg:w-auto">
+                                        <input
+                                            ref={illegalRef}
+                                            placeholder="Illegal sqmt."
+                                            className=" w-full border-2 border-gray-600 bg-transparent outline-none fill-none text-slate-800 p-2"
+                                        />
+                                    </div>
+                                    :
+                                    <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal p-2 bg-gray-200 rounded-md">
+                                        {form.illegal_sqmt} (sqmt)
+                                    </div>
+                                }
+                            </div>
+                            <div className="flex  flex-wrap gap-4 gap-y-2 px-4 py-2 my-2">
+                                <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal text-left text-gray-700 ">
+                                    <span className="mr-2">2.12</span> Photograph attach
+                                </div>
+                                {form.attachments == undefined ?
+                                    <div className="flex-none flex gap-4 lg:flex-1 w-full lg:w-auto">
+                                        <div className="hidden">
+                                            <input type="file" ref={attachmentsRef} accept="*/*" onChange={(e) => handleLogoChange(e, setAttachments)} />
+                                        </div>
+                                        <button
+                                            onClick={() => attachmentsRef.current?.click()}
+                                            className="py-1 w-full sm:w-auto text-white text-lg px-4 bg-green-500 text-center rounded-md font-medium"
+                                        >
+                                            <div className="flex items-center gap-2">
+                                                <Fa6SolidLink></Fa6SolidLink> {attachments == null ? "Attach Doc." : "Update Doc."}
+                                            </div>
+                                        </button>
+                                        {
+                                            attachments != null ?
+                                                <a target="_blank" href={URL.createObjectURL(attachments)}
+                                                    className="py-1 w-full sm:w-auto flex items-center gap-2  text-white text-lg px-4 bg-green-500 text-center rounded-md font-medium">
+                                                    <Fa6SolidFileLines></Fa6SolidFileLines>
+                                                    <p>
+                                                        View Doc.
+                                                    </p>
+                                                </a>
+                                                : null
+                                        }
+                                    </div>
+                                    :
+                                    <div className="flex-none flex gap-4 lg:flex-1 w-full lg:w-auto">
+                                        <a target="_blank"
+                                            href={form.attachments}
+                                            className="py-1 w-full sm:w-auto text-white text-lg px-4 bg-green-500 text-center rounded-md font-medium"
+                                        >
+                                            <div className="flex items-center gap-2">
+                                                <Fa6SolidLink></Fa6SolidLink> View Doc.
+                                            </div>
+                                        </a>
+                                    </div>
+                                }
+                            </div>
+                            <div className="flex  flex-wrap gap-4 gap-y-2 px-4 py-2 my-2">
+                                <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal text-left text-gray-700 ">
+                                    <span className="mr-2">2.13</span> Recommend status
+                                </div>
+                                {form.recommend == undefined ?
+                                    <div className="flex-none gap-10 lg:flex-1 w-full lg:w-auto flex">
+                                        <label className='flex1'>
+                                            <input type="radio" value="recommend" checked={recommend === 'recommend'} onChange={(e) => setRecommend(e.target.value)} />
+                                            Recommended
+                                        </label>
+                                        <label className='flex1'>
+                                            <input type="radio" value="notrecommend" checked={recommend === 'notrecommend'} onChange={(e) => setRecommend(e.target.value)} />
+                                            Not Recommended
+                                        </label>
+                                    </div>
+                                    :
+                                    <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal p-2 bg-gray-200 rounded-md">
+                                        {form.recommend ? "YES" : "NO"}
+                                    </div>
+                                }
+                            </div>
                         </>
                         :
                         null
@@ -1111,6 +1265,8 @@ const LandSection: React.FC = (): JSX.Element => {
                                     :
                                     null
                                 } */}
+
+
                                 {common.form_status == 1 && user.id == common.auth_user_id ?
                                     <button
                                         onClick={async () => {
@@ -1119,7 +1275,7 @@ const LandSection: React.FC = (): JSX.Element => {
                                                 setForwardBox(val => true);
                                                 setNextData(val => ({
                                                     title: "Forward to JTP",
-                                                    formstatus: 75,
+                                                    formstatus: 25,
                                                     querytype: "INTRA",
                                                     authuserid: "6",
                                                     foacaluserid: "5",
@@ -1137,7 +1293,59 @@ const LandSection: React.FC = (): JSX.Element => {
                                     :
                                     null
                                 }
-                                {common.form_status == 75 && user.id == 6 ?
+
+
+                                {common.form_status == 25 && user.id == 6 ?
+                                    <button
+                                        onClick={async () => {
+
+                                            setForwardBox(val => true);
+                                            setNextData(val => ({
+                                                title: "Forward to ATP",
+                                                formstatus: 50,
+                                                querytype: "INTRA",
+                                                authuserid: "5",
+                                                foacaluserid: "5",
+                                                intrauserid: "5,6,12",
+                                                interuserid: "0",
+                                                touserid: 5,
+                                                querystatus: "INPROCESS"
+                                            }));
+
+                                        }}
+                                        className="py-1 w-full sm:w-auto text-white text-lg px-4 bg-cyan-500 text-center rounded-md font-medium"
+                                    >
+                                        Forward to ATP
+                                    </button>
+                                    :
+                                    null
+                                }
+                                {common.form_status == 50 && user.id == 5 ?
+                                    <button
+                                        onClick={async () => {
+
+                                            setForwardBox(val => true);
+                                            setNextData(val => ({
+                                                title: "Forward to M.S.",
+                                                formstatus: 75,
+                                                querytype: "INTRA",
+                                                authuserid: "4",
+                                                foacaluserid: "5",
+                                                intrauserid: "4,5,6,12",
+                                                interuserid: "0",
+                                                touserid: 4,
+                                                querystatus: "INPROCESS"
+                                            }));
+
+                                        }}
+                                        className="py-1 w-full sm:w-auto text-white text-lg px-4 bg-cyan-500 text-center rounded-md font-medium"
+                                    >
+                                        Forward to M.S.
+                                    </button>
+                                    :
+                                    null
+                                }
+                                {common.form_status == 75 && user.id == 4 ?
                                     <button
                                         onClick={async () => {
                                             setForwardBox(val => true);
@@ -1155,7 +1363,7 @@ const LandSection: React.FC = (): JSX.Element => {
                                         }}
                                         className="py-1 w-full sm:w-auto text-white text-lg px-4 bg-cyan-500 text-center rounded-md font-medium"
                                     >
-                                        Sign and Forward to ATP
+                                        Forward to ATP
                                     </button>
                                     :
                                     null
@@ -1163,6 +1371,9 @@ const LandSection: React.FC = (): JSX.Element => {
                                 {common.form_status == 100 && user.id == 5 ?
                                     <button
                                         onClick={async () => {
+                                            if (form.attachments != undefined) {
+                                                await sendtolandillegal();
+                                            }
                                             await sendtoland();
                                             setForwardBox(val => true);
                                             setNextData(val => ({
@@ -1185,7 +1396,8 @@ const LandSection: React.FC = (): JSX.Element => {
                                     null
                                 }
 
-                                {(common.form_status == 100 || common.form_status == 125) && user.id == 5 ?
+                                {/* {(common.form_status == 100 || common.form_status == 125) && (user.id == 5 || user.id == 4) ? */}
+                                {(user.id == 5 || user.id == 4) ?
                                     <Link to={`/landsectionpdf/${form.id}`} className="py-1 w-full sm:w-auto text-white text-lg px-4 bg-cyan-500 text-center rounded-md font-medium">View PDF</Link> : null
                                 }
                             </div>

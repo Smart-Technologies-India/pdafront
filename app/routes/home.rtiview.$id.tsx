@@ -551,7 +551,6 @@ const RightToInformationView = (): JSX.Element => {
                 </div>
                 {/*--------------------- section 1 end here ------------------------- */}
 
-
                 {/*--------------------- section 2 start here ------------------------- */}
                 <div className="w-full bg-indigo-500 py-2 rounded-md px-4 mt-4">
                     <p className="text-left font-semibold text-xl text-white"> 2. R.T.I. Details </p>
@@ -721,7 +720,6 @@ const RightToInformationView = (): JSX.Element => {
                                 {common.form_status == 25 && user.id == 6 ?
                                     <button
                                         onClick={() => {
-
                                             setForwardBox(val => true);
                                             setNextData(val => ({
                                                 title: "Forward to ATP",

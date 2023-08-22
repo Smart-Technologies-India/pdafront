@@ -1,5 +1,5 @@
 import { Link, useLoaderData, useNavigate } from "@remix-run/react";
-import { useEffect, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { Fa6SolidFileLines, Fa6SolidLink } from "~/components/icons/icons";
 import { ApiCall, UploadFile } from "~/services/api";
 import { toast } from "react-toastify";
@@ -73,7 +73,7 @@ export const loader: LoaderFunction = async (props: LoaderArgs) => {
           }
       `,
         veriables: {
-            id: parseInt(id!)
+            id: parseInt(data.data.getAllZoneById.village_id)
         },
     });
 
@@ -95,6 +95,33 @@ export const loader: LoaderFunction = async (props: LoaderArgs) => {
             }
         },
     });
+    const searchpayment = await ApiCall({
+        query: `
+        query searchPayment($searchPaymentInput:SearchPaymentInput!){
+            searchPayment(searchPaymentInput:$searchPaymentInput){
+            id,
+            form_id,
+            deptuser_id,
+            user_id,
+            type1,
+            amount1,
+            type2,
+            amount2,
+            type3,
+            amount3,
+            daycount,
+            paymentamout,
+            form_type,
+            paymentstatus
+            }
+          }
+      `,
+        veriables: {
+            searchPaymentInput: {
+                form_id: parseInt(data.data.getAllZoneById.id),
+            }
+        },
+    });
 
     return json({
         user: cookie,
@@ -102,7 +129,9 @@ export const loader: LoaderFunction = async (props: LoaderArgs) => {
         submit: submit.status,
         village: village.data.getAllVillageById,
         subdivision: subdivision.data.getSubDivision,
-        common: submit.data.searchCommon
+        common: submit.data.searchCommon,
+        payment: searchpayment.status,
+        paymentinfo: searchpayment.data.searchPayment[0]
     });
 };
 
@@ -119,8 +148,6 @@ const ZoneInofrmationView: React.FC = (): JSX.Element => {
     const isUser = user.role == "USER";
 
     const common = isSubmited ? loader.common[0] : null;
-
-
 
     interface landDetailsType {
         land: string | null;
@@ -203,6 +230,7 @@ const ZoneInofrmationView: React.FC = (): JSX.Element => {
 
 
     const [querybox, setQueryBox] = useState<boolean>(false);
+    const [paymentbox, setPaymentBox] = useState<boolean>(false);
     const queryRef = useRef<HTMLTextAreaElement>(null);
     const attachmentRef = useRef<HTMLInputElement>(null);
     const [attachment, setAttachment] = useState<File>();
@@ -423,8 +451,268 @@ const ZoneInofrmationView: React.FC = (): JSX.Element => {
     }
 
 
+    const timelimit = useRef<HTMLInputElement>(null);
+
+
+    const [payamt, setPayamt] = useState<{ [key: string]: number }>({
+        type1: 0,
+        amount1: 0,
+        type2: 0,
+        amount2: 0,
+        type3: 0,
+        amount3: 0,
+    });
+
+    const requestpayment = async () => {
+
+        if (
+            timelimit.current?.value == null ||
+            timelimit.current?.value == undefined ||
+            timelimit.current?.value == "" ||
+            parseInt(timelimit.current?.value
+            ) == 0) {
+            toast.error("Time limit is required.", { theme: "light" });
+        } else {
+            let req: any = {
+                form_id: from_data.id,
+                deptuser_id: parseInt(user.id),
+                user_id: parseInt(from_data.userId),
+                form_type: "ZONE",
+                paymentstatus: "PENDING",
+            };
+            if (payamt.type1 != 0) req.type1 = payamt.type1;
+            if (payamt.amount1 != 0) req.amount1 = payamt.amount1;
+            if (payamt.type2 != 0) req.type2 = payamt.type2;
+            if (payamt.amount2 != 0) req.amount2 = payamt.amount2;
+            if (payamt.type3 != 0) req.type3 = payamt.type3;
+            if (payamt.amount3 != 0) req.amount3 = payamt.amount3;
+            if (parseInt(timelimit!.current!.value) != 0) req.daycount = parseInt(timelimit!.current!.value);
+            if (
+                (payamt.type1 * payamt.amount1) +
+                (payamt.type2 * payamt.amount2) +
+                (payamt.type3 * payamt.amount3)
+                != 0
+            ) req.paymentamout = (payamt.type1 * payamt.amount1) +
+                (payamt.type2 * payamt.amount2) +
+                (payamt.type3 * payamt.amount3);
+
+            const addpayment = await ApiCall({
+                query: `
+                mutation createPayment($createPaymentInput:CreatePaymentInput!){
+                    createPayment(createPaymentInput:$createPaymentInput){
+                      id,
+                    }
+                  }
+              `,
+                veriables: {
+                    createPaymentInput: req
+                },
+            });
+
+            if (!addpayment.status) {
+                setPaymentBox(false);
+                toast.error(addpayment.message, { theme: "light" });
+            } else {
+                setPaymentBox(false);
+                toast.success("Payment request sent to user", { theme: "light" });
+            }
+        }
+    }
+
+
+
+    const handleInputChange = (key: string, value: number) => {
+        setPayamt((prevPayamt) => ({
+            ...prevPayamt,
+            [key]: value,
+        }));
+    };
+
+    console.log(loader.paymentinfo);
+
+    const paymentType = useRef<HTMLSelectElement>(null);
+    const refrancerRef = useRef<HTMLInputElement>(null);
+
+    const submitpayment = async () => {
+        console.log("woring");
+        if (
+            refrancerRef.current?.value == null ||
+            refrancerRef.current?.value == undefined ||
+            refrancerRef.current?.value == "") {
+            toast.error("Enter Payment Refrenace.", { theme: "light" });
+        } else if (
+            paymentType.current?.value == null ||
+            paymentType.current?.value == undefined ||
+            paymentType.current?.value == "" ||
+            parseInt(paymentType.current?.value
+            ) == 0) {
+            toast.error("Select Payment Type.", { theme: "light" });
+        } else {
+
+            const submitpayment = await ApiCall({
+                query: `
+                mutation updatePaymentById($updatePaymentInput:UpdatePaymentInput!){
+                    updatePaymentById(updatePaymentInput:$updatePaymentInput){
+                      id,
+                    }
+                  }
+              `,
+                veriables: {
+                    updatePaymentInput: {
+                        id: loader.paymentinfo.id,
+                        paymentstatus: "PAID",
+                        reference: refrancerRef.current?.value,
+                        paymentType: paymentType.current?.value,
+                    }
+                },
+            });
+
+            if (!submitpayment.status) {
+                toast.error(submitpayment.message, { theme: "light" });
+            } else {
+
+                const req: { [key: string]: any } = {
+                    "stage": "ZONE",
+                    "form_id": from_data.id,
+                    "from_user_id": Number(user.id),
+                    "to_user_id": 5,
+                    "form_status": common.form_status,
+                    "query_type": "PUBLIC",
+                    "remark": `The payment of Rs. (${loader.paymentinfo.paymentamout}) requested from user is successfully paid vide ${paymentType.current?.value} with reference no ${refrancerRef.current?.value}.`,
+                    "query_status": "SENT"
+                }
+
+
+                const data = await ApiCall({
+                    query: `
+                    mutation createQuery($createQueryInput:CreateQueryInput!){
+                        createQuery(createQueryInput:$createQueryInput){
+                          id,
+                        }
+                      }
+                    `,
+                    veriables: {
+                        createQueryInput: req
+                    },
+                });
+
+                if (data.status) {
+                    toast.success("Submit successfully.", { theme: "light" });
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1500);
+                } else {
+                    return toast.error(data.message, { theme: "light" });
+                }
+            }
+        }
+    }
+
+
     return (
         <>
+            {/* payment box start here */}
+            <div className={`fixed top-0 left-0 bg-black bg-opacity-20 min-h-screen w-full  z-50 ${paymentbox ? "grid place-items-center" : "hidden"}`}>
+                <div className="bg-white p-4 rounded-md w-96">
+                    <h3 className="text-2xl text-center font-semibold">Payment Request</h3>
+                    <div className="w-full h-[2px] bg-gray-800 my-4"></div>
+                    <div className="flex gap-3 my-2 justify-between">
+                        <p className="flex-1"></p>
+                        <p className="flex-1">Page Qty.</p>
+                        <p className="flex-1">Amount</p>
+                        <p className="flex-1">Total</p>
+                    </div>
+                    <div className="flex gap-3 my-2 justify-between">
+                        <p className="shrink-0 flex-1">Type 1</p>
+                        <input
+                            value={payamt.type1}
+                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                const newValue = parseInt(e.target.value) || 0;
+                                handleInputChange('type1', newValue);
+                            }}
+                            type="text" className="flex-1 w-20 bg-[#eeeeee] fill-none focus:outline-none outline-none arounded-md py-1 px-2" />
+                        <input
+                            value={payamt.amount1}
+                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                const newValue = parseInt(e.target.value) || 0;
+                                handleInputChange('amount1', newValue);
+                            }}
+                            type="text" className="flex-1 w-20 bg-[#eeeeee] fill-none focus:outline-none outline-none rounded-md py-1 px-2" />
+                        <p className="flex-1 shrink-0">
+                            {payamt.type1 * payamt.amount1}
+                        </p>
+                    </div>
+                    <div className="flex gap-3 my-2 justify-between">
+                        <p className="shrink-0 flex-1">Type 2</p>
+                        <input
+                            value={payamt.type2}
+                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                const newValue = parseInt(e.target.value) || 0;
+                                handleInputChange('type2', newValue);
+                            }}
+                            type="text" className="flex-1 w-20 bg-[#eeeeee] fill-none focus:outline-none outline-none rounded-md py-1 px-2" />
+                        <input
+                            value={payamt.amount2}
+                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                const newValue = parseInt(e.target.value) || 0;
+                                handleInputChange('amount2', newValue);
+                            }}
+                            type="text" className="flex-1 w-20 bg-[#eeeeee] fill-none focus:outline-none outline-none rounded-md py-1 px-2" />
+                        <p className="flex-1 shrink-0">
+                            {payamt.type2 * payamt.amount2}
+                        </p>
+                    </div>
+                    <div className="flex gap-3 my-2 justify-between">
+                        <p className="shrink-0 flex-1">Type 3</p>
+                        <input
+                            value={payamt.type3}
+                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                const newValue = parseInt(e.target.value) || 0;
+                                handleInputChange('type3', newValue);
+                            }}
+                            type="text" className="flex-1 w-20 bg-[#eeeeee] fill-none focus:outline-none outline-none rounded-md py-1 px-2" />
+                        <input
+                            value={payamt.amount3}
+                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                const newValue = parseInt(e.target.value) || 0;
+                                handleInputChange('amount3', newValue);
+                            }}
+                            type="text" className="flex-1 w-20 bg-[#eeeeee] fill-none focus:outline-none outline-none rounded-md py-1 px-2" />
+                        <p className="flex-1 shrink-0">
+                            {payamt.type3 * payamt.amount3}
+                        </p>
+                    </div>
+                    <div className="w-full h-[1px] bg-gray-800 my-2"></div>
+                    <div className="flex gap-3 my-2 justify-between">
+                        <p className="shrink-0 flex-1">Total</p>
+                        <p className="shrink-0 flex-1">{payamt.type1 + payamt.type2 + payamt.type3}</p>
+                        <p className="shrink-0 flex-1">{payamt.amount1 + payamt.amount2 + payamt.amount3}</p>
+                        <p className="shrink-0 flex-1">{(payamt.type1 * payamt.amount1) + (payamt.type2 * payamt.amount2) + (payamt.type3 * payamt.amount3)}</p>
+                    </div>
+
+                    <div className="w-full h-[1px] bg-gray-800 my-2"></div>
+                    <div className="flex gap-3 my-2 justify-between">
+                        <p className="flex-2">Time Limit [Day]</p>
+                        <div className="flex-1"></div>
+                        <input ref={timelimit} onChange={(e: ChangeEvent<HTMLInputElement>) => { e.target.value = e.target.value.replace(/\D/g, "") }} type="text" className="flex-1 w-20 bg-[#eeeeee] fill-none focus:outline-none outline-none rounded-md py-1 px-2" />
+                    </div>
+                    <div className="flex flex-wrap gap-6 mt-4">
+                        <button
+                            onClick={requestpayment}
+                            className="py-1 w-full sm:w-auto text-white text-lg px-4 bg-green-500 text-center rounded-md font-medium grow"
+                        >
+                            Request
+                        </button>
+                        <button
+                            onClick={() => setPaymentBox(val => false)}
+                            className="py-1 w-full sm:w-auto text-white text-lg px-4 bg-rose-500 text-center rounded-md font-medium grow"
+                        >
+                            Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {/* payment box end here */}
             {/* reject box start here */}
             <div className={`fixed top-0 left-0 bg-black bg-opacity-20 min-h-screen w-full  z-50 ${rejectbox ? "grid place-items-center" : "hidden"}`}>
                 <div className="bg-white p-4 rounded-md w-80">
@@ -554,7 +842,7 @@ const ZoneInofrmationView: React.FC = (): JSX.Element => {
             </div>
             {/* forward box end here */}
             <div className="bg-white rounded-md shadow-lg p-4 my-4 w-full">
-                <h1 className="text-gray-800 text-3xl font-semibold text-center">Zone Infomation</h1>
+                <h1 className="text-gray-800 text-3xl font-semibold text-center">Zone Information</h1>
                 <div className="w-full flex gap-4 my-4">
                     <div className="grow bg-gray-700 h-[2px]"></div>
                     <div className="w-10 bg-gray-500 h-[3px]"></div>
@@ -730,6 +1018,14 @@ const ZoneInofrmationView: React.FC = (): JSX.Element => {
                                 >
                                     Query
                                 </button>
+                                {loader.payment ? null :
+                                    <button
+                                        onClick={() => setPaymentBox(val => true)}
+                                        className="py-1 w-full sm:w-auto text-white text-lg px-4 bg-green-500 text-center rounded-md font-medium"
+                                    >
+                                        Payment
+                                    </button>
+                                }
                                 {common.form_status == 1 ?
                                     <button
                                         onClick={() => { setRejectid(val => common.id); setRejectBox(true); }}
@@ -772,25 +1068,25 @@ const ZoneInofrmationView: React.FC = (): JSX.Element => {
                                             forwardRef!.current!.value = `The zone info pertaining to land with survey No. ${from_data.survey_no} & sub Division ${from_data.sub_division} of village ${villagedata.name} is ${landDetails.zone} zone.`;
                                             setForwardBox(val => true);
                                             setNextData(val => ({
-                                                title: "Forward to ATP",
+                                                title: "Forward to M.S.",
                                                 formstatus: 50,
                                                 querytype: "INTRA",
-                                                authuserid: "5",
+                                                authuserid: "4",
                                                 foacaluserid: "5",
                                                 intrauserid: "5,6",
                                                 interuserid: "0",
-                                                touserid: 5,
+                                                touserid: 4,
                                                 querystatus: "INPROCESS"
                                             }));
                                         }}
                                         className="py-1 w-full sm:w-auto text-white text-lg px-4 bg-cyan-500 text-center rounded-md font-medium"
                                     >
-                                        Forward to ATP
+                                        Forward to M.S.
                                     </button>
                                     :
                                     null
                                 }
-                                {common.form_status == 50 && user.id == 5 ?
+                                {common.form_status == 50 && user.id == 4 ?
                                     <button
                                         onClick={() => {
                                             forwardRef!.current!.value = `The zone info requested as per application number ${from_data.id} pertaining to your land with survey No. ${from_data.survey_no} & sub Division ${from_data.sub_division} of village ${villagedata.name} is ${landDetails.zone} zone.`;
@@ -815,6 +1111,9 @@ const ZoneInofrmationView: React.FC = (): JSX.Element => {
                                     null
                                 }
 
+                                {(common.form_status == 50) && (user.id == 5) ?
+                                    <Link to={`/zonepdf/${from_data.id}`} className="py-1 w-full sm:w-auto text-white text-lg px-4 bg-cyan-500 text-center rounded-md font-medium">View PDF</Link> : null
+                                }
                             </div>
                         </>
                     :
@@ -838,8 +1137,84 @@ const ZoneInofrmationView: React.FC = (): JSX.Element => {
                         null
                 }
             </div >
+            {user.id == from_data.userId && loader.payment && loader.paymentinfo.paymentstatus == "PENDING" ?
+                <div className="p-6 bg-white rounded-lg shadow-lg my-8 grid place-items-center">
+                    <div className="bg-white p-4 rounded-md w-96">
+                        <h3 className="text-2xl text-center font-semibold">Payment Request</h3>
+                        <div className="w-full h-[2px] bg-gray-800 my-4"></div>
+                        <div className="flex gap-3 my-2 justify-between">
+                            <p className="flex-1"></p>
+                            <p className="flex-1 text-center">Page Qty.</p>
+                            <p className="flex-1 text-center">Amount</p>
+                            <p className="flex-1 text-center">Total</p>
+                        </div>
+                        <div className="flex gap-3 my-2 justify-between">
+                            <p className="shrink-0 flex-1">Type 1</p>
+                            <p className="shrink-0 flex-1 text-center">{loader.paymentinfo.type1 ?? 0}</p>
+                            <p className="shrink-0 flex-1 text-center">{loader.paymentinfo.amount1 ?? 0}</p>
+                            <p className="flex-1 shrink-0 text-center">
+                                {loader.paymentinfo.type1 ?? 0 * loader.paymentinfo.amount1 ?? 0}
+                            </p>
+                        </div>
+                        <div className="flex gap-3 my-2 justify-between">
+                            <p className="shrink-0 flex-1">Type 2</p>
+                            <p className="shrink-0 flex-1 text-center">{loader.paymentinfo.type2 ?? 0}</p>
+                            <p className="shrink-0 flex-1 text-center">{loader.paymentinfo.amount2 ?? 0}</p>
+                            <p className="flex-1 shrink-0 text-center">
+                                {loader.paymentinfo.type2 ?? 0 * loader.paymentinfo.amount2 ?? 0}
+                            </p>
+                        </div>
+                        <div className="flex gap-3 my-2 justify-between">
+                            <p className="shrink-0 flex-1">Type 3</p>
+                            <p className="shrink-0 flex-1 text-center">{loader.paymentinfo.type3 ?? 0}</p>
+                            <p className="shrink-0 flex-1 text-center">{loader.paymentinfo.amount3 ?? 0}</p>
+                            <p className="flex-1 shrink-0 text-center">
+                                {loader.paymentinfo.type3 ?? 0 * loader.paymentinfo.amount3 ?? 0}
+                            </p>
+                        </div>
+                        <div className="w-full h-[1px] bg-gray-800 my-2"></div>
+                        <div className="flex gap-3 my-2 justify-between">
+                            <p className="shrink-0 flex-1">Total</p>
+                            <p className="shrink-0 flex-1 text-center">{loader.paymentinfo.type1 ?? 0 + loader.paymentinfo.type2 ?? 0 + loader.paymentinfo.type3 ?? 0}</p>
+                            <p className="shrink-0 flex-1 text-center">{loader.paymentinfo.amount1 ?? 0 + loader.paymentinfo.amount2 ?? 0 + loader.paymentinfo.amount3 ?? 0}</p>
+                            <p className="shrink-0 flex-1 text-center">{(loader.paymentinfo.type1 ?? 0 * loader.paymentinfo.amount1 ?? 0) + (loader.paymentinfo.type2 ?? 0 * loader.paymentinfo.amount1 ?? 0) + (loader.paymentinfo.type3 * loader.paymentinfo.amount3 ?? 0)}</p>
+                        </div>
+
+                        <div className="w-full h-[1px] bg-gray-800 my-2"></div>
+                        <div className="flex gap-3 my-2 justify-between">
+                            <p className="flex-2">Time Limit [Day]</p>
+                            <div className="flex-1"></div>
+                            <p className="flex-1">{loader.paymentinfo.paymentamout} </p>
+                        </div>
+                        <div className="flex gap-3 my-2 justify-between items-center">
+                            <p className="flex-2 shrink-0">Panyment Type</p>
+                            <select ref={paymentType} defaultValue={"0"} className="flex-2 px-4 bg-primary-700 fill-none outline-none border-2 border-black text-black py-2 w-96">
+                                <option value="0" className=" text-black text-lg " disabled>Select Payent Type</option>
+                                <option className=" text-black text-lg" value="CASH">CASH</option>
+                                <option className=" text-black text-lg" value="CHEQUE">CHEQUE</option>
+                                <option className=" text-black text-lg" value="NETBANKING">NETBANKING</option>
+                                <option className=" text-black text-lg" value="UPI">UPI</option>
+                                <option className=" text-black text-lg" value="CCDC">CREDIT/DEBIT CARD</option>
+                            </select>
+                        </div>
+                        <div className="flex gap-3 my-2 justify-between items-center">
+                            <p className="flex-2 shrink-0">Panyment Reference</p>
+                            <input
+                                ref={refrancerRef}
+                                type="text" className="flex-2 bg-[#eeeeee] fill-none focus:outline-none outline-none arounded-md py-1 px-2" />
+                        </div>
+                        <button
+                            onClick={submitpayment}
+                            className="py-1 w-full sm:w-auto text-white text-lg px-4 bg-green-500 text-center rounded-md font-medium grow"
+                        >
+                            Pay
+                        </button>
+                    </div>
+
+                </div>
+                : null}
             <div className="p-6 bg-white rounded-lg shadow-lg my-8">
-                <h1 className="text-gray-800 text-3xl font-semibold text-center">Notings</h1>
+                <h1 className="text-gray-800 text-3xl font-semibold text-center">{user.id == from_data.userId ? "Department Comment" : "Notings"}</h1>
                 <div className="w-full flex gap-4 my-4">
                     <div className="grow bg-gray-700 h-[2px]"></div>
                     <div className="w-10 bg-gray-500 h-[3px]"></div>

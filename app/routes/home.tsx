@@ -172,7 +172,8 @@ const Home: React.FC = (): JSX.Element => {
                                                 active={asideindex === SideBarTabs.Files}
                                             ></SidebarTab>
                                         </Link>
-                                        <div className="w-full h-[2px] bg-gray-800 my-4"></div>
+                                        <div className="w-full h-[2px] bg-gray-800 my-3"></div>
+                                        <p className="text-left px-2 font-serif text-sm my-2 text-gray-600 w-full">Citizen Files</p>
                                         <Link
                                             to={"/home/vzoneinfo"}
                                             onClick={() => achangeindex(SideBarTabs.ZoneInfo)}
@@ -203,7 +204,8 @@ const Home: React.FC = (): JSX.Element => {
                                                 active={asideindex === SideBarTabs.OldCopy}
                                             ></SidebarTab>
                                         </Link>
-                                        <div className="w-full h-[2px] bg-gray-800 my-4"></div>
+                                        <div className="w-full h-[2px] bg-gray-800 my-3"></div>
+                                        <p className="text-left px-2 font-serif text-sm my-2 text-gray-600 w-full">Department Files</p>
                                         <Link
                                             to={"/home/vpetroleum"}
                                             onClick={() => achangeindex(SideBarTabs.Petroleum)}
@@ -225,7 +227,8 @@ const Home: React.FC = (): JSX.Element => {
                                                 active={asideindex === SideBarTabs.Unauthorisd}
                                             ></SidebarTab>
                                         </Link>
-                                        <div className="w-full h-[2px] bg-gray-800 my-4"></div>
+                                        <div className="w-full h-[2px] bg-gray-800 my-3"></div>
+                                        <p className="text-left px-2 font-serif text-sm my-2 text-gray-600 w-full">Intra Department Files</p>
                                         <Link
                                             to={"/home/vlandsection"}
                                             onClick={() => achangeindex(SideBarTabs.landSection)}
@@ -242,7 +245,7 @@ const Home: React.FC = (): JSX.Element => {
                                         >
                                             <SidebarTab
                                                 icon={Fa6SolidCodeBranch}
-                                                title="Architcect Files"
+                                                title="CP/PL/OC Auto Approval System"
                                                 active={asideindex === SideBarTabs.DesignPoint}
                                             ></SidebarTab>
                                         </button>
@@ -327,13 +330,13 @@ type SideBarTabProps = {
 const SidebarTab = (props: SideBarTabProps) => {
     return (
         <div
-            className={`w-60 md:w-auto font-semibold flex gap-2 items-center my-1 b  py-1 px-2 rounded-md text-xl cursor-pointer ${props.active
+            className={`w-60 md:w-auto font-medium flex gap-2 items-center my-1 b  py-1 px-2 rounded-md text-left text-lg cursor-pointer ${props.active
                 ? "bg-indigo-500 text-white"
                 : "text-gray-800 hover:text-white hover:bg-indigo-500"
                 }`}
         >
             <props.icon></props.icon>
-            <p>{props.title}</p>
+            <p className="text-left">{props.title}</p>
         </div>
     );
 };

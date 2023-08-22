@@ -93,7 +93,7 @@ export const loader: LoaderFunction = async (props: LoaderArgs) => {
           }
       `,
         veriables: {
-            id: parseInt(id!)
+            id: parseInt(data.data.getPetroleumById.village_id)
         },
     });
 
