@@ -131,7 +131,7 @@ export const loader: LoaderFunction = async (props: LoaderArgs) => {
         subdivision: subdivision.data.getSubDivision,
         common: submit.data.searchCommon,
         payment: searchpayment.status,
-        paymentinfo: searchpayment.data.searchPayment[0]
+        paymentinfo: searchpayment.status ? searchpayment.data.searchPayment[0] : ""
     });
 };
 
@@ -367,10 +367,14 @@ const ZoneInofrmationView: React.FC = (): JSX.Element => {
                 toast.error(data.message, { theme: "light" });
             } else {
                 setForwardBox(val => false);
-                toast.success("Form sent successfully.", { theme: "light" });
-                setTimeout(() => {
-                    window.location.reload();
-                }, 1500)
+                // toast.success("Form sent successfully.", { theme: "light" });
+                if (common.form_status == 1) {
+                    setPaymentBox(val => true);
+                } else {
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1500)
+                }
 
             }
         } else {
@@ -513,8 +517,43 @@ const ZoneInofrmationView: React.FC = (): JSX.Element => {
                 setPaymentBox(false);
                 toast.error(addpayment.message, { theme: "light" });
             } else {
-                setPaymentBox(false);
-                toast.success("Payment request sent to user", { theme: "light" });
+
+
+                const reqdata: { [key: string]: any } = {
+                    "stage": "ZONE",
+                    "form_id": from_data.id,
+                    "from_user_id": 5,
+                    "to_user_id": Number(user.id),
+                    "form_status": common.form_status,
+                    "query_type": "PUBLIC",
+                    "remark": `Payment Request of Rs. (${req.paymentamout}) requested successfully from user.`,
+                    "query_status": "SENT"
+                }
+
+
+                const data = await ApiCall({
+                    query: `
+                    mutation createQuery($createQueryInput:CreateQueryInput!){
+                        createQuery(createQueryInput:$createQueryInput){
+                          id,
+                        }
+                      }
+                    `,
+                    veriables: {
+                        createQueryInput: reqdata
+                    },
+                });
+
+                if (data.status) {
+                    setPaymentBox(false);
+                    toast.success("Payment request sent to user", { theme: "light" });
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1500);
+                } else {
+                    return toast.error(data.message, { theme: "light" });
+                }
+
             }
         }
     }
@@ -528,7 +567,6 @@ const ZoneInofrmationView: React.FC = (): JSX.Element => {
         }));
     };
 
-    console.log(loader.paymentinfo);
 
     const paymentType = useRef<HTMLSelectElement>(null);
     const refrancerRef = useRef<HTMLInputElement>(null);
@@ -1018,15 +1056,15 @@ const ZoneInofrmationView: React.FC = (): JSX.Element => {
                                 >
                                     Query
                                 </button>
-                                {loader.payment ? null :
+                                {/* {loader.payment ? null :
                                     <button
                                         onClick={() => setPaymentBox(val => true)}
                                         className="py-1 w-full sm:w-auto text-white text-lg px-4 bg-green-500 text-center rounded-md font-medium"
                                     >
                                         Payment
                                     </button>
-                                }
-                                {common.form_status == 1 ?
+                                } */}
+                                {common.form_status == 1 && (user.id == 5 || user.id == 6) ?
                                     <button
                                         onClick={() => { setRejectid(val => common.id); setRejectBox(true); }}
                                         className="py-1 w-full sm:w-auto text-white text-lg px-4 bg-rose-500 text-center rounded-md font-medium"
@@ -1221,7 +1259,7 @@ const ZoneInofrmationView: React.FC = (): JSX.Element => {
                     <div className="grow bg-gray-700 h-[2px]"></div>
                 </div>
                 {notings.length == 0 ?
-                    <h3 className="text-2xl font-semibold text-center bg-rose-500 bg-opacity-25 rounded-md border-l-4 border-rose-500 py-2  text-rose-500">You have not submitted any query.</h3> :
+                    <h3 className="text-2xl font-semibold text-center bg-rose-500 bg-opacity-25 rounded-md border-l-4 border-rose-500 py-2  text-rose-500">No queries pending.</h3> :
                     <>
                         {notings.map((val: any, index: number) => {
                             return (

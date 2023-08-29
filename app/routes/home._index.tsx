@@ -6,6 +6,7 @@ import ChartDataLabels from "chartjs-plugin-datalabels";
 import { LoaderArgs, LoaderFunction, json, redirect } from "@remix-run/node";
 import { ApiCall } from "~/services/api";
 import { userPrefs } from "~/cookies";
+import sideBarStore, { SideBarTabs } from "~/state/sidebar";
 ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, ...registerables, ChartDataLabels);
 
 export const loader: LoaderFunction = async (props: LoaderArgs) => {
@@ -13,6 +14,11 @@ export const loader: LoaderFunction = async (props: LoaderArgs) => {
     const cookie: any = await userPrefs.parse(cookieHeader);
     if (cookie.role == "USER") {
         return redirect("/home/files/");
+    }
+
+    const usersshow = ["COLLECTOR", "DYCOLLECTOR", "ATP", "JTP"];
+    if (!usersshow.includes(cookie.role)) {
+        return redirect("/home/files")
     }
 
 
@@ -135,6 +141,9 @@ const DashBoard = (): JSX.Element => {
     const officercount = loader.officercount;
     const processcount = loader.processcount;
     const villageprocess = loader.villageprocess;
+
+    const achangeindex = sideBarStore((state) => state.changeTab);
+
 
 
 
@@ -413,12 +422,12 @@ const DashBoard = (): JSX.Element => {
 
                 <div className="bg-white grow flex flex-col">
                     <div className="my-8 bg-white flex gap-6 flex-wrap justify-between items-center">
-                        <DashboradCard title="Zone Info" color="bg-gradient-to-r from-rose-400 to-rose-600" textcolor="text-rose-500" link="/" value={filecount.ZONE} />
-                        <DashboradCard title="Old Copy" color="bg-gradient-to-r from-cyan-400 to-cyan-600" textcolor="text-cyan-500" link="/" value={filecount.OLDCOPY} />
-                        <DashboradCard title="RTI" color="bg-gradient-to-r from-blue-400 to-blue-600" textcolor="text-blue-500" link="/" value={filecount.RTI} />
-                        <DashboradCard title="Petroleum" color="bg-gradient-to-r from-green-400 to-green-600" textcolor="text-green-500" link="/" value={filecount.PETROLEUM} />
-                        <DashboradCard title="Unauthorized" color="bg-gradient-to-r from-slate-400 to-slate-600" textcolor="text-slate-500" link="/" value={filecount.UNAUTHORIZED} />
-                        <DashboradCard title="Land Section" color="bg-gradient-to-r from-indigo-400 to-indigo-600" textcolor="text-indigo-500" link="/" value={filecount.LANDRECORDS} />
+                        <DashboradCard onclick={() => achangeindex(SideBarTabs.ZoneInfo)} title="Zone Info" color="bg-gradient-to-r from-rose-400 to-rose-600" textcolor="text-rose-500" link="/home/vzoneinfo" value={filecount.ZONE} />
+                        <DashboradCard onclick={() => achangeindex(SideBarTabs.OldCopy)} title="Old Copy" color="bg-gradient-to-r from-cyan-400 to-cyan-600" textcolor="text-cyan-500" link="/home/voldcopy" value={filecount.OLDCOPY} />
+                        <DashboradCard onclick={() => achangeindex(SideBarTabs.Rti)} title="RTI" color="bg-gradient-to-r from-blue-400 to-blue-600" textcolor="text-blue-500" link="/home/vrti" value={filecount.RTI} />
+                        <DashboradCard onclick={() => achangeindex(SideBarTabs.Petroleum)} title="Petroleum" color="bg-gradient-to-r from-green-400 to-green-600" textcolor="text-green-500" link="/home/vpetroleum" value={filecount.PETROLEUM} />
+                        <DashboradCard onclick={() => achangeindex(SideBarTabs.Unauthorisd)} title="Unauthorized" color="bg-gradient-to-r from-slate-400 to-slate-600" textcolor="text-slate-500" link="/home/vunauthorised" value={filecount.UNAUTHORIZED} />
+                        <DashboradCard onclick={() => achangeindex(SideBarTabs.landSection)} title="Land Section" color="bg-gradient-to-r from-indigo-400 to-indigo-600" textcolor="text-indigo-500" link="/home/vlandsection" value={filecount.LANDRECORDS} />
                     </div>
                 </div>
             </div>
@@ -482,11 +491,12 @@ interface DashboradCardProps {
     value: number;
     color: string;
     textcolor: string;
+    onclick: () => void;
 }
 
 const DashboradCard: React.FC<DashboradCardProps> = (props: DashboradCardProps): JSX.Element => {
     return (
-        <div className="h-32 w-52 rounded-md bg-white shadow-lg border-2 flex flex-col">
+        <div className="h-32 w-52 rounded-md bg-white shadow-lg border-2 flex flex-col" onClick={props.onclick}>
             <p className={`grow text-2xl ${props.textcolor} font-semibold text-center`}>{props.title}</p>
             <p className={`grow text-5xl ${props.textcolor} font-semibold text-center`}>{props.value}</p>
             <Link to={props.link} className={`rounded-b-lg w-full py-2 ${props.color} text-white font-semibold text-xl inline-block text-center`}>VIEW</Link>

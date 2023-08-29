@@ -793,7 +793,7 @@ const OldCopyView: React.FC = (): JSX.Element => {
                                 >
                                     Query
                                 </button>
-                                {common.form_status == 1 ?
+                                {common.form_status == 1 && (user.id == 5 || user.id == 6) ?
                                     <button
                                         onClick={() => { setRejectid(val => common.id); setRejectBox(true); }}
                                         className="py-1 w-full sm:w-auto text-white text-lg px-4 bg-rose-500 text-center rounded-md font-medium"
@@ -903,14 +903,14 @@ const OldCopyView: React.FC = (): JSX.Element => {
             </div>
 
             <div className="p-6 bg-white rounded-lg shadow-lg my-8">
-                <h1 className="text-gray-800 text-3xl font-semibold text-center">Notings</h1>
+                <h1 className="text-gray-800 text-3xl font-semibold text-center">{user.id == from_data.userId ? "Department Comment" : "Notings"}</h1>
                 <div className="w-full flex gap-4 my-4">
                     <div className="grow bg-gray-700 h-[2px]"></div>
                     <div className="w-10 bg-gray-500 h-[3px]"></div>
                     <div className="grow bg-gray-700 h-[2px]"></div>
                 </div>
                 {notings.length == 0 ?
-                    <h3 className="text-2xl font-semibold text-center bg-rose-500 bg-opacity-25 rounded-md border-l-4 border-rose-500 py-2  text-rose-500">You have not submitted any query.</h3> :
+                    <h3 className="text-2xl font-semibold text-center bg-rose-500 bg-opacity-25 rounded-md border-l-4 border-rose-500 py-2  text-rose-500">No queries pending.</h3> :
                     <>
                         {notings.map((val: any, index: number) => {
                             return (

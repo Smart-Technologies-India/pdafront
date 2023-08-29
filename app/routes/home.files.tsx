@@ -3,7 +3,6 @@ import { Link, useLoaderData, useNavigate } from "@remix-run/react";
 import { useEffect, useState } from "react";
 import { userPrefs } from "~/cookies";
 import { ApiCall } from "~/services/api";
-import { toast } from "react-toastify";
 
 
 export const loader: LoaderFunction = async (props: LoaderArgs) => {
@@ -80,10 +79,18 @@ const Dashboard: React.FC = (): JSX.Element => {
     const id = user.id;
     const userdata = loader.userdata;
     const department = loader.departmentdata;
+    const navigator = useNavigate();
+
+    useEffect(() => {
+        if (user.role == "USER") {
+            if (userdata == undefined || userdata.length == 0 || userdata == null) navigator("/home/services");
+        }
+
+
+    }, []);
 
 
     const getViewLink = (value: string, id: number): string => {
-
         if (value == "PETROLEUM") {
             return `/home/petroleumview/${id}`;
         } else if (value == "RTI") {
@@ -107,7 +114,7 @@ const Dashboard: React.FC = (): JSX.Element => {
     return (
         <>
             <div className="bg-white rounded-md shadow-lg p-4 my-4 mb-10">
-                <h1 className="text-gray-800 text-3xl font-semibold text-center">Dashboard</h1>
+                <h1 className="text-gray-800 text-3xl font-semibold text-center"> {user.role == "USER" ? "Dashboard" : "Running Files"}</h1>
                 <div className="w-full flex gap-4 my-4">
                     <div className="grow bg-gray-700 h-[2px]"></div>
                     <div className="w-10 bg-gray-500 h-[3px]"></div>
@@ -214,6 +221,8 @@ const Dashboard: React.FC = (): JSX.Element => {
                                     </thead>
                                     <tbody>
                                         {department.map((val: any, index: number) => {
+                                            if (val.query_status == "APPROVED") return;
+                                            if (val.query_status == "REJCTED") return;
                                             return (
                                                 <tr key={index} className="bg-white border-b border-t transition duration-300 ease-in-out hover:bg-gray-100">
                                                     <td className="text-lg text-gray-900 font-medium px-6 py-4 whitespace-nowrap">

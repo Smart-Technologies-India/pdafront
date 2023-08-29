@@ -332,3 +332,16 @@ export function CilCameraControl(props: SVGProps<SVGSVGElement>) {
         <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 512 512" {...props}><path fill="currentColor" d="M336 256a80 80 0 1 0-80 80a80.091 80.091 0 0 0 80-80Zm-128 0a48 48 0 1 1 48 48a48.055 48.055 0 0 1-48-48Zm-48 141.988L245.307 496h21.386L352 397.988V368H160ZM307.825 400L256 459.544L204.175 400ZM245.307 16L160 114.012V144h192v-29.988L266.693 16Zm-41.132 96L256 52.456L307.825 112ZM16 245.307v21.386L114.013 352H144V160h-29.987Zm96 62.519L52.455 256L112 204.174ZM397.987 160H368v192h29.987L496 266.693v-21.386ZM400 307.826V204.174L459.545 256Z"></path></svg>
     )
 }
+
+export function CilEnvelopeClosed(props: SVGProps<SVGSVGElement>) {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 512 512" {...props}><path fill="currentColor" d="M16 112v384h480V112Zm220.8 229.6a32.167 32.167 0 0 0 38.4 0l23.467-17.6L464 448v16H48v-16l165.333-124ZM256 316L48 160v-16h416v16ZM48 200l138.667 104L48 408Zm416 208L325.333 304L464 200Z"></path></svg>
+    )
+}
+
+
+export function CilContact(props: SVGProps<SVGSVGElement>) {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 512 512" {...props}><path fill="currentColor" d="M472 48H40a24.028 24.028 0 0 0-24 24v368a24.028 24.028 0 0 0 24 24h88v-58.822a20.01 20.01 0 0 1 10.284-17.478l91.979-51.123L200 260.919V200a56 56 0 0 1 112 0v60.919l-30.263 75.655l91.979 51.126A20.011 20.011 0 0 1 384 405.178V464h88a24.028 24.028 0 0 0 24-24V72a24.028 24.028 0 0 0-24-24Zm-8 384h-48v-26.822a52.027 52.027 0 0 0-26.738-45.451L321.915 322.3L344 267.081V200a88 88 0 0 0-176 0v67.081l22.085 55.219l-67.347 37.432A52.027 52.027 0 0 0 96 405.178V432H48V80h416Z"></path></svg>
+    )
+}

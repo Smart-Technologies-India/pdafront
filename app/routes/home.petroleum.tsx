@@ -168,7 +168,8 @@ const Petroleum: React.FC = (): JSX.Element => {
                     .nonempty("Applicant address is required."),
                 mobile: z
                     .string()
-                    .nonempty("Applicant Contact Number is required."),
+                    .nonempty("Applicant Contact Number is required.")
+                    .length(10, "Mobile Number shoule be 10 digit."),
                 email: z
                     .string()
                     .email("Enter a valid email.")
@@ -338,10 +339,6 @@ const Petroleum: React.FC = (): JSX.Element => {
                     <div className="grow bg-gray-700 h-[2px]"></div>
                 </div>
                 <p className="text-center font-semibold text-xl text-gray-800"> SUBJECT  :  Application for issuance of Petroleum NOC </p>
-
-
-
-
                 {/*--------------------- section 1 start here ------------------------- */}
                 <div className="w-full bg-indigo-500 py-2 rounded-md px-4 mt-4">
                     <p className="text-left font-semibold text-xl text-white">1. Land Details </p>

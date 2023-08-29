@@ -6,12 +6,31 @@ import { Fa6SolidFileLines, Fa6SolidLink } from "~/components/icons/icons";
 import { userPrefs } from "~/cookies";
 import { ApiCall, UploadFile } from "~/services/api";
 import { z } from "zod";
+import { checkUID } from "~/utils";
 
 
 export const loader: LoaderFunction = async (props: LoaderArgs) => {
     const cookieHeader = props.request.headers.get("Cookie");
     const cookie: any = await userPrefs.parse(cookieHeader);
-    return json({ user: cookie });
+    const userdata = await ApiCall({
+        query: `
+        query getUserById($id:Int!){
+            getUserById(id:$id){
+                id,
+                role,
+                name,
+                address,
+                contact,
+                email,
+                user_uid
+            }   
+        }
+        `,
+        veriables: {
+            id: parseInt(cookie.id!)
+        },
+    });
+    return json({ user: userdata.data.getUserById });
 };
 
 const OldCopy: React.FC = (): JSX.Element => {
@@ -129,6 +148,11 @@ const OldCopy: React.FC = (): JSX.Element => {
     }
     useEffect(() => {
         getVillage();
+        nameRef!.current!.value = user.name ?? "";
+        mobileRef!.current!.value = user.contact ?? "";
+        emailRef!.current!.value = user.email ?? "";
+        addressRef!.current!.value = user.address ?? "";
+        uidRef!.current!.value = user.user_uid ?? "";
     }, []);
 
     const setlanddetails = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -164,13 +188,17 @@ const OldCopy: React.FC = (): JSX.Element => {
                     .nonempty("Applicant address is required."),
                 mobile: z
                     .string()
-                    .nonempty("Applicant Contact Number is required."),
+                    .nonempty("Applicant Contact Number is required.")
+                    .length(10, "Mobile Number shoule be 10 digit."),
                 email: z
                     .string()
                     .email("Enter a valid email.")
                     .optional(),
                 user_uid: z
                     .string()
+                    .refine(value => checkUID(value), {
+                        message: "Invalid UIDAI Number",
+                    })
                     .optional(),
                 village_id: z
                     .number({ invalid_type_error: "Select a valid village", required_error: "Select a village" })

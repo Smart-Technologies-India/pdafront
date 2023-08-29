@@ -39,6 +39,7 @@ export const loader: LoaderFunction = async (props: LoaderArgs) => {
     });
 
 
+
     return json({
         user: userdata.data.getUserById,
         isAdmin: cookie.role == "ADMIN" ? true : false,
@@ -146,19 +147,23 @@ const Home: React.FC = (): JSX.Element => {
                                     </>
                                 ) : (
                                     <>
-                                        <Link
-                                            to={"/home/"}
-                                            onClick={() => {
-                                                achangeindex(SideBarTabs.Dashborad);
-                                                changeMobile(false);
-                                            }}
-                                        >
-                                            <SidebarTab
-                                                icon={Fa6SolidObjectUngroup}
-                                                title="Dashboard"
-                                                active={asideindex === SideBarTabs.Dashborad}
-                                            ></SidebarTab>
-                                        </Link>
+                                        {
+                                            ["COLLECTOR", "DYCOLLECTOR", "ATP", "JTP"].includes(user.role) ?
+                                                <Link
+                                                    to={"/home/"}
+                                                    onClick={() => {
+                                                        achangeindex(SideBarTabs.Dashborad);
+                                                        changeMobile(false);
+                                                    }}
+                                                >
+                                                    <SidebarTab
+                                                        icon={Fa6SolidObjectUngroup}
+                                                        title="Dashboard"
+                                                        active={asideindex === SideBarTabs.Dashborad}
+                                                    ></SidebarTab>
+                                                </Link>
+                                                : null
+                                        }
                                         <Link
                                             to={"/home/files"}
                                             onClick={() => {
@@ -168,7 +173,7 @@ const Home: React.FC = (): JSX.Element => {
                                         >
                                             <SidebarTab
                                                 icon={Fa6SolidFile}
-                                                title="All Files"
+                                                title={isUser ? "All Files" : "Running Files"}
                                                 active={asideindex === SideBarTabs.Files}
                                             ></SidebarTab>
                                         </Link>
