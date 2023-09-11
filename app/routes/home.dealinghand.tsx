@@ -93,7 +93,6 @@ const Dealinghand = (): JSX.Element => {
 
 
     const submit = async (value: number, index: number) => {
-        console.log(data[index]);
         const update = await ApiCall({
             query: `
             mutation updateDealingHandById($updateDealinghandInput:UpdateDealinghandInput!){

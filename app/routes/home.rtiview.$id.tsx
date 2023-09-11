@@ -519,7 +519,6 @@ const RightToInformationView = (): JSX.Element => {
     const refrancerRef = useRef<HTMLInputElement>(null);
 
     const submitpayment = async () => {
-        console.log("woring");
         if (
             refrancerRef.current?.value == null ||
             refrancerRef.current?.value == undefined ||
