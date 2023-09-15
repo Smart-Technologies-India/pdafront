@@ -66,13 +66,30 @@ const Dashboard: React.FC = (): JSX.Element => {
 
     const init = () => {
         setDepartment((val) => loader.department);
+        if (user.role == "USER") {
+            if (loader.department == undefined || loader.department.length == 0 || loader.department == null) navigator("/home/services");
+        }
     }
     useEffect(() => {
         init();
-        if (user.role == "USER") {
-            if (department == undefined || department.length == 0 || department == null) navigator("/home/services");
-        }
     }, []);
+
+    const getUserfromId = (userid: number): string => {
+        if (1 == userid) return "SYSTEM";
+        if (2 == userid) return "ADMIN";
+        if (3 == userid) return "Collector";
+        if (4 == userid) return "Dy. Collector";
+        if (5 == userid) return "ATP";
+        if (6 == userid) return "JTP";
+        if (7 == userid) return "JE";
+        if (8 == userid) return "Field Inspector";
+        if (8 == userid) return "Site Supervisor";
+        if (10 == userid) return "Architect Assistant";
+        if (11 == userid) return "Planning Draughtsman";
+        if (12 == userid) return "SP Draughtsman";
+        if (13 == userid) return "ST Draughtsman";
+        return "USER"
+    }
 
     const search = async () => {
         setIsSearching((val) => true);
@@ -204,6 +221,9 @@ const Dashboard: React.FC = (): JSX.Element => {
                                         <th className="px-6 py-4 whitespace-nowrap font-medium text-white text-xl text-left">Village</th>
                                         <th className="px-6 py-4 whitespace-nowrap font-medium text-white text-xl">Status</th>
                                         <th className="px-6 py-4 whitespace-nowrap font-medium text-white text-xl">ACTION</th>
+                                        {user.role != "USER" ?
+                                            <th className="px-6 py-4 whitespace-nowrap font-medium text-white text-xl">With User</th>
+                                            : null}
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -260,6 +280,11 @@ const Dashboard: React.FC = (): JSX.Element => {
                                                         VIEW
                                                     </Link>
                                                 </td>
+                                                {user.role != "USER" ?
+                                                    <td className="text-center text-lg text-gray-900 font-medium px-6 py-4 whitespace-nowrap">
+                                                        {getUserfromId(val.auth_user_id)}
+                                                    </td>
+                                                    : null}
                                             </tr>
                                         );
                                     })}

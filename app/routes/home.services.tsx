@@ -41,7 +41,6 @@ const ServiceCard: React.FC<ServiceCardProps> = (props: ServiceCardProps): JSX.E
                 <p>{props.description}</p>
                 <div className="grow"></div>
                 <div className="w-full h-[2px] mt-2 bg-gray-700 shrink-0"></div>
-                <p className="text-lg text-center font-normal ">Action</p>
                 <div className="flex w-full gap-4 mt-2">
                     <Link to={props.view}
                         className="py-1 text-white text-lg grow bg-indigo-500 text-center rounded-md font-medium"
