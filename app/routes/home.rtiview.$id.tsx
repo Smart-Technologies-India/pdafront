@@ -68,7 +68,42 @@ export const loader: LoaderFunction = async (props: LoaderArgs) => {
         },
     });
 
-    return json({ user: cookie, formid: id, from_data: data.data.getAllRtiById, submit: submit.status, common: submit.data.searchCommon });
+    const searchpayment = await ApiCall({
+        query: `
+        query searchPayment($searchPaymentInput:SearchPaymentInput!){
+            searchPayment(searchPaymentInput:$searchPaymentInput){
+            id,
+            form_id,
+            deptuser_id,
+            user_id,
+            type1,
+            amount1,
+            type2,
+            amount2,
+            type3,
+            amount3,
+            daycount,
+            paymentamout,
+            form_type,
+            paymentstatus
+            }
+          }
+      `,
+        veriables: {
+            searchPaymentInput: {
+                form_id: parseInt(data.data.getAllRtiById.id),
+            }
+        },
+    });
+    return json({
+        user: cookie,
+        formid: id,
+        from_data: data.data.getAllRtiById,
+        submit: submit.status,
+        common: submit.data.searchCommon,
+        payment: searchpayment.status,
+        paymentinfo: searchpayment.status ? searchpayment.data.searchPayment[0] : ""
+    });
 
 };
 
@@ -161,7 +196,8 @@ const RightToInformationView = (): JSX.Element => {
             "form_status": common.form_status,
             "query_type": "PUBLIC",
             "remark": queryRef.current?.value,
-            "query_status": "SENT"
+            "query_status": "SENT",
+            "status": "NONE"
         }
 
         if (attachment != null) {
@@ -187,8 +223,30 @@ const RightToInformationView = (): JSX.Element => {
         });
 
         if (data.status) {
-            setQueryBox(val => false);
-            return toast.success("Query sent successfully.", { theme: "light" });
+
+            const updatecommon = await ApiCall({
+                query: `
+                mutation updateCommonById($updateCommonInput:UpdateCommonInput!){
+                    updateCommonById(updateCommonInput:$updateCommonInput){
+                      id,
+                    }
+                  }
+              `,
+                veriables: {
+                    updateCommonInput: {
+                        id: common.id,
+                        query_status: "QUERYRAISED",
+                    }
+                },
+            });
+
+            if (updatecommon.status) {
+                setQueryBox(val => false);
+                return toast.success("Query sent successfully.", { theme: "light" });
+            }
+            else {
+                return toast.error(updatecommon.message, { theme: "light" });
+            }
         } else {
             return toast.error(data.message, { theme: "light" });
         }
@@ -208,6 +266,7 @@ const RightToInformationView = (): JSX.Element => {
         interuserid: string;
         touserid: number;
         querystatus: string;
+        status: string;
     }
 
     const [nextdata, setNextData] = useState<forwardqueryType>({
@@ -219,7 +278,8 @@ const RightToInformationView = (): JSX.Element => {
         formstatus: 0,
         querytype: "NONE",
         touserid: 0,
-        querystatus: "NONE"
+        querystatus: "NONE",
+        status: "NONE"
     });
 
     const forwardQuery = async (args: forwardqueryType) => {
@@ -232,7 +292,8 @@ const RightToInformationView = (): JSX.Element => {
             "form_status": args.formstatus,
             "query_type": args.querytype,
             "remark": forwardRef.current?.value,
-            "query_status": "SENT"
+            "query_status": "SENT",
+            "status": args.status
         }
 
         if (attachment != null) {
@@ -274,7 +335,7 @@ const RightToInformationView = (): JSX.Element => {
                         intra_user_id: args.intrauserid,
                         inter_user_id: args.interuserid,
                         form_status: args.formstatus,
-                        query_status: args.querystatus
+                        query_status: args.querystatus,
                     }
                 },
             });
@@ -287,6 +348,8 @@ const RightToInformationView = (): JSX.Element => {
                 // toast.success("Form sent successfully.", { theme: "light" });
                 if (common.form_status == 1) {
                     setPaymentBox(val => true);
+                } else if (common.form_status == 50) {
+                    await sendDocQuery();
                 } else {
                     setTimeout(() => {
                         window.location.reload();
@@ -295,6 +358,62 @@ const RightToInformationView = (): JSX.Element => {
             }
         } else {
             return toast.error(data.message, { theme: "light" });
+        }
+    }
+
+    const sendDocQuery = async () => {
+        const getdoc = await ApiCall({
+            query: `
+            query searchQuery($searchQueryInput:SearchQueryInput!){
+                searchQuery(searchQueryInput:$searchQueryInput){
+                  id,
+                  doc_url
+                }
+              }
+          `,
+            veriables: {
+                searchQueryInput: {
+                    "status": "ACTIVE",
+                    "form_id": from_data.id,
+                    "stage": "RTI",
+                    "query_type": "INTRA"
+                }
+            },
+        });
+        if (getdoc.status) {
+
+            const req: { [key: string]: any } = {
+                "stage": "RTI",
+                "form_id": from_data.id,
+                "from_user_id": Number(user.id),
+                "to_user_id": Number(from_data.userId),
+                "form_status": 75,
+                "query_type": "PUBLIC",
+                "remark": "Document",
+                "query_status": "SENT",
+                "status": "NONE",
+                "doc_url": getdoc.data.searchQuery[0].doc_url
+            }
+
+
+            const createQuery = await ApiCall({
+                query: `
+                mutation createQuery($createQueryInput:CreateQueryInput!){
+                    createQuery(createQueryInput:$createQueryInput){
+                      id,
+                    }
+                  }
+                `,
+                veriables: {
+                    createQueryInput: req
+                },
+            });
+
+            if (createQuery.status) {
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1500)
+            }
         }
     }
 
@@ -438,11 +557,12 @@ const RightToInformationView = (): JSX.Element => {
                     "stage": "RTI",
                     "form_id": from_data.id,
                     "from_user_id": 5,
-                    "to_user_id": Number(user.id),
+                    "to_user_id": Number(from_data.userId),
                     "form_status": common.form_status,
                     "query_type": "PUBLIC",
                     "remark": `Payment Request of Rs. (${req.paymentamout}) requested successfully from user.`,
-                    "query_status": "SENT"
+                    "query_status": "SENT",
+                    "status": "NONE"
                 }
 
 
@@ -554,7 +674,6 @@ const RightToInformationView = (): JSX.Element => {
             if (!submitpayment.status) {
                 toast.error(submitpayment.message, { theme: "light" });
             } else {
-
                 const req: { [key: string]: any } = {
                     "stage": "RTI",
                     "form_id": from_data.id,
@@ -563,7 +682,8 @@ const RightToInformationView = (): JSX.Element => {
                     "form_status": common.form_status,
                     "query_type": "PUBLIC",
                     "remark": `The payment of Rs. (${loader.paymentinfo.paymentamout}) requested from user is successfully paid vide ${paymentType.current?.value} with reference no ${refrancerRef.current?.value}.`,
-                    "query_status": "SENT"
+                    "query_status": "SENT",
+                    "status": "NONE"
                 }
 
 
@@ -609,7 +729,7 @@ const RightToInformationView = (): JSX.Element => {
                         <p className="flex-1">Total</p>
                     </div>
                     <div className="flex gap-3 my-2 justify-between">
-                        <p className="shrink-0 flex-1">Type 1</p>
+                        <p className="shrink-0 flex-1">A4</p>
                         <input
                             value={payamt.type1}
                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
@@ -629,7 +749,7 @@ const RightToInformationView = (): JSX.Element => {
                         </p>
                     </div>
                     <div className="flex gap-3 my-2 justify-between">
-                        <p className="shrink-0 flex-1">Type 2</p>
+                        <p className="shrink-0 flex-1">A3</p>
                         <input
                             value={payamt.type2}
                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
@@ -649,7 +769,7 @@ const RightToInformationView = (): JSX.Element => {
                         </p>
                     </div>
                     <div className="flex gap-3 my-2 justify-between">
-                        <p className="shrink-0 flex-1">Type 3</p>
+                        <p className="shrink-0 flex-1">Maps</p>
                         <input
                             value={payamt.type3}
                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
@@ -1047,8 +1167,8 @@ const RightToInformationView = (): JSX.Element => {
                                                 intrauserid: "5,6",
                                                 interuserid: "0",
                                                 touserid: 6,
-                                                querystatus: "INPROCESS"
-
+                                                querystatus: "PAYMENT",
+                                                status: "ACTIVE"
                                             }));
                                         }}
                                         className="py-1 w-full sm:w-auto text-white text-lg px-4 bg-cyan-500 text-center rounded-md font-medium"
@@ -1073,7 +1193,8 @@ const RightToInformationView = (): JSX.Element => {
                                                 intrauserid: "5,6",
                                                 interuserid: "0",
                                                 touserid: 5,
-                                                querystatus: "INPROCESS"
+                                                querystatus: "INPROCESS",
+                                                status: "NONE"
                                             }));
                                         }}
                                         className="py-1 w-full sm:w-auto text-white text-lg px-4 bg-cyan-500 text-center rounded-md font-medium"
@@ -1097,7 +1218,8 @@ const RightToInformationView = (): JSX.Element => {
                                                 intrauserid: "0",
                                                 interuserid: "0",
                                                 touserid: from_data.userId,
-                                                querystatus: "APPROVED"
+                                                querystatus: "APPROVED",
+                                                status: "NONE"
                                             }));
                                         }}
                                         className="py-1 w-full sm:w-auto text-white text-lg px-4 bg-cyan-500 text-center rounded-md font-medium"
@@ -1144,7 +1266,7 @@ const RightToInformationView = (): JSX.Element => {
                             <p className="flex-1 text-center">Total</p>
                         </div>
                         <div className="flex gap-3 my-2 justify-between">
-                            <p className="shrink-0 flex-1">Type 1</p>
+                            <p className="shrink-0 flex-1">A4</p>
                             <p className="shrink-0 flex-1 text-center">{loader.paymentinfo.type1 ?? 0}</p>
                             <p className="shrink-0 flex-1 text-center">{loader.paymentinfo.amount1 ?? 0}</p>
                             <p className="flex-1 shrink-0 text-center">
@@ -1152,7 +1274,7 @@ const RightToInformationView = (): JSX.Element => {
                             </p>
                         </div>
                         <div className="flex gap-3 my-2 justify-between">
-                            <p className="shrink-0 flex-1">Type 2</p>
+                            <p className="shrink-0 flex-1">A3</p>
                             <p className="shrink-0 flex-1 text-center">{loader.paymentinfo.type2 ?? 0}</p>
                             <p className="shrink-0 flex-1 text-center">{loader.paymentinfo.amount2 ?? 0}</p>
                             <p className="flex-1 shrink-0 text-center">
@@ -1160,7 +1282,7 @@ const RightToInformationView = (): JSX.Element => {
                             </p>
                         </div>
                         <div className="flex gap-3 my-2 justify-between">
-                            <p className="shrink-0 flex-1">Type 3</p>
+                            <p className="shrink-0 flex-1">Maps</p>
                             <p className="shrink-0 flex-1 text-center">{loader.paymentinfo.type3 ?? 0}</p>
                             <p className="shrink-0 flex-1 text-center">{loader.paymentinfo.amount3 ?? 0}</p>
                             <p className="flex-1 shrink-0 text-center">

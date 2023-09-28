@@ -41,11 +41,11 @@ const RightToInformation: React.FC = (): JSX.Element => {
     const emailRef = useRef<HTMLInputElement>(null);
     const uidRef = useRef<HTMLInputElement>(null);
 
-    const remarkRef = useRef<HTMLTextAreaElement>(null);
+    const remarkRef = useRef<HTMLInputElement>(null);
     const applicationDateRef = useRef<HTMLInputElement>(null);
     const applicationDateToRef = useRef<HTMLInputElement>(null);
-    const applicationNameRef = useRef<HTMLInputElement>(null);
-    const applicationDescRef = useRef<HTMLInputElement>(null);
+    const applicationNameRef = useRef<HTMLTextAreaElement>(null);
+    const applicationDescRef = useRef<HTMLTextAreaElement>(null);
 
 
     const nakalRef = useRef<HTMLInputElement>(null);
@@ -241,6 +241,16 @@ const RightToInformation: React.FC = (): JSX.Element => {
         uidRef!.current!.value = user.user_uid ?? "";
     }, []);
 
+    const handleNumberChange = () => {
+        if (mobileRef.current) {
+            const numericValue = mobileRef.current.value.replace(/[^0-9]/g, '');
+            if (numericValue.toString().length <= 10) {
+                console.log()
+                mobileRef.current.value = numericValue;
+            }
+        }
+    };
+
 
     return (
         <>
@@ -289,6 +299,8 @@ const RightToInformation: React.FC = (): JSX.Element => {
                         <input
                             ref={mobileRef}
                             placeholder="Applicant Contact Number"
+                            maxLength={10}
+                            onChange={handleNumberChange}
                             className=" w-full border-2 border-gray-600 bg-transparent outline-none fill-none text-slate-800 p-2"
                         />
                     </div>
@@ -330,11 +342,11 @@ const RightToInformation: React.FC = (): JSX.Element => {
                         <span className="mr-2">2.1</span> Subject matter of Information
                     </div>
                     <div className="flex-none lg:flex-1 w-full lg:w-auto">
-                        <textarea
+                        <input
                             ref={remarkRef}
-                            placeholder="Information Needed"
-                            className=" w-full border-2 border-gray-600 bg-transparent outline-none fill-none text-slate-800 p-2 h-28 resize-none"
-                        ></textarea>
+                            placeholder="Additional Information Required"
+                            className=" w-full border-2 border-gray-600 bg-transparent outline-none fill-none text-slate-800 p-2"
+                        />
                     </div>
                 </div>
                 <div className="flex  flex-wrap gap-4 gap-y-2 px-4 py-2 my-2">
@@ -370,11 +382,11 @@ const RightToInformation: React.FC = (): JSX.Element => {
                         <span className="mr-2">2.4</span> Description Of Information Required
                     </div>
                     <div className="flex-none lg:flex-1 w-full lg:w-auto">
-                        <input
+                        <textarea
                             ref={applicationNameRef}
-                            placeholder="Description Of Information Required"
-                            className=" w-full border-2 border-gray-600 bg-transparent outline-none fill-none text-slate-800 p-2"
-                        />
+                            placeholder="Information Needed"
+                            className=" w-full border-2 border-gray-600 bg-transparent outline-none fill-none text-slate-800 p-2 h-28 resize-none"
+                        ></textarea>
                     </div>
                 </div>
                 <div className="flex  flex-wrap gap-4 gap-y-2 px-4 py-2 my-2">
@@ -382,11 +394,11 @@ const RightToInformation: React.FC = (): JSX.Element => {
                         <span className="mr-2">2.5</span> Additional Information Required
                     </div>
                     <div className="flex-none lg:flex-1 w-full lg:w-auto">
-                        <input
+                        <textarea
                             ref={applicationDescRef}
-                            placeholder="Additional Information Required"
-                            className=" w-full border-2 border-gray-600 bg-transparent outline-none fill-none text-slate-800 p-2"
-                        />
+                            placeholder="Information Needed"
+                            className=" w-full border-2 border-gray-600 bg-transparent outline-none fill-none text-slate-800 p-2 h-28 resize-none"
+                        ></textarea>
                     </div>
                 </div>
                 {/*--------------------- section 2 end here ------------------------- */}

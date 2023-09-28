@@ -271,6 +271,15 @@ const ZoneInofrmation: React.FC = (): JSX.Element => {
             }
         } else { toast.error(parsed.error.errors[0].message, { theme: "light" }); }
     }
+    const handleNumberChange = () => {
+        if (mobileRef.current) {
+            const numericValue = mobileRef.current.value.replace(/[^0-9]/g, '');
+            if (numericValue.toString().length <= 10) {
+                console.log()
+                mobileRef.current.value = numericValue;
+            }
+        }
+    };
 
     return (
         <>
@@ -382,6 +391,8 @@ const ZoneInofrmation: React.FC = (): JSX.Element => {
                         <input
                             ref={mobileRef}
                             placeholder="Applicant Contact Number"
+                            maxLength={10}
+                            onChange={handleNumberChange}
                             className=" w-full border-2 border-gray-600 bg-transparent outline-none fill-none text-slate-800 p-2"
                         />
                     </div>

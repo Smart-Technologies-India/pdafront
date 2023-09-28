@@ -2,7 +2,7 @@ import { LoaderArgs, LoaderFunction, json, redirect } from "@remix-run/node";
 import { Link, Outlet, useLoaderData, useNavigate } from "@remix-run/react";
 import axios from "axios";
 import { useEffect, useRef } from "react";
-import { CilCameraControl, Fa6RegularStarHalfStroke, Fa6SolidArrowsUpDownLeftRight, Fa6SolidBars, Fa6SolidBook, Fa6SolidBookTanakh, Fa6SolidBuilding, Fa6SolidCalendarDays, Fa6SolidChartArea, Fa6SolidCircleQuestion, Fa6SolidCodeBranch, Fa6SolidFile, Fa6SolidHouse, Fa6SolidMagnifyingGlass, Fa6SolidMapLocationDot, Fa6SolidObjectUngroup, Fa6SolidPaintbrush, Fa6SolidPersonMilitaryPointing, Fa6SolidStar, Fa6SolidUser, Fa6SolidXmark, MaterialSymbolsActivityZone, MaterialSymbolsAlignHorizontalRight, MaterialSymbolsFluidBalance, MaterialSymbolsLogoutRounded, MaterialSymbolsOralDisease } from "~/components/icons/icons";
+import { CarbonEdit, CilCameraControl, Fa6RegularStarHalfStroke, Fa6SolidArrowsUpDownLeftRight, Fa6SolidBars, Fa6SolidBook, Fa6SolidBookTanakh, Fa6SolidBuilding, Fa6SolidCalendarDays, Fa6SolidChartArea, Fa6SolidCircleQuestion, Fa6SolidCodeBranch, Fa6SolidFile, Fa6SolidHouse, Fa6SolidMagnifyingGlass, Fa6SolidMapLocationDot, Fa6SolidObjectUngroup, Fa6SolidPaintbrush, Fa6SolidPersonMilitaryPointing, Fa6SolidStar, Fa6SolidUser, Fa6SolidXmark, MaterialSymbolsActivityZone, MaterialSymbolsAlignHorizontalRight, MaterialSymbolsFluidBalance, MaterialSymbolsLogoutRounded, MaterialSymbolsOralDisease } from "~/components/icons/icons";
 import { userPrefs } from "~/cookies";
 import { ApiCall } from "~/services/api";
 import sideBarStore, { SideBarTabs } from "~/state/sidebar";
@@ -256,6 +256,23 @@ const Home: React.FC = (): JSX.Element => {
                                         </button>
                                     </>
                                 )}
+
+                                {user.role == "USER" ?
+                                    <Link
+                                        to={"/home/editprofile"}
+                                        onClick={() => {
+                                            achangeindex(SideBarTabs.EditProfile);
+                                            changeMobile(false);
+                                        }}
+                                    >
+                                        <SidebarTab
+                                            icon={CarbonEdit}
+                                            title="Edit Profile"
+                                            active={asideindex === SideBarTabs.EditProfile}
+                                        ></SidebarTab>
+                                    </Link>
+
+                                    : null}
                                 {user.role == "ATP" || user.role == "JTP" ?
                                     <>
                                         <Link
@@ -271,6 +288,8 @@ const Home: React.FC = (): JSX.Element => {
                                                 active={asideindex === SideBarTabs.DealingHand}
                                             ></SidebarTab>
                                         </Link>
+
+
                                         <Link
                                             to={"/home/search"}
                                             onClick={() => {

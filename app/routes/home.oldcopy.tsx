@@ -302,6 +302,17 @@ const OldCopy: React.FC = (): JSX.Element => {
         } else { toast.error(parsed.error.errors[0].message, { theme: "light" }); }
 
     }
+
+    const handleNumberChange = () => {
+        if (mobileRef.current) {
+            const numericValue = mobileRef.current.value.replace(/[^0-9]/g, '');
+            if (numericValue.toString().length <= 10) {
+                console.log()
+                mobileRef.current.value = numericValue;
+            }
+        }
+    };
+
     return (
         <>
             <div className="bg-white rounded-md shadow-lg p-4 my-4 w-full">
@@ -411,7 +422,9 @@ const OldCopy: React.FC = (): JSX.Element => {
                     <div className="flex-none lg:flex-1 w-full lg:w-auto">
                         <input
                             ref={mobileRef}
+                            maxLength={10}
                             placeholder="Applicant Contact Number"
+                            onChange={handleNumberChange}
                             className=" w-full border-2 border-gray-600 bg-transparent outline-none fill-none text-slate-800 p-2"
                         />
                     </div>

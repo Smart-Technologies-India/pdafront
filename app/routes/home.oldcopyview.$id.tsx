@@ -1,6 +1,6 @@
 import { LoaderArgs, LoaderFunction, json } from "@remix-run/node";
 import { Link, useLoaderData, useNavigate } from "@remix-run/react";
-import { useEffect, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { Fa6SolidFileLines, Fa6SolidLink } from "~/components/icons/icons";
 import { userPrefs } from "~/cookies";
@@ -101,6 +101,34 @@ export const loader: LoaderFunction = async (props: LoaderArgs) => {
         },
     });
 
+    const searchpayment = await ApiCall({
+        query: `
+        query searchPayment($searchPaymentInput:SearchPaymentInput!){
+            searchPayment(searchPaymentInput:$searchPaymentInput){
+            id,
+            form_id,
+            deptuser_id,
+            user_id,
+            type1,
+            amount1,
+            type2,
+            amount2,
+            type3,
+            amount3,
+            daycount,
+            paymentamout,
+            form_type,
+            paymentstatus
+            }
+          }
+      `,
+        veriables: {
+            searchPaymentInput: {
+                form_id: parseInt(data.data.getOldCopyById.id),
+            }
+        },
+    });
+
 
     return json({
         user: cookie,
@@ -108,7 +136,9 @@ export const loader: LoaderFunction = async (props: LoaderArgs) => {
         submit: submit.status,
         village: village.data.getAllVillageById,
         subdivision: subdivision.data.getSubDivision,
-        common: submit.data.searchCommon
+        common: submit.data.searchCommon,
+        payment: searchpayment.status,
+        paymentinfo: searchpayment.status ? searchpayment.data.searchPayment[0] : ""
     });
 
 };
@@ -126,11 +156,6 @@ const OldCopyView: React.FC = (): JSX.Element => {
     const isUser = user.role == "USER";
 
     const common = isSubmited ? loader.common[0] : null;
-
-
-
-
-
 
     interface landDetailsType {
         land: string | null;
@@ -211,6 +236,7 @@ const OldCopyView: React.FC = (): JSX.Element => {
 
 
     const [querybox, setQueryBox] = useState<boolean>(false);
+    const [paymentbox, setPaymentBox] = useState<boolean>(false);
     const queryRef = useRef<HTMLTextAreaElement>(null);
     const attachmentRef = useRef<HTMLInputElement>(null);
     const [attachment, setAttachment] = useState<File>();
@@ -237,7 +263,8 @@ const OldCopyView: React.FC = (): JSX.Element => {
             "form_status": common.form_status,
             "query_type": "PUBLIC",
             "remark": queryRef.current?.value,
-            "query_status": "SENT"
+            "query_status": "SENT",
+            "status": "NONE"
         }
 
         if (attachment != null) {
@@ -263,8 +290,29 @@ const OldCopyView: React.FC = (): JSX.Element => {
         });
 
         if (data.status) {
-            setQueryBox(val => false);
-            return toast.success("Query sent successfully.", { theme: "light" });
+            const updatecommon = await ApiCall({
+                query: `
+                mutation updateCommonById($updateCommonInput:UpdateCommonInput!){
+                    updateCommonById(updateCommonInput:$updateCommonInput){
+                      id,
+                    }
+                  }
+              `,
+                veriables: {
+                    updateCommonInput: {
+                        id: common.id,
+                        query_status: "QUERYRAISED",
+                    }
+                },
+            });
+
+            if (updatecommon.status) {
+                setQueryBox(val => false);
+                return toast.success("Query sent successfully.", { theme: "light" });
+            }
+            else {
+                return toast.error(updatecommon.message, { theme: "light" });
+            }
         } else {
             return toast.error(data.message, { theme: "light" });
         }
@@ -284,6 +332,7 @@ const OldCopyView: React.FC = (): JSX.Element => {
         interuserid: string;
         touserid: number;
         querystatus: string;
+        status: string;
     }
 
     const [nextdata, setNextData] = useState<forwardqueryType>({
@@ -295,7 +344,8 @@ const OldCopyView: React.FC = (): JSX.Element => {
         formstatus: 0,
         querytype: "NONE",
         touserid: 0,
-        querystatus: "NONE"
+        querystatus: "NONE",
+        status: "NONE"
     });
 
     const forwardQuery = async (args: forwardqueryType) => {
@@ -308,7 +358,8 @@ const OldCopyView: React.FC = (): JSX.Element => {
             "form_status": args.formstatus,
             "query_type": args.querytype,
             "remark": forwardRef.current?.value,
-            "query_status": "SENT"
+            "query_status": "SENT",
+            "status": args.status
         }
 
         if (attachment != null) {
@@ -358,17 +409,83 @@ const OldCopyView: React.FC = (): JSX.Element => {
             if (!data.status) {
                 toast.error(data.message, { theme: "light" });
             } else {
+
                 setForwardBox(val => false);
-                toast.success("Form sent successfully.", { theme: "light" });
-                setTimeout(() => {
-                    window.location.reload();
-                }, 1500)
+                // toast.success("Form sent successfully.", { theme: "light" });
+                if (common.form_status == 1) {
+                    setPaymentBox(val => true);
+                } else if (common.form_status == 50) {
+                    await sendDocQuery();
+                } else {
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1500)
+                }
+
 
             }
         } else {
             return toast.error(data.message, { theme: "light" });
         }
     }
+
+
+    const sendDocQuery = async () => {
+        const getdoc = await ApiCall({
+            query: `
+            query searchQuery($searchQueryInput:SearchQueryInput!){
+                searchQuery(searchQueryInput:$searchQueryInput){
+                  id,
+                  doc_url
+                }
+              }
+          `,
+            veriables: {
+                searchQueryInput: {
+                    "status": "ACTIVE",
+                    "form_id": from_data.id,
+                    "stage": "OLDCOPY",
+                    "query_type": "INTRA"
+                }
+            },
+        });
+        if (getdoc.status) {
+
+            const req: { [key: string]: any } = {
+                "stage": "RTOLDCOPYI",
+                "form_id": from_data.id,
+                "from_user_id": Number(user.id),
+                "to_user_id": Number(from_data.userId),
+                "form_status": 75,
+                "query_type": "PUBLIC",
+                "remark": "Document",
+                "query_status": "SENT",
+                "status": "NONE",
+                "doc_url": getdoc.data.searchQuery[0].doc_url
+            }
+
+
+            const createQuery = await ApiCall({
+                query: `
+                mutation createQuery($createQueryInput:CreateQueryInput!){
+                    createQuery(createQueryInput:$createQueryInput){
+                      id,
+                    }
+                  }
+                `,
+                veriables: {
+                    createQueryInput: req
+                },
+            });
+
+            if (createQuery.status) {
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1500)
+            }
+        }
+    }
+
 
 
 
@@ -443,10 +560,337 @@ const OldCopyView: React.FC = (): JSX.Element => {
         }
     }
 
+    // paymetn section start here
+
+    const timelimit = useRef<HTMLInputElement>(null);
+
+
+    const [payamt, setPayamt] = useState<{ [key: string]: number }>({
+        type1: 0,
+        amount1: 0,
+        type2: 0,
+        amount2: 0,
+        type3: 0,
+        amount3: 0,
+    });
+
+    const requestpayment = async () => {
+        if (
+            timelimit.current?.value == null ||
+            timelimit.current?.value == undefined ||
+            timelimit.current?.value == "" ||
+            parseInt(timelimit.current?.value
+            ) == 0) {
+            toast.error("Time limit is required.", { theme: "light" });
+        } else {
+            let req: any = {
+                form_id: from_data.id,
+                deptuser_id: parseInt(user.id),
+                user_id: parseInt(from_data.userId),
+                form_type: "OLDCOPY",
+                paymentstatus: "PENDING",
+            };
+            if (payamt.type1 != 0) req.type1 = payamt.type1;
+            if (payamt.amount1 != 0) req.amount1 = payamt.amount1;
+            if (payamt.type2 != 0) req.type2 = payamt.type2;
+            if (payamt.amount2 != 0) req.amount2 = payamt.amount2;
+            if (payamt.type3 != 0) req.type3 = payamt.type3;
+            if (payamt.amount3 != 0) req.amount3 = payamt.amount3;
+            if (parseInt(timelimit!.current!.value) != 0) req.daycount = parseInt(timelimit!.current!.value);
+            if (
+                (payamt.type1 * payamt.amount1) +
+                (payamt.type2 * payamt.amount2) +
+                (payamt.type3 * payamt.amount3)
+                != 0
+            ) req.paymentamout = (payamt.type1 * payamt.amount1) +
+                (payamt.type2 * payamt.amount2) +
+                (payamt.type3 * payamt.amount3);
+
+            const addpayment = await ApiCall({
+                query: `
+                mutation createPayment($createPaymentInput:CreatePaymentInput!){
+                    createPayment(createPaymentInput:$createPaymentInput){
+                      id,
+                    }
+                  }
+              `,
+                veriables: {
+                    createPaymentInput: req
+                },
+            });
+
+            if (!addpayment.status) {
+                setPaymentBox(false);
+                toast.error(addpayment.message, { theme: "light" });
+            } else {
+
+
+                const reqdata: { [key: string]: any } = {
+                    "stage": "OLDCOPY",
+                    "form_id": from_data.id,
+                    "from_user_id": 5,
+                    "to_user_id": Number(from_data.userId),
+                    "form_status": common.form_status,
+                    "query_type": "PUBLIC",
+                    "remark": `Payment Request of Rs. (${req.paymentamout}) requested successfully from user.`,
+                    "query_status": "SENT",
+                    "status": "NONE"
+                }
+
+
+                const data = await ApiCall({
+                    query: `
+                    mutation createQuery($createQueryInput:CreateQueryInput!){
+                        createQuery(createQueryInput:$createQueryInput){
+                          id,
+                        }
+                      }
+                    `,
+                    veriables: {
+                        createQueryInput: reqdata
+                    },
+                });
+
+                if (data.status) {
+                    setPaymentBox(false);
+                    toast.success("Payment request sent to user", { theme: "light" });
+
+
+                    let payreq: any = {
+                        id: from_data.id,
+                    };
+
+                    if (attachment != null) {
+                        const attach = await UploadFile(attachment);
+                        if (attach.status) {
+                            payreq.payment_doc = attach.data
+                        } else {
+                            return toast.error("Unable to upload attachment", { theme: "light" });
+                        }
+                    }
+
+                    const savepaymentdoc = await ApiCall({
+                        query: `
+                        mutation updateOldCopyById($updateOldcopyInput:UpdateOldcopyInput!){
+                            updateOldCopyById(updateOldcopyInput:$updateOldcopyInput){
+                              id,
+                            }
+                          }
+                        `,
+                        veriables: {
+                            updateOldcopyInput: payreq
+                        },
+                    });
+
+                    if (!savepaymentdoc.status) {
+                        toast.error(savepaymentdoc.message, { theme: "light" });
+                    }
+                    else {
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 1500);
+                    }
+                } else {
+                    return toast.error(data.message, { theme: "light" });
+                }
+
+            }
+        }
+    }
+
+
+
+    const handleInputChange = (key: string, value: number) => {
+        setPayamt((prevPayamt) => ({
+            ...prevPayamt,
+            [key]: value,
+        }));
+    };
+
+    const paymentType = useRef<HTMLSelectElement>(null);
+    const refrancerRef = useRef<HTMLInputElement>(null);
+
+    const submitpayment = async () => {
+        if (
+            refrancerRef.current?.value == null ||
+            refrancerRef.current?.value == undefined ||
+            refrancerRef.current?.value == "") {
+            toast.error("Enter Payment Refrenace.", { theme: "light" });
+        } else if (
+            paymentType.current?.value == null ||
+            paymentType.current?.value == undefined ||
+            paymentType.current?.value == "" ||
+            parseInt(paymentType.current?.value
+            ) == 0) {
+            toast.error("Select Payment Type.", { theme: "light" });
+        } else {
+
+            const submitpayment = await ApiCall({
+                query: `
+                mutation updatePaymentById($updatePaymentInput:UpdatePaymentInput!){
+                    updatePaymentById(updatePaymentInput:$updatePaymentInput){
+                      id,
+                    }
+                  }
+              `,
+                veriables: {
+                    updatePaymentInput: {
+                        id: loader.paymentinfo.id,
+                        paymentstatus: "PAID",
+                        reference: refrancerRef.current?.value,
+                        paymentType: paymentType.current?.value,
+                    }
+                },
+            });
+
+            if (!submitpayment.status) {
+                toast.error(submitpayment.message, { theme: "light" });
+            } else {
+                const req: { [key: string]: any } = {
+                    "stage": "OLDCOPY",
+                    "form_id": from_data.id,
+                    "from_user_id": Number(user.id),
+                    "to_user_id": 5,
+                    "form_status": common.form_status,
+                    "query_type": "PUBLIC",
+                    "remark": `The payment of Rs. (${loader.paymentinfo.paymentamout}) requested from user is successfully paid vide ${paymentType.current?.value} with reference no ${refrancerRef.current?.value}.`,
+                    "query_status": "SENT",
+                    "status": "NONE"
+                }
+
+
+                const data = await ApiCall({
+                    query: `
+                    mutation createQuery($createQueryInput:CreateQueryInput!){
+                        createQuery(createQueryInput:$createQueryInput){
+                          id,
+                        }
+                      }
+                    `,
+                    veriables: {
+                        createQueryInput: req
+                    },
+                });
+
+                if (data.status) {
+                    toast.success("Submit successfully.", { theme: "light" });
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1500);
+                } else {
+                    return toast.error(data.message, { theme: "light" });
+                }
+            }
+        }
+    }
+    // paymetn section end here
+
 
 
     return (
         <>
+            {/* payment box start here */}
+            <div className={`fixed top-0 left-0 bg-black bg-opacity-20 min-h-screen w-full  z-50 ${paymentbox ? "grid place-items-center" : "hidden"}`}>
+                <div className="bg-white p-4 rounded-md w-96">
+                    <h3 className="text-2xl text-center font-semibold">Payment Request</h3>
+                    <div className="w-full h-[2px] bg-gray-800 my-4"></div>
+                    <div className="flex gap-3 my-2 justify-between">
+                        <p className="flex-1"></p>
+                        <p className="flex-1">Page Qty.</p>
+                        <p className="flex-1">Amount</p>
+                        <p className="flex-1">Total</p>
+                    </div>
+                    <div className="flex gap-3 my-2 justify-between">
+                        <p className="shrink-0 flex-1">A4</p>
+                        <input
+                            value={payamt.type1}
+                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                const newValue = parseInt(e.target.value) || 0;
+                                handleInputChange('type1', newValue);
+                            }}
+                            type="text" className="flex-1 w-20 bg-[#eeeeee] fill-none focus:outline-none outline-none arounded-md py-1 px-2" />
+                        <input
+                            value={payamt.amount1}
+                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                const newValue = parseInt(e.target.value) || 0;
+                                handleInputChange('amount1', newValue);
+                            }}
+                            type="text" className="flex-1 w-20 bg-[#eeeeee] fill-none focus:outline-none outline-none rounded-md py-1 px-2" />
+                        <p className="flex-1 shrink-0">
+                            {payamt.type1 * payamt.amount1}
+                        </p>
+                    </div>
+                    <div className="flex gap-3 my-2 justify-between">
+                        <p className="shrink-0 flex-1">A3</p>
+                        <input
+                            value={payamt.type2}
+                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                const newValue = parseInt(e.target.value) || 0;
+                                handleInputChange('type2', newValue);
+                            }}
+                            type="text" className="flex-1 w-20 bg-[#eeeeee] fill-none focus:outline-none outline-none rounded-md py-1 px-2" />
+                        <input
+                            value={payamt.amount2}
+                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                const newValue = parseInt(e.target.value) || 0;
+                                handleInputChange('amount2', newValue);
+                            }}
+                            type="text" className="flex-1 w-20 bg-[#eeeeee] fill-none focus:outline-none outline-none rounded-md py-1 px-2" />
+                        <p className="flex-1 shrink-0">
+                            {payamt.type2 * payamt.amount2}
+                        </p>
+                    </div>
+                    <div className="flex gap-3 my-2 justify-between">
+                        <p className="shrink-0 flex-1">Maps</p>
+                        <input
+                            value={payamt.type3}
+                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                const newValue = parseInt(e.target.value) || 0;
+                                handleInputChange('type3', newValue);
+                            }}
+                            type="text" className="flex-1 w-20 bg-[#eeeeee] fill-none focus:outline-none outline-none rounded-md py-1 px-2" />
+                        <input
+                            value={payamt.amount3}
+                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                const newValue = parseInt(e.target.value) || 0;
+                                handleInputChange('amount3', newValue);
+                            }}
+                            type="text" className="flex-1 w-20 bg-[#eeeeee] fill-none focus:outline-none outline-none rounded-md py-1 px-2" />
+                        <p className="flex-1 shrink-0">
+                            {payamt.type3 * payamt.amount3}
+                        </p>
+                    </div>
+                    <div className="w-full h-[1px] bg-gray-800 my-2"></div>
+                    <div className="flex gap-3 my-2 justify-between">
+                        <p className="shrink-0 flex-1">Total</p>
+                        <p className="shrink-0 flex-1">{payamt.type1 + payamt.type2 + payamt.type3}</p>
+                        <p className="shrink-0 flex-1">{payamt.amount1 + payamt.amount2 + payamt.amount3}</p>
+                        <p className="shrink-0 flex-1">{(payamt.type1 * payamt.amount1) + (payamt.type2 * payamt.amount2) + (payamt.type3 * payamt.amount3)}</p>
+                    </div>
+
+                    <div className="w-full h-[1px] bg-gray-800 my-2"></div>
+                    <div className="flex gap-3 my-2 justify-between">
+                        <p className="flex-2">Time Limit [Day]</p>
+                        <div className="flex-1"></div>
+                        <input ref={timelimit} onChange={(e: ChangeEvent<HTMLInputElement>) => { e.target.value = e.target.value.replace(/\D/g, "") }} type="text" className="flex-1 w-20 bg-[#eeeeee] fill-none focus:outline-none outline-none rounded-md py-1 px-2" />
+                    </div>
+                    <div className="flex flex-wrap gap-6 mt-4">
+                        <button
+                            onClick={requestpayment}
+                            className="py-1 w-full sm:w-auto text-white text-lg px-4 bg-green-500 text-center rounded-md font-medium grow"
+                        >
+                            Request
+                        </button>
+                        <button
+                            onClick={() => setPaymentBox(val => false)}
+                            className="py-1 w-full sm:w-auto text-white text-lg px-4 bg-rose-500 text-center rounded-md font-medium grow"
+                        >
+                            Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {/* payment box end here */}
             {/* reject box start here */}
             <div className={`fixed top-0 left-0 bg-black bg-opacity-20 min-h-screen w-full  z-50 ${rejectbox ? "grid place-items-center" : "hidden"}`}>
                 <div className="bg-white p-4 rounded-md w-80">
@@ -817,7 +1261,8 @@ const OldCopyView: React.FC = (): JSX.Element => {
                                                 intrauserid: "5,6",
                                                 interuserid: "0",
                                                 touserid: 6,
-                                                querystatus: "INPROCESS"
+                                                querystatus: "PAYMENT",
+                                                status: "ACTIVE"
                                             }));
                                         }}
                                         className="py-1 w-full sm:w-auto text-white text-lg px-4 bg-cyan-500 text-center rounded-md font-medium"
@@ -842,7 +1287,8 @@ const OldCopyView: React.FC = (): JSX.Element => {
                                                 intrauserid: "5,6",
                                                 interuserid: "0",
                                                 touserid: 5,
-                                                querystatus: "INPROCESS"
+                                                querystatus: "INPROCESS",
+                                                status: "NONE"
                                             }));
                                         }}
                                         className="py-1 w-full sm:w-auto text-white text-lg px-4 bg-cyan-500 text-center rounded-md font-medium"
@@ -868,7 +1314,8 @@ const OldCopyView: React.FC = (): JSX.Element => {
                                                 intrauserid: "0",
                                                 interuserid: "0",
                                                 touserid: from_data.userId,
-                                                querystatus: "APPROVED"
+                                                querystatus: "APPROVED",
+                                                status: "NONE"
                                             }));
                                         }}
                                         className="py-1 w-full sm:w-auto text-white text-lg px-4 bg-cyan-500 text-center rounded-md font-medium"

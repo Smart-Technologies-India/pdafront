@@ -660,7 +660,7 @@ const ZoneInofrmationView: React.FC = (): JSX.Element => {
                         <p className="flex-1">Total</p>
                     </div>
                     <div className="flex gap-3 my-2 justify-between">
-                        <p className="shrink-0 flex-1">Type 1</p>
+                        <p className="shrink-0 flex-1">A4</p>
                         <input
                             value={payamt.type1}
                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
@@ -680,7 +680,7 @@ const ZoneInofrmationView: React.FC = (): JSX.Element => {
                         </p>
                     </div>
                     <div className="flex gap-3 my-2 justify-between">
-                        <p className="shrink-0 flex-1">Type 2</p>
+                        <p className="shrink-0 flex-1">A3</p>
                         <input
                             value={payamt.type2}
                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
@@ -700,7 +700,7 @@ const ZoneInofrmationView: React.FC = (): JSX.Element => {
                         </p>
                     </div>
                     <div className="flex gap-3 my-2 justify-between">
-                        <p className="shrink-0 flex-1">Type 3</p>
+                        <p className="shrink-0 flex-1">Maps</p>
                         <input
                             value={payamt.type3}
                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
@@ -1186,7 +1186,7 @@ const ZoneInofrmationView: React.FC = (): JSX.Element => {
                             <p className="flex-1 text-center">Total</p>
                         </div>
                         <div className="flex gap-3 my-2 justify-between">
-                            <p className="shrink-0 flex-1">Type 1</p>
+                            <p className="shrink-0 flex-1">A4</p>
                             <p className="shrink-0 flex-1 text-center">{loader.paymentinfo.type1 ?? 0}</p>
                             <p className="shrink-0 flex-1 text-center">{loader.paymentinfo.amount1 ?? 0}</p>
                             <p className="flex-1 shrink-0 text-center">
@@ -1194,7 +1194,7 @@ const ZoneInofrmationView: React.FC = (): JSX.Element => {
                             </p>
                         </div>
                         <div className="flex gap-3 my-2 justify-between">
-                            <p className="shrink-0 flex-1">Type 2</p>
+                            <p className="shrink-0 flex-1">A3</p>
                             <p className="shrink-0 flex-1 text-center">{loader.paymentinfo.type2 ?? 0}</p>
                             <p className="shrink-0 flex-1 text-center">{loader.paymentinfo.amount2 ?? 0}</p>
                             <p className="flex-1 shrink-0 text-center">
@@ -1202,7 +1202,7 @@ const ZoneInofrmationView: React.FC = (): JSX.Element => {
                             </p>
                         </div>
                         <div className="flex gap-3 my-2 justify-between">
-                            <p className="shrink-0 flex-1">Type 3</p>
+                            <p className="shrink-0 flex-1">Maps</p>
                             <p className="shrink-0 flex-1 text-center">{loader.paymentinfo.type3 ?? 0}</p>
                             <p className="shrink-0 flex-1 text-center">{loader.paymentinfo.amount3 ?? 0}</p>
                             <p className="flex-1 shrink-0 text-center">

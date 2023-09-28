@@ -11,6 +11,7 @@ enum SideBarTabs {
     landSection,
     Unauthorisd,
     DesignPoint,
+    EditProfile,
     Search,
     DealingHand
 }

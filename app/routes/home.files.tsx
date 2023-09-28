@@ -266,11 +266,18 @@ const Dashboard: React.FC = (): JSX.Element => {
                                                                     {val.query_status}
                                                                 </div>
                                                                 :
-                                                                <div
-                                                                    className="py-1 text-white text-lg px-4 bg-indigo-500 text-center rounded-md font-medium"
-                                                                >
-                                                                    {val.query_status}
-                                                                </div>
+                                                                val.query_status == "PAYMENT" || val.query_status == "QUERYRAISED" || val.query_status == "REJCTED" ?
+                                                                    <div
+                                                                        className="py-1 text-white text-lg px-4 bg-rose-500 text-center rounded-md font-medium"
+                                                                    >
+                                                                        {val.query_status}
+                                                                    </div>
+                                                                    :
+                                                                    <div
+                                                                        className="py-1 text-white text-lg px-4 bg-indigo-500 text-center rounded-md font-medium"
+                                                                    >
+                                                                        {val.query_status}
+                                                                    </div>
                                                     }
                                                 </td>
                                                 <td className="text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap">
