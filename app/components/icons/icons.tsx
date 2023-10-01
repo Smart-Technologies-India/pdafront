@@ -396,3 +396,52 @@ export function CharmChevronRight(props: SVGProps<SVGSVGElement>) {
         <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 16 16" {...props}><path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M5.75 12.25L10.25 8l-4.5-4.25"></path></svg>
     )
 }
+
+export function MdiMapMarkerPath(props: SVGProps<SVGSVGElement>) {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...props}><path fill="currentColor" d="M18 15a3 3 0 0 1 3 3a3 3 0 0 1-3 3a2.99 2.99 0 0 1-2.83-2H14v-2h1.17c.41-1.17 1.52-2 2.83-2m0 2a1 1 0 0 0-1 1a1 1 0 0 0 1 1a1 1 0 0 0 1-1a1 1 0 0 0-1-1m0-9a1.43 1.43 0 0 0 1.43-1.43a1.43 1.43 0 1 0-2.86 0A1.43 1.43 0 0 0 18 8m0-5.43a4 4 0 0 1 4 4C22 9.56 18 14 18 14s-4-4.44-4-7.43a4 4 0 0 1 4-4M8.83 17H10v2H8.83A2.99 2.99 0 0 1 6 21a3 3 0 0 1-3-3c0-1.31.83-2.42 2-2.83V14h2v1.17c.85.3 1.53.98 1.83 1.83M6 17a1 1 0 0 0-1 1a1 1 0 0 0 1 1a1 1 0 0 0 1-1a1 1 0 0 0-1-1M6 3a3 3 0 0 1 3 3c0 1.31-.83 2.42-2 2.83V10H5V8.83A2.99 2.99 0 0 1 3 6a3 3 0 0 1 3-3m0 2a1 1 0 0 0-1 1a1 1 0 0 0 1 1a1 1 0 0 0 1-1a1 1 0 0 0-1-1m5 14v-2h2v2h-2m-4-6H5v-2h2v2Z"></path></svg>
+    )
+}
+
+export function MdiFolderInformation(props: SVGProps<SVGSVGElement>) {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...props}><path fill="currentColor" d="M21 11.1V8c0-1.1-.9-2-2-2h-8L9 4H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h7.3c1.3 1.9 3.5 3 5.7 3c3.9 0 7-3.1 7-7c0-1.8-.7-3.6-2-4.9M16 21c-2.8 0-5-2.2-5-5s2.2-5 5-5s5 2.2 5 5s-2.2 5-5 5m1-1h-2v-5h2v5m0-6h-2v-2h2v2Z"></path></svg>
+    )
+}
+
+export function FluentCloudArchive24Filled(props: SVGProps<SVGSVGElement>) {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...props}><path fill="currentColor" d="M6.08 9.02a6.001 6.001 0 0 1 11.84 0A4.504 4.504 0 0 1 21.744 12H13a2 2 0 0 0-2 2v1a2 2 0 0 0 1 1.732V18H6.5a4.5 4.5 0 0 1-.42-8.98ZM13 13a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1v-1a1 1 0 0 0-1-1h-9Zm9 4h-9v4a2 2 0 0 0 2 2h5a2 2 0 0 0 2-2v-4Zm-6.5 1.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5Z"></path></svg>
+    )
+}
+
+export function MdiDesktopMacDashboard(props: SVGProps<SVGSVGElement>) {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...props}><path fill="currentColor" d="M21 14V4H3v10h18m0-12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-7l2 3v1H8v-1l2-3H3a2 2 0 0 1-2-2V4c0-1.11.89-2 2-2h18M4 5h11v5H4V5m12 0h4v2h-4V5m4 3v5h-4V8h4M4 11h5v2H4v-2m6 0h5v2h-5v-2Z"></path></svg>
+    )
+}
+
+export function StreamlineInterfaceUserEditActionsCloseEditGeometricHumanPencilPersonSingleUpUserWrite(props: SVGProps<SVGSVGElement>) {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 14 14" {...props}><g fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round"><circle cx="5" cy="2.75" r="2.25"></circle><path d="M3.5 12.5h-3V11A4.51 4.51 0 0 1 7 7m6.5 1.5l-4.71 4.71l-2.13.29l.3-2.13l4.7-4.71L13.5 8.5z"></path></g></svg>
+    )
+}
+
+
+export function FluentEmojiHighContrastBuildingConstruction(props: SVGProps<SVGSVGElement>) {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 32 32" {...props}><path fill="currentColor" d="M4 4a1 1 0 0 1 1-1h22a1 1 0 1 1 0 2h-3c0 .556-.404 1-.91 1h-.59v3.09c.85.23 1.48 1.02 1.48 1.94c0 .696-.36 1.312-.903 1.67l.92 1.3h4.489a.51.51 0 0 1 .514.5a.5.5 0 0 1-.504.5H28v3h.486a.51.51 0 0 1 .514.5a.51.51 0 0 1-.514.5h-1.018a.493.493 0 0 1-.208.48c-.09.06-.19.09-.29.09c-.16 0-.31-.07-.41-.21l-.255-.36h-8.65l-.255.36c-.1.14-.25.21-.41.21c-.1 0-.2-.03-.29-.09a.493.493 0 0 1-.208-.48h-.978a.51.51 0 0 1-.514-.5c0-.274.232-.5.514-.5H16v-3h-.486a.51.51 0 0 1-.514-.5c0-.274.232-.5.514-.5h4.45l.92-1.3a2.002 2.002 0 0 1-.904-1.67c0-.28.23-.5.5-.5c.28 0 .5.22.5.5c0 .36.193.678.481.854l.085-.12a.488.488 0 0 1 .079-.1a.492.492 0 0 1 .355-.147c.13-.001.26.05.355.147a.49.49 0 0 1 .08.1l.084.12c.288-.176.481-.494.481-.854c0-.55-.43-.99-.98-1c-.17 0-.33-.09-.42-.23a.439.439 0 0 1-.09-.27c0-.04 0-.07.01-.11V6h-.59c-.506 0-.91-.444-.91-1h-6v21h.75c.69 0 1.25.56 1.25 1.25V28h12.01c1.1 0 1.99.895 1.99 2H2c0-1.105.89-2 1.99-2H5v-.75c0-.69.56-1.25 1.25-1.25H7V5H5a1 1 0 0 1-1-1Zm4 3v2.191L12.382 7H8Zm.618 19H13v-2.191L8.618 26Zm3.764-3H8v2.191L12.382 23ZM8.618 10H13V7.809L8.618 10Zm3.764 1H8v2.191L12.382 11Zm-3.764 3H13v-2.191L8.618 14Zm3.764 1H8v2.191L12.382 15Zm-3.764 3H13v-2.191L8.618 18Zm3.764 1H8v2.191L12.382 19Zm-3.764 3H13v-2.191L8.618 22Zm13.264-8.972l-.688.972h1.572l-.688-.972a1.99 1.99 0 0 1-.196 0ZM19.255 15H17v3h.132l2.123-3Zm-.892 3h7.234l-2.123-3h-2.988l-2.123 3Zm6.341-3l2.124 3H27v-3h-2.296Z"></path></svg>
+    )
+}
+
+export function PhBuildingsBold(props: SVGProps<SVGSVGElement>) {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 256 256" {...props}><path fill="currentColor" d="M240 204h-12V96a20 20 0 0 0-20-20h-36V32a20 20 0 0 0-28.45-18.12l-104 48.54A20.06 20.06 0 0 0 28 80.55V204H16a12 12 0 0 0 0 24h224a12 12 0 0 0 0-24Zm-36-104v104h-32V100ZM52 83.09l96-44.79V204H52ZM132 112v12a12 12 0 0 1-24 0v-12a12 12 0 0 1 24 0Zm-40 0v12a12 12 0 0 1-24 0v-12a12 12 0 0 1 24 0Zm0 52v12a12 12 0 0 1-24 0v-12a12 12 0 0 1 24 0Zm40 0v12a12 12 0 0 1-24 0v-12a12 12 0 0 1 24 0Z"></path></svg>
+    )
+}
+
+export function StreamlineNatureEcologyLeafProtectEnvironmentLeafEcologyPlantPlantsEco(props: SVGProps<SVGSVGElement>) {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 14 14" {...props}><g fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round"><path d="M11.31 4.15c0-1 0-2-.07-2.66A1 1 0 0 0 9.89.55c-2.16.62-6.57 2.17-8.42 4.83c-2 2.82-.46 6.05.27 7.31a1.38 1.38 0 0 0 1 .66a9.36 9.36 0 0 0 2.79.08"></path><path d="M5 8.58a51.12 51.12 0 0 0-2.78 4.6m8.45.29h0a.5.5 0 0 1-.34 0h0A4.48 4.48 0 0 1 7.5 9.31V7.46A.47.47 0 0 1 8 7h5a.47.47 0 0 1 .46.46v1.85a4.48 4.48 0 0 1-2.79 4.16Z"></path></g></svg>
+    )
+}

@@ -766,7 +766,7 @@ const LandSection: React.FC = (): JSX.Element => {
                         </div>
                         <button
                             onClick={() => attachmentRef.current?.click()}
-                            className="py-1 w-full sm:w-auto text-white text-lg px-4 bg-indigo-500 text-center rounded-md font-medium"
+                            className="py-1 w-full sm:w-auto text-white text-lg px-4 bg-[#0984e3] text-center rounded-md font-medium"
                         >
                             <div className="flex items-center gap-2">
                                 <Fa6SolidLink></Fa6SolidLink> {attachment == null ? "Attach Doc." : "Update Doc."}
@@ -813,7 +813,7 @@ const LandSection: React.FC = (): JSX.Element => {
                 <p className="text-center font-semibold text-xl text-gray-800"> SUBJECT  :  Comments of pda on land related documents.</p>
 
                 {/*--------------------- section 1 start here ------------------------- */}
-                <div className="w-full bg-indigo-500 py-2 rounded-md px-4 mt-4">
+                <div className="w-full bg-[#0984e3] py-2 rounded-md px-4 mt-4">
                     <p className="text-left font-semibold text-xl text-white"> 1. Applicant Details(s) </p>
                 </div>
                 <div className="flex  flex-wrap gap-4 gap-y-2 px-4 py-2 my-2">
@@ -898,7 +898,7 @@ const LandSection: React.FC = (): JSX.Element => {
                         (common.form_status == 100 && (user.id == 5 || user.id == 6 || user.id == common.auth_user_id))
                         ? <>
                             {/*--------------------- section 2 start here ------------------------- */}
-                            <div className="w-full bg-indigo-500 py-2 rounded-md px-4 mt-4">
+                            <div className="w-full bg-[#0984e3] py-2 rounded-md px-4 mt-4">
                                 <p className="text-left font-semibold text-xl text-white"> 2. Site Details </p>
                             </div>
                             <div className="flex  flex-wrap gap-4 gap-y-2 px-4 py-2 my-2">

@@ -92,6 +92,7 @@ export const loader: LoaderFunction = async (props: LoaderArgs) => {
         veriables: {
             searchPaymentInput: {
                 form_id: parseInt(data.data.getAllRtiById.id),
+                form_type: "RTI"
             }
         },
     });
@@ -858,7 +859,7 @@ const RightToInformationView = (): JSX.Element => {
                         </div>
                         <button
                             onClick={() => attachmentRef.current?.click()}
-                            className="py-1 w-full sm:w-auto text-white text-lg px-4 bg-indigo-500 text-center rounded-md font-medium"
+                            className="py-1 w-full sm:w-auto text-white text-lg px-4 bg-[#0984e3] text-center rounded-md font-medium"
                         >
                             <div className="flex items-center gap-2">
                                 <Fa6SolidLink></Fa6SolidLink> {attachment == null ? "Attach Doc." : "Update Doc."}
@@ -910,7 +911,7 @@ const RightToInformationView = (): JSX.Element => {
                         </div>
                         <button
                             onClick={() => attachmentRef.current?.click()}
-                            className="py-1 w-full sm:w-auto text-white text-lg px-4 bg-indigo-500 text-center rounded-md font-medium"
+                            className="py-1 w-full sm:w-auto text-white text-lg px-4 bg-[#0984e3] text-center rounded-md font-medium"
                         >
                             <div className="flex items-center gap-2">
                                 <Fa6SolidLink></Fa6SolidLink> {attachment == null ? "Attach Doc." : "Update Doc."}
@@ -957,7 +958,7 @@ const RightToInformationView = (): JSX.Element => {
                 <p className="text-center font-semibold text-xl text-gray-800"> Format of Application for obtaining Information under Right to Information Act ,2005. </p>
 
                 {/*--------------------- section 1 start here ------------------------- */}
-                <div className="w-full bg-indigo-500 py-2 rounded-md px-4 mt-4">
+                <div className="w-full bg-[#0984e3] py-2 rounded-md px-4 mt-4">
                     <p className="text-left font-semibold text-xl text-white"> 1. Applicant Details(s) </p>
                 </div>
                 <div className="flex  flex-wrap gap-4 gap-y-2 px-4 py-2 my-2">
@@ -1003,7 +1004,7 @@ const RightToInformationView = (): JSX.Element => {
                 {/*--------------------- section 1 end here ------------------------- */}
 
                 {/*--------------------- section 2 start here ------------------------- */}
-                <div className="w-full bg-indigo-500 py-2 rounded-md px-4 mt-4">
+                <div className="w-full bg-[#0984e3] py-2 rounded-md px-4 mt-4">
                     <p className="text-left font-semibold text-xl text-white"> 2. R.T.I. Details </p>
                 </div>
 
@@ -1054,7 +1055,7 @@ const RightToInformationView = (): JSX.Element => {
                 {from_data.proverty_line_url == null || from_data.undefined ? null :
 
                     <>
-                        <div className="w-full bg-indigo-500 py-2 rounded-md px-4 mt-4">
+                        <div className="w-full bg-[#0984e3] py-2 rounded-md px-4 mt-4">
                             <p className="text-left font-semibold text-xl text-white"> 3. Document Attachment </p>
                         </div>
 
@@ -1081,7 +1082,7 @@ const RightToInformationView = (): JSX.Element => {
 
                 {/*--------------------- section 4 start here ------------------------- */}
 
-                <div className="w-full bg-indigo-500 py-2 rounded-md px-4 mt-4">
+                <div className="w-full bg-[#0984e3] py-2 rounded-md px-4 mt-4">
                     <p className="text-left font-semibold text-xl text-white">
                         4. Applicant / Occupant Declaration and Signature </p>
                 </div>
@@ -1123,7 +1124,7 @@ const RightToInformationView = (): JSX.Element => {
                                 <a
                                     target="_blank"
                                     href={from_data.payment_doc}
-                                    className="py-1 w-full sm:w-auto text-white text-lg px-4 bg-indigo-500 text-center rounded-md font-medium"
+                                    className="py-1 w-full sm:w-auto text-white text-lg px-4 bg-[#0984e3] text-center rounded-md font-medium"
                                 >
                                     Download Document
                                 </a>
@@ -1159,7 +1160,7 @@ const RightToInformationView = (): JSX.Element => {
                                         onClick={() => {
                                             setForwardBox(val => true);
                                             setNextData(val => ({
-                                                title: "Forward to JTP",
+                                                title: "Upload Document & Forward to JTP",
                                                 formstatus: 25,
                                                 querytype: "INTRA",
                                                 authuserid: "6",

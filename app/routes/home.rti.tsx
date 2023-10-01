@@ -245,7 +245,6 @@ const RightToInformation: React.FC = (): JSX.Element => {
         if (mobileRef.current) {
             const numericValue = mobileRef.current.value.replace(/[^0-9]/g, '');
             if (numericValue.toString().length <= 10) {
-                console.log()
                 mobileRef.current.value = numericValue;
             }
         }
@@ -264,7 +263,7 @@ const RightToInformation: React.FC = (): JSX.Element => {
                 <p className="text-center font-semibold text-xl text-gray-800"> Format of Application for obtaining Information under Right to Information Act ,2005. </p>
 
                 {/*--------------------- section 1 start here ------------------------- */}
-                <div className="w-full bg-indigo-500 py-2 rounded-md px-4 mt-4">
+                <div className="w-full bg-[#0984e3] py-2 rounded-md px-4 mt-4">
                     <p className="text-left font-semibold text-xl text-white"> 1. Applicant Details(s) </p>
                 </div>
                 <div className="flex  flex-wrap gap-4 gap-y-2 px-4 py-2 my-2">
@@ -333,7 +332,7 @@ const RightToInformation: React.FC = (): JSX.Element => {
 
 
                 {/*--------------------- section 2 start here ------------------------- */}
-                <div className="w-full bg-indigo-500 py-2 rounded-md px-4 mt-4">
+                <div className="w-full bg-[#0984e3] py-2 rounded-md px-4 mt-4">
                     <p className="text-left font-semibold text-xl text-white"> 2. R.T.I. Details </p>
                 </div>
 
@@ -405,7 +404,7 @@ const RightToInformation: React.FC = (): JSX.Element => {
 
                 {/*--------------------- section 3 start here ------------------------- */}
 
-                <div className="w-full bg-indigo-500 py-2 rounded-md px-4 mt-4">
+                <div className="w-full bg-[#0984e3] py-2 rounded-md px-4 mt-4">
                     <p className="text-left font-semibold text-xl text-white"> 3. Document Attachment </p>
                 </div>
                 <div className="flex gap-4 gap-y-2 px-4 py-2 my-2">
@@ -461,7 +460,7 @@ const RightToInformation: React.FC = (): JSX.Element => {
                 {/*--------------------- section 3 end here ------------------------- */}
 
                 {/*--------------------- section 4 start here ------------------------- */}
-                <div className="w-full bg-indigo-500 py-2 rounded-md px-4 mt-4">
+                <div className="w-full bg-[#0984e3] py-2 rounded-md px-4 mt-4">
                     <p className="text-left font-semibold text-xl text-white">
                         4. Applicant / Occupant Declaration and Signature </p>
                 </div>

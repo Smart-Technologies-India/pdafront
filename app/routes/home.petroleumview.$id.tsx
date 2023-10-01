@@ -637,7 +637,7 @@ const Petroleum: React.FC = (): JSX.Element => {
                         </div>
                         <button
                             onClick={() => attachmentRef.current?.click()}
-                            className="py-1 w-full sm:w-auto text-white text-lg px-4 bg-indigo-500 text-center rounded-md font-medium"
+                            className="py-1 w-full sm:w-auto text-white text-lg px-4 bg-[#0984e3] text-center rounded-md font-medium"
                         >
                             <div className="flex items-center gap-2">
                                 <Fa6SolidLink></Fa6SolidLink> {attachment == null ? "Attach Doc." : "Update Doc."}
@@ -685,7 +685,7 @@ const Petroleum: React.FC = (): JSX.Element => {
 
 
                 {/*--------------------- section 1 start here ------------------------- */}
-                <div className="w-full bg-indigo-500 py-2 rounded-md px-4 mt-4">
+                <div className="w-full bg-[#0984e3] py-2 rounded-md px-4 mt-4">
                     <p className="text-left font-semibold text-xl text-white">1. Land Details </p>
                 </div>
                 <div className="flex flex-wrap gap-4 gap-y-2 items-center px-4 py-2 my-2">
@@ -732,7 +732,7 @@ const Petroleum: React.FC = (): JSX.Element => {
                 {/*--------------------- section 1 end here ------------------------- */}
 
                 {/*--------------------- section 2 start here ------------------------- */}
-                <div className="w-full bg-indigo-500 py-2 rounded-md px-4 mt-4">
+                <div className="w-full bg-[#0984e3] py-2 rounded-md px-4 mt-4">
                     <p className="text-left font-semibold text-xl text-white"> 2. Applicant Details(s) </p>
                 </div>
                 <div className="flex  flex-wrap gap-4 gap-y-2 px-4 py-2 my-2">
@@ -799,7 +799,7 @@ const Petroleum: React.FC = (): JSX.Element => {
 
 
                 {/*--------------------- section 3 start here ------------------------- */}
-                <div className="w-full bg-indigo-500 py-2 rounded-md px-4 mt-4">
+                <div className="w-full bg-[#0984e3] py-2 rounded-md px-4 mt-4">
                     <p className="text-left font-semibold text-xl text-white"> 3. Permission Details </p>
                 </div>
                 <div className="flex flex-wrap gap-4 gap-y-2 items-center px-4 py-2 my-2">
@@ -839,7 +839,7 @@ const Petroleum: React.FC = (): JSX.Element => {
 
                 {/*--------------------- section 4 start here ------------------------- */}
 
-                <div className="w-full bg-indigo-500 py-2 rounded-md px-4 mt-4">
+                <div className="w-full bg-[#0984e3] py-2 rounded-md px-4 mt-4">
                     <p className="text-left font-semibold text-xl text-white"> 4. Document Attachment </p>
                 </div>
 
@@ -955,7 +955,7 @@ const Petroleum: React.FC = (): JSX.Element => {
                         (common.form_status == 100 && (user.id == 5 || user.id == 6 || user.id == 12))
                         ? <>
                             {/*--------------------- section 2 start here ------------------------- */}
-                            <div className="w-full bg-indigo-500 py-2 rounded-md px-4 mt-4">
+                            <div className="w-full bg-[#0984e3] py-2 rounded-md px-4 mt-4">
                                 <p className="text-left font-semibold text-xl text-white"> 5. Department Comments </p>
                             </div>
 

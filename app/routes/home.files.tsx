@@ -173,7 +173,7 @@ const Dashboard: React.FC = (): JSX.Element => {
                         isSearch ?
                             <>
                                 <div
-                                    className="grid place-items-center rounded-md bg-indigo-500 shadow-md h-full p-2 text-white">
+                                    className="grid place-items-center rounded-md bg-[#0984e3] shadow-md h-full p-2 text-white">
                                     Found : {department.length} result
                                 </div>
                                 <button
@@ -185,7 +185,7 @@ const Dashboard: React.FC = (): JSX.Element => {
                             :
                             isSearching ?
                                 <div
-                                    className="r rounded-md bg-indigo-500 shadow-md h-full p-2 text-white flex gap-2 items-center">
+                                    className="r rounded-md bg-[#0984e3] shadow-md h-full p-2 text-white flex gap-2 items-center">
                                     <Fa6SolidMagnifyingGlass></Fa6SolidMagnifyingGlass> Searching for text {searchRef.current?.value}
                                 </div> :
                                 <>
@@ -194,16 +194,11 @@ const Dashboard: React.FC = (): JSX.Element => {
                                     </div>
                                     <button
                                         onClick={search}
-                                        className="grid place-items-center rounded-md bg-indigo-500 shadow-md h-full p-2 text-white">
+                                        className="grid place-items-center rounded-md bg-[#0984e3] shadow-md h-full p-2 text-white">
                                         <Fa6SolidMagnifyingGlass></Fa6SolidMagnifyingGlass>
                                     </button>
                                 </>
                     }
-                </div>
-                <div className="w-full flex gap-4 my-4">
-                    <div className="grow bg-gray-700 h-[2px]"></div>
-                    <div className="w-10 bg-gray-500 h-[3px]"></div>
-                    <div className="grow bg-gray-700 h-[2px]"></div>
                 </div>
 
                 {(pagination.paginatedItems == undefined || pagination.paginatedItems.length == 0 || pagination.paginatedItems == null) ?
@@ -214,15 +209,15 @@ const Dashboard: React.FC = (): JSX.Element => {
                         <div className="overflow-x-auto sm:mx-0.5 my-2 p-4">
                             <table className="min-w-full rounded-md">
                                 <thead>
-                                    <tr className="rounded-md bg-indigo-500 border-b border-t transition duration-300 ease-in-out hover:bg-indigo-600">
-                                        <th className="px-6 py-4 whitespace-nowrap font-medium text-white text-xl text-left">Form Id</th>
+                                    <tr className="bg-[#0984e3] border-b border-t transition duration-300 ease-in-out  rounded-xl">
+                                        <th className="bg-[#0984e3] rounded-l-xl px-6 py-4 whitespace-nowrap font-medium text-white text-xl text-left">Form Id</th>
                                         <th className="px-6 py-4 whitespace-nowrap font-medium text-white text-xl text-left">Purpose</th>
                                         <th className="px-6 py-4 whitespace-nowrap font-medium text-white text-xl text-left">Applicant</th>
                                         <th className="px-6 py-4 whitespace-nowrap font-medium text-white text-xl text-left">Village</th>
                                         <th className="px-6 py-4 whitespace-nowrap font-medium text-white text-xl">Status</th>
-                                        <th className="px-6 py-4 whitespace-nowrap font-medium text-white text-xl">ACTION</th>
+                                        <th className={`px-6 py-4 whitespace-nowrap font-medium text-white text-xl ${user.role == "USER" ? "bg-[#0984e3] rounded-r-xl" : ""} `}>ACTION</th>
                                         {user.role != "USER" ?
-                                            <th className="px-6 py-4 whitespace-nowrap font-medium text-white text-xl">With User</th>
+                                            <th className="bg-[#0984e3] rounded-r-xl px-6 py-4 whitespace-nowrap font-medium text-white text-xl">With User</th>
                                             : null}
                                     </tr>
                                 </thead>
@@ -274,7 +269,7 @@ const Dashboard: React.FC = (): JSX.Element => {
                                                                     </div>
                                                                     :
                                                                     <div
-                                                                        className="py-1 text-white text-lg px-4 bg-indigo-500 text-center rounded-md font-medium"
+                                                                        className="py-1 text-white text-lg px-4 bg-[#0984e3] text-center rounded-md font-medium"
                                                                     >
                                                                         {val.query_status}
                                                                     </div>
@@ -282,7 +277,7 @@ const Dashboard: React.FC = (): JSX.Element => {
                                                 </td>
                                                 <td className="text-sm text-gray-900 font-medium px-6 py-4 whitespace-nowrap">
                                                     <Link to={getViewLink(val.form_type, val.form_id)}
-                                                        className="py-1 w-full sm:w-auto block text-white text-lg px-4 bg-indigo-500 text-center rounded-md font-medium"
+                                                        className="py-1 w-full sm:w-auto block text-white text-lg px-4 bg-[#0984e3] text-center rounded-md font-medium"
                                                     >
                                                         VIEW
                                                     </Link>

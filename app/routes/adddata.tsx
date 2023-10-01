@@ -120,7 +120,7 @@ const AddData: React.FC = (): JSX.Element => {
                         ></textarea>
                     </div>
                     <div className="flex gap-4 items-center mt-4">
-                        <button onClick={submit} className="bg-indigo-500 rounded-md py-1 text-sm text-center text-white font-semibold flex-1 inline-block">SUBMIT</button>
+                        <button onClick={submit} className="bg-[#0984e3] rounded-md py-1 text-sm text-center text-white font-semibold flex-1 inline-block">SUBMIT</button>
                         <Link to="/home" className="bg-blue-500 rounded-md py-1 text-sm text-center text-white font-semibold flex-1 inline-block">SKIP THIS STEP</Link>
                     </div>
 

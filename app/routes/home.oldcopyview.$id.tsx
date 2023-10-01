@@ -31,7 +31,8 @@ export const loader: LoaderFunction = async (props: LoaderArgs) => {
               information_needed
               aadhar_url,
               iagree,
-              signature_url
+              signature_url,
+              payment_doc
             }
           }
       `,
@@ -125,6 +126,7 @@ export const loader: LoaderFunction = async (props: LoaderArgs) => {
         veriables: {
             searchPaymentInput: {
                 form_id: parseInt(data.data.getOldCopyById.id),
+                form_type: "OLDCOPY"
             }
         },
     });
@@ -452,7 +454,7 @@ const OldCopyView: React.FC = (): JSX.Element => {
         if (getdoc.status) {
 
             const req: { [key: string]: any } = {
-                "stage": "RTOLDCOPYI",
+                "stage": "OLDCOPY",
                 "form_id": from_data.id,
                 "from_user_id": Number(user.id),
                 "to_user_id": Number(from_data.userId),
@@ -517,7 +519,7 @@ const OldCopyView: React.FC = (): JSX.Element => {
             veriables: {
                 searchQueryInput: {
                     form_id: from_data.id,
-                    stage: "PETROLEUM",
+                    stage: "OLDCOPY",
                     query_type: isUser ? "PUBLIC" : "INTRA"
                 }
             },
@@ -930,7 +932,7 @@ const OldCopyView: React.FC = (): JSX.Element => {
                         </div>
                         <button
                             onClick={() => attachmentRef.current?.click()}
-                            className="py-1 w-full sm:w-auto text-white text-lg px-4 bg-indigo-500 text-center rounded-md font-medium"
+                            className="py-1 w-full sm:w-auto text-white text-lg px-4 bg-[#0984e3] text-center rounded-md font-medium"
                         >
                             <div className="flex items-center gap-2">
                                 <Fa6SolidLink></Fa6SolidLink> {attachment == null ? "Attach Doc." : "Update Doc."}
@@ -970,7 +972,7 @@ const OldCopyView: React.FC = (): JSX.Element => {
             {/* forward box start here */}
             <div className={`fixed top-0 left-0 bg-black bg-opacity-20 min-h-screen w-full  z-50 ${forwardbox ? "grid place-items-center" : "hidden"}`}>
                 <div className="bg-white p-4 rounded-md w-80">
-                    <h3 className="text-2xl text-center font-semibold">Forward to JTP</h3>
+                    <h3 className="text-2xl text-center font-semibold">{nextdata.title}</h3>
                     <textarea
                         ref={forwardRef}
                         placeholder="Information Needed"
@@ -982,7 +984,7 @@ const OldCopyView: React.FC = (): JSX.Element => {
                         </div>
                         <button
                             onClick={() => attachmentRef.current?.click()}
-                            className="py-1 w-full sm:w-auto text-white text-lg px-4 bg-indigo-500 text-center rounded-md font-medium"
+                            className="py-1 w-full sm:w-auto text-white text-lg px-4 bg-[#0984e3] text-center rounded-md font-medium"
                         >
                             <div className="flex items-center gap-2">
                                 <Fa6SolidLink></Fa6SolidLink> {attachment == null ? "Attach Doc." : "Update Doc."}
@@ -1030,7 +1032,7 @@ const OldCopyView: React.FC = (): JSX.Element => {
 
 
                 {/*--------------------- section 1 start here ------------------------- */}
-                <div className="w-full bg-indigo-500 py-2 rounded-md px-4 mt-4">
+                <div className="w-full bg-[#0984e3] py-2 rounded-md px-4 mt-4">
                     <p className="text-left font-semibold text-xl text-white">1. Land Details </p>
                 </div>
                 <div className="flex flex-wrap gap-4 gap-y-2 items-center px-4 py-2 my-2">
@@ -1077,7 +1079,7 @@ const OldCopyView: React.FC = (): JSX.Element => {
                 {/*--------------------- section 1 end here ------------------------- */}
 
                 {/*--------------------- section 2 start here ------------------------- */}
-                <div className="w-full bg-indigo-500 py-2 rounded-md px-4 mt-4">
+                <div className="w-full bg-[#0984e3] py-2 rounded-md px-4 mt-4">
                     <p className="text-left font-semibold text-xl text-white"> 2. Applicant Details(s) </p>
                 </div>
                 <div className="flex  flex-wrap gap-4 gap-y-2 px-4 py-2 my-2">
@@ -1124,7 +1126,7 @@ const OldCopyView: React.FC = (): JSX.Element => {
 
 
                 {/*--------------------- section 3 start here ------------------------- */}
-                <div className="w-full bg-indigo-500 py-2 rounded-md px-4 mt-4">
+                <div className="w-full bg-[#0984e3] py-2 rounded-md px-4 mt-4">
                     <p className="text-left font-semibold text-xl text-white"> 3. Permisstion Details </p>
                 </div>
                 <div className="flex flex-wrap gap-4 gap-y-2 items-center px-4 py-2 my-2">
@@ -1163,7 +1165,7 @@ const OldCopyView: React.FC = (): JSX.Element => {
                 {/*--------------------- section 3 end here ------------------------- */}
 
                 {/*--------------------- section 4 start here ------------------------- */}
-                <div className="w-full bg-indigo-500 py-2 rounded-md px-4 mt-4">
+                <div className="w-full bg-[#0984e3] py-2 rounded-md px-4 mt-4">
                     <p className="text-left font-semibold text-xl text-white"> 4. Document Attachment </p>
                 </div>
 
@@ -1188,7 +1190,7 @@ const OldCopyView: React.FC = (): JSX.Element => {
 
 
                 {/*--------------------- section 5 start here ------------------------- */}
-                <div className="w-full bg-indigo-500 py-2 rounded-md px-4 mt-4">
+                <div className="w-full bg-[#0984e3] py-2 rounded-md px-4 mt-4">
                     <p className="text-left font-semibold text-xl text-white">
                         5. Applicant / Occupant Declaration and Signature </p>
                 </div>
@@ -1223,7 +1225,19 @@ const OldCopyView: React.FC = (): JSX.Element => {
                 </div>
                 {/*--------------------- section 5 end here ------------------------- */}
                 {isSubmited ?
-                    user.id == from_data.userId ? null :
+                    user.id == from_data.userId ?
+                        <>
+                            {common.form_status == 75 ?
+                                <a
+                                    target="_blank"
+                                    href={from_data.payment_doc}
+                                    className="py-1 w-full sm:w-auto text-white text-lg px-4 bg-[#0984e3] text-center rounded-md font-medium"
+                                >
+                                    Download Document
+                                </a>
+                                : null}
+                        </>
+                        :
                         <>
                             <div className="flex flex-wrap gap-6 mt-4">
                                 <Link to={"/home/"}
@@ -1253,7 +1267,7 @@ const OldCopyView: React.FC = (): JSX.Element => {
                                         onClick={() => {
                                             setForwardBox(val => true);
                                             setNextData(val => ({
-                                                title: "Forward to JTP",
+                                                title: "Upload Document & Forward to JTP",
                                                 formstatus: 25,
                                                 querytype: "INTRA",
                                                 authuserid: "6",
@@ -1276,7 +1290,6 @@ const OldCopyView: React.FC = (): JSX.Element => {
                                 {common.form_status == 25 && user.id == 6 ?
                                     <button
                                         onClick={() => {
-                                            forwardRef!.current!.value = `The zone info pertaining to land with survey No. ${from_data.survey_no} & sub Division ${from_data.sub_division} of village ${villagedata.name} is ${landDetails.zone} zone.`;
                                             setForwardBox(val => true);
                                             setNextData(val => ({
                                                 title: "Forward to ATP",
@@ -1302,8 +1315,7 @@ const OldCopyView: React.FC = (): JSX.Element => {
 
                                     <button
                                         onClick={() => {
-                                            forwardRef!.current!.value = `The zone info requested as per application number ${from_data.id} pertaining to your land with survey No. ${from_data.survey_no} & sub Division ${from_data.sub_division} of village ${villagedata.name} is ${landDetails.zone} zone.`;
-
+                                            forwardRef!.current!.value = `The OldCopy documents requested as per application number ${from_data.id} pertaining to your request is as attached below.`;
                                             setForwardBox(val => true);
                                             setNextData(val => ({
                                                 title: "Convey to Applicant",
@@ -1349,6 +1361,87 @@ const OldCopyView: React.FC = (): JSX.Element => {
                 }
             </div>
 
+            {/* payment section start here */}
+
+
+            {user.id == from_data.userId && loader.payment && loader.paymentinfo.paymentstatus == "PENDING" ?
+                <div className="p-6 bg-white rounded-lg shadow-lg my-8 grid place-items-center">
+                    <div className="bg-white p-4 rounded-md w-96">
+                        <h3 className="text-2xl text-center font-semibold">Payment Request</h3>
+                        <div className="w-full h-[2px] bg-gray-800 my-4"></div>
+                        <div className="flex gap-3 my-2 justify-between">
+                            <p className="flex-1"></p>
+                            <p className="flex-1 text-center">Page Qty.</p>
+                            <p className="flex-1 text-center">Amount</p>
+                            <p className="flex-1 text-center">Total</p>
+                        </div>
+                        <div className="flex gap-3 my-2 justify-between">
+                            <p className="shrink-0 flex-1">A4</p>
+                            <p className="shrink-0 flex-1 text-center">{loader.paymentinfo.type1 ?? 0}</p>
+                            <p className="shrink-0 flex-1 text-center">{loader.paymentinfo.amount1 ?? 0}</p>
+                            <p className="flex-1 shrink-0 text-center">
+                                {loader.paymentinfo.type1 ?? 0 * loader.paymentinfo.amount1 ?? 0}
+                            </p>
+                        </div>
+                        <div className="flex gap-3 my-2 justify-between">
+                            <p className="shrink-0 flex-1">A3</p>
+                            <p className="shrink-0 flex-1 text-center">{loader.paymentinfo.type2 ?? 0}</p>
+                            <p className="shrink-0 flex-1 text-center">{loader.paymentinfo.amount2 ?? 0}</p>
+                            <p className="flex-1 shrink-0 text-center">
+                                {loader.paymentinfo.type2 ?? 0 * loader.paymentinfo.amount2 ?? 0}
+                            </p>
+                        </div>
+                        <div className="flex gap-3 my-2 justify-between">
+                            <p className="shrink-0 flex-1">Maps</p>
+                            <p className="shrink-0 flex-1 text-center">{loader.paymentinfo.type3 ?? 0}</p>
+                            <p className="shrink-0 flex-1 text-center">{loader.paymentinfo.amount3 ?? 0}</p>
+                            <p className="flex-1 shrink-0 text-center">
+                                {loader.paymentinfo.type3 ?? 0 * loader.paymentinfo.amount3 ?? 0}
+                            </p>
+                        </div>
+                        <div className="w-full h-[1px] bg-gray-800 my-2"></div>
+                        <div className="flex gap-3 my-2 justify-between">
+                            <p className="shrink-0 flex-1">Total</p>
+                            <p className="shrink-0 flex-1 text-center">{loader.paymentinfo.type1 ?? 0 + loader.paymentinfo.type2 ?? 0 + loader.paymentinfo.type3 ?? 0}</p>
+                            <p className="shrink-0 flex-1 text-center">{loader.paymentinfo.amount1 ?? 0 + loader.paymentinfo.amount2 ?? 0 + loader.paymentinfo.amount3 ?? 0}</p>
+                            <p className="shrink-0 flex-1 text-center">{(loader.paymentinfo.type1 ?? 0 * loader.paymentinfo.amount1 ?? 0) + (loader.paymentinfo.type2 ?? 0 * loader.paymentinfo.amount1 ?? 0) + (loader.paymentinfo.type3 * loader.paymentinfo.amount3 ?? 0)}</p>
+                        </div>
+
+                        <div className="w-full h-[1px] bg-gray-800 my-2"></div>
+                        <div className="flex gap-3 my-2 justify-between">
+                            <p className="flex-2">Time Limit [Day]</p>
+                            <div className="flex-1"></div>
+                            <p className="flex-1">{loader.paymentinfo.paymentamout} </p>
+                        </div>
+                        <div className="flex gap-3 my-2 justify-between items-center">
+                            <p className="flex-2 shrink-0">Panyment Type</p>
+                            <select ref={paymentType} defaultValue={"0"} className="flex-2 px-4 bg-primary-700 fill-none outline-none border-2 border-black text-black py-2 w-96">
+                                <option value="0" className=" text-black text-lg " disabled>Select Payent Type</option>
+                                <option className=" text-black text-lg" value="CASH">CASH</option>
+                                <option className=" text-black text-lg" value="CHEQUE">CHEQUE</option>
+                                <option className=" text-black text-lg" value="NETBANKING">NETBANKING</option>
+                                <option className=" text-black text-lg" value="UPI">UPI</option>
+                                <option className=" text-black text-lg" value="CCDC">CREDIT/DEBIT CARD</option>
+                            </select>
+                        </div>
+                        <div className="flex gap-3 my-2 justify-between items-center">
+                            <p className="flex-2 shrink-0">Panyment Reference</p>
+                            <input
+                                ref={refrancerRef}
+                                type="text" className="flex-2 bg-[#eeeeee] fill-none focus:outline-none outline-none arounded-md py-1 px-2" />
+                        </div>
+                        <button
+                            onClick={submitpayment}
+                            className="py-1 w-full sm:w-auto text-white text-lg px-4 bg-green-500 text-center rounded-md font-medium grow"
+                        >
+                            Pay
+                        </button>
+                    </div>
+
+                </div>
+                : null}
+
+            {/* payment section end here */}
             <div className="p-6 bg-white rounded-lg shadow-lg my-8">
                 <h1 className="text-gray-800 text-3xl font-semibold text-center">{user.id == from_data.userId ? "Department Comment" : "Notings"}</h1>
                 <div className="w-full flex gap-4 my-4">

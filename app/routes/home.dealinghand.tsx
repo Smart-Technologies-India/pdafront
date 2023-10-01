@@ -138,7 +138,7 @@ const Dealinghand = (): JSX.Element => {
                 <div className="overflow-x-auto sm:mx-0.5 my-2 p-4">
                     <table className="min-w-full rounded-md">
                         <thead>
-                            <tr className="rounded-md bg-indigo-500 border-b border-t transition duration-300 ease-in-out hover:bg-indigo-600">
+                            <tr className="rounded-md bg-[#0984e3] border-b border-t transition duration-300 ease-in-out">
                                 <th className="px-6 py-4 whitespace-nowrap font-medium text-white text-xl text-left">id</th>
                                 <th className="px-6 py-4 whitespace-nowrap font-medium text-white text-xl text-left">File Type</th>
                                 <th className="px-6 py-4 whitespace-nowrap font-medium text-white text-xl text-left">Collector</th>
@@ -210,7 +210,7 @@ const Dealinghand = (): JSX.Element => {
                                         <td className="text-center text-lg text-gray-900 font-medium px-6 py-4 whitespace-nowrap">
                                             {compareObjects(data[index], getvalue(index)) ? null :
                                                 <button onClick={() => { submit(val.id, index) }}
-                                                    className="py-1 w-full sm:w-auto block text-white text-lg px-4 bg-indigo-500 text-center rounded-md font-medium"
+                                                    className="py-1 w-full sm:w-auto block text-white text-lg px-4 bg-[#0984e3] text-center rounded-md font-medium"
                                                 >
                                                     UPDATE
                                                 </button>

@@ -27,7 +27,8 @@ export const loader: LoaderFunction = async (props: LoaderArgs) => {
               sub_division,
               nakel_url_1_14,
               iagree,
-              signature_url
+              signature_url,
+              payment_doc
             }
           }
       `,
@@ -119,9 +120,11 @@ export const loader: LoaderFunction = async (props: LoaderArgs) => {
         veriables: {
             searchPaymentInput: {
                 form_id: parseInt(data.data.getAllZoneById.id),
+                form_type: "ZONE"
             }
         },
     });
+
 
     return json({
         user: cookie,
@@ -131,7 +134,8 @@ export const loader: LoaderFunction = async (props: LoaderArgs) => {
         subdivision: subdivision.data.getSubDivision,
         common: submit.data.searchCommon,
         payment: searchpayment.status,
-        paymentinfo: searchpayment.status ? searchpayment.data.searchPayment[0] : ""
+        paymentinfo: searchpayment.status ? searchpayment.data.searchPayment[0] : "",
+        baseurl: props.request.url.split("home")[0]
     });
 };
 
@@ -142,7 +146,7 @@ const ZoneInofrmationView: React.FC = (): JSX.Element => {
     const villagedata = loader.village;
     const from_data = loader.from_data;
     const division = loader.subdivision;
-
+    const baseurl = loader.baseurl;
     const isSubmited = loader.submit;
 
     const isUser = user.role == "USER";
@@ -367,9 +371,11 @@ const ZoneInofrmationView: React.FC = (): JSX.Element => {
                 toast.error(data.message, { theme: "light" });
             } else {
                 setForwardBox(val => false);
-                // toast.success("Form sent successfully.", { theme: "light" });
                 if (common.form_status == 1) {
                     setPaymentBox(val => true);
+                }
+                else if (common.form_status == 50) {
+                    await sendDocQuery();
                 } else {
                     setTimeout(() => {
                         window.location.reload();
@@ -379,6 +385,44 @@ const ZoneInofrmationView: React.FC = (): JSX.Element => {
             }
         } else {
             return toast.error(data.message, { theme: "light" });
+        }
+    }
+
+
+
+
+
+    const sendDocQuery = async () => {
+        const req: { [key: string]: any } = {
+            "stage": "ZONE",
+            "form_id": from_data.id,
+            "from_user_id": Number(user.id),
+            "to_user_id": Number(from_data.userId),
+            "form_status": 75,
+            "query_type": "PUBLIC",
+            "remark": "Document",
+            "query_status": "SENT",
+            "status": "NONE",
+            "doc_url": `${baseurl}zoneinfopdf/${from_data.id}`
+        }
+
+        const createQuery = await ApiCall({
+            query: `
+                mutation createQuery($createQueryInput:CreateQueryInput!){
+                    createQuery(createQueryInput:$createQueryInput){
+                      id,
+                    }
+                  }
+                `,
+            veriables: {
+                createQueryInput: req
+            },
+        });
+
+        if (createQuery.status) {
+            setTimeout(() => {
+                window.location.reload();
+            }, 1500)
         }
     }
 
@@ -789,7 +833,7 @@ const ZoneInofrmationView: React.FC = (): JSX.Element => {
                         </div>
                         <button
                             onClick={() => attachmentRef.current?.click()}
-                            className="py-1 w-full sm:w-auto text-white text-lg px-4 bg-indigo-500 text-center rounded-md font-medium"
+                            className="py-1 w-full sm:w-auto text-white text-lg px-4 bg-[#0984e3] text-center rounded-md font-medium"
                         >
                             <div className="flex items-center gap-2">
                                 <Fa6SolidLink></Fa6SolidLink> {attachment == null ? "Attach Doc." : "Update Doc."}
@@ -829,7 +873,7 @@ const ZoneInofrmationView: React.FC = (): JSX.Element => {
             {/* forward box start here */}
             <div className={`fixed top-0 left-0 bg-black bg-opacity-20 min-h-screen w-full  z-50 ${forwardbox ? "grid place-items-center" : "hidden"}`}>
                 <div className="bg-white p-4 rounded-md w-80">
-                    <h3 className="text-2xl text-center font-semibold">Forward to JTP</h3>
+                    <h3 className="text-2xl text-center font-semibold">{nextdata.title}</h3>
                     <textarea
                         ref={forwardRef}
                         placeholder="Information Needed"
@@ -841,7 +885,7 @@ const ZoneInofrmationView: React.FC = (): JSX.Element => {
                         </div>
                         <button
                             onClick={() => attachmentRef.current?.click()}
-                            className="py-1 w-full sm:w-auto text-white text-lg px-4 bg-indigo-500 text-center rounded-md font-medium"
+                            className="py-1 w-full sm:w-auto text-white text-lg px-4 bg-[#0984e3] text-center rounded-md font-medium"
                         >
                             <div className="flex items-center gap-2">
                                 <Fa6SolidLink></Fa6SolidLink> {attachment == null ? "Attach Doc." : "Update Doc."}
@@ -889,7 +933,7 @@ const ZoneInofrmationView: React.FC = (): JSX.Element => {
 
 
                 {/*--------------------- section 1 start here ------------------------- */}
-                <div className="w-full bg-indigo-500 py-2 rounded-md px-4 mt-4">
+                <div className="w-full bg-[#0984e3] py-2 rounded-md px-4 mt-4">
                     <p className="text-left font-semibold text-xl text-white">1. Land Details </p>
                 </div>
                 <div className="flex flex-wrap gap-4 gap-y-2 items-center px-4 py-2 my-2">
@@ -926,7 +970,7 @@ const ZoneInofrmationView: React.FC = (): JSX.Element => {
                 </div>
                 <div className="flex  flex-wrap gap-4 gap-y-2 px-4 py-2 my-2">
                     <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal text-left text-gray-700 ">
-                        <span className="mr-2">2.5</span> Area
+                        <span className="mr-2">1.5</span> Area
                     </div>
                     <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal">
                         {landDetails.area == null || landDetails.area == undefined || landDetails.area == "" ? "-" : landDetails.area}
@@ -936,7 +980,7 @@ const ZoneInofrmationView: React.FC = (): JSX.Element => {
                 {/*--------------------- section 1 end here ------------------------- */}
 
                 {/*--------------------- section 2 start here ------------------------- */}
-                <div className="w-full bg-indigo-500 py-2 rounded-md px-4 mt-4">
+                <div className="w-full bg-[#0984e3] py-2 rounded-md px-4 mt-4">
                     <p className="text-left font-semibold text-xl text-white"> 2. Applicant Details(s) </p>
                 </div>
                 <div className="flex  flex-wrap gap-4 gap-y-2 px-4 py-2 my-2">
@@ -982,7 +1026,7 @@ const ZoneInofrmationView: React.FC = (): JSX.Element => {
                 {/*--------------------- section 2 end here ------------------------- */}
 
                 {/*--------------------- section 3 start here ------------------------- */}
-                <div className="w-full bg-indigo-500 py-2 rounded-md px-4 mt-4">
+                <div className="w-full bg-[#0984e3] py-2 rounded-md px-4 mt-4">
                     <p className="text-left font-semibold text-xl text-white"> 3. Document Attachment </p>
                 </div>
 
@@ -1006,7 +1050,7 @@ const ZoneInofrmationView: React.FC = (): JSX.Element => {
                 {/*--------------------- section 3 end here ------------------------- */}
 
                 {/*--------------------- section 4 start here ------------------------- */}
-                <div className="w-full bg-indigo-500 py-2 rounded-md px-4 mt-4">
+                <div className="w-full bg-[#0984e3] py-2 rounded-md px-4 mt-4">
                     <p className="text-left font-semibold text-xl text-white">
                         4. Applicant / Occupant Declaration and Signature </p>
                 </div>
@@ -1041,7 +1085,19 @@ const ZoneInofrmationView: React.FC = (): JSX.Element => {
                 </div>
                 {/*--------------------- section 4 end here ------------------------- */}
                 {isSubmited ?
-                    user.id == from_data.userId ? null :
+                    user.id == from_data.userId ?
+                        <>
+                            {common.form_status == 75 ?
+                                <Link
+                                    target="_blank"
+                                    to={`/zoneinfopdf/${from_data.id}`}
+                                    className="py-1 w-full sm:w-auto text-white text-lg px-4 bg-[#0984e3] text-center rounded-md font-medium"
+                                >
+                                    Download Zone Certificate
+                                </Link>
+                                : null}
+                        </>
+                        :
                         <>
                             <div className="flex flex-wrap gap-6 mt-4">
                                 <Link to={"/home/"}
@@ -1077,10 +1133,9 @@ const ZoneInofrmationView: React.FC = (): JSX.Element => {
                                 {common.form_status == 1 && user.id == common.auth_user_id ?
                                     <button
                                         onClick={() => {
-                                            forwardRef!.current!.value = `The zone info pertaining to land with survey No. ${from_data.survey_no} & sub Division ${from_data.sub_division} of village ${villagedata.name} is ${landDetails.zone} zone.`;
                                             setForwardBox(val => true);
                                             setNextData(val => ({
-                                                title: "Forward to JTP",
+                                                title: "Upload Document & Forward to JTP",
                                                 formstatus: 25,
                                                 querytype: "INTRA",
                                                 authuserid: "6",
@@ -1102,7 +1157,6 @@ const ZoneInofrmationView: React.FC = (): JSX.Element => {
                                 {common.form_status == 25 && user.id == 6 ?
                                     <button
                                         onClick={() => {
-                                            forwardRef!.current!.value = `The zone info pertaining to land with survey No. ${from_data.survey_no} & sub Division ${from_data.sub_division} of village ${villagedata.name} is ${landDetails.zone} zone.`;
                                             setForwardBox(val => true);
                                             setNextData(val => ({
                                                 title: "Forward to M.S.",

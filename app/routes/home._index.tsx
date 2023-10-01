@@ -427,7 +427,7 @@ const DashBoard = (): JSX.Element => {
                         <DashboradCard onclick={() => achangeindex(SideBarTabs.Rti)} title="RTI" color="bg-gradient-to-r from-blue-400 to-blue-600" textcolor="text-blue-500" link="/home/vrti" value={filecount.RTI} />
                         <DashboradCard onclick={() => achangeindex(SideBarTabs.Petroleum)} title="Petroleum" color="bg-gradient-to-r from-green-400 to-green-600" textcolor="text-green-500" link="/home/vpetroleum" value={filecount.PETROLEUM} />
                         <DashboradCard onclick={() => achangeindex(SideBarTabs.Unauthorisd)} title="Unauthorized" color="bg-gradient-to-r from-slate-400 to-slate-600" textcolor="text-slate-500" link="/home/vunauthorised" value={filecount.UNAUTHORIZED} />
-                        <DashboradCard onclick={() => achangeindex(SideBarTabs.landSection)} title="Land Section" color="bg-gradient-to-r from-indigo-400 to-indigo-600" textcolor="text-indigo-500" link="/home/vlandsection" value={filecount.LANDRECORDS} />
+                        <DashboradCard onclick={() => achangeindex(SideBarTabs.landSection)} title="Land Section" color="bg-gradient-to-r from-indigo-400 to-indigo-600" textcolor="text-[#0984e3]" link="/home/vlandsection" value={filecount.LANDRECORDS} />
                     </div>
                 </div>
             </div>

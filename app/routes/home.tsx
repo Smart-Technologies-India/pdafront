@@ -1,8 +1,7 @@
 import { LoaderArgs, LoaderFunction, json, redirect } from "@remix-run/node";
 import { Link, Outlet, useLoaderData, useNavigate } from "@remix-run/react";
-import axios from "axios";
-import { useEffect, useRef } from "react";
-import { CarbonEdit, CilCameraControl, Fa6RegularStarHalfStroke, Fa6SolidArrowsUpDownLeftRight, Fa6SolidBars, Fa6SolidBook, Fa6SolidBookTanakh, Fa6SolidBuilding, Fa6SolidCalendarDays, Fa6SolidChartArea, Fa6SolidCircleQuestion, Fa6SolidCodeBranch, Fa6SolidFile, Fa6SolidHouse, Fa6SolidMagnifyingGlass, Fa6SolidMapLocationDot, Fa6SolidObjectUngroup, Fa6SolidPaintbrush, Fa6SolidPersonMilitaryPointing, Fa6SolidStar, Fa6SolidUser, Fa6SolidXmark, MaterialSymbolsActivityZone, MaterialSymbolsAlignHorizontalRight, MaterialSymbolsFluidBalance, MaterialSymbolsLogoutRounded, MaterialSymbolsOralDisease } from "~/components/icons/icons";
+import { useRef } from "react";
+import { CilCameraControl, Fa6SolidArrowsUpDownLeftRight, Fa6SolidBars, Fa6SolidCalendarDays, Fa6SolidCodeBranch, Fa6SolidFile, Fa6SolidHouse, Fa6SolidMagnifyingGlass, Fa6SolidMapLocationDot, Fa6SolidObjectUngroup, Fa6SolidPersonMilitaryPointing, Fa6SolidXmark, MaterialSymbolsActivityZone, MaterialSymbolsAlignHorizontalRight, MaterialSymbolsLogoutRounded, MaterialSymbolsOralDisease, MdiDesktopMacDashboard, StreamlineInterfaceUserEditActionsCloseEditGeometricHumanPencilPersonSingleUpUserWrite } from "~/components/icons/icons";
 import { userPrefs } from "~/cookies";
 import { ApiCall } from "~/services/api";
 import sideBarStore, { SideBarTabs } from "~/state/sidebar";
@@ -91,20 +90,38 @@ const Home: React.FC = (): JSX.Element => {
 
     return (
         <>
-            <section className="h-screen w-full relative">
-                <div className="flex min-h-screen relative flex-nowrap w-full">
+            <section className="h-screen w-full relative bg-[#eeeeee]">
+
+                {/* <TopNavBar
+                    name={username}
+                ></TopNavBar> */}
+
+                <div className="flex relative flex-nowrap w-full">
+                    {/* <div
+                        className={`z-40 w-full md:w-60 shrink-0 bg-[#182330] md:flex flex-col md:relative fixed top-0 left-0 min-h-screen md:min-h-full md:h-auto shadow-xl ${isMobile ? "grid place-items-center" : "hidden"
+                            }`}
+                    > */}
                     <div
-                        className={`z-40 w-full md:w-60 shrink-0 bg-white p-2 md:flex flex-col md:relative fixed top-0 left-0 min-h-screen md:min-h-full md:h-auto shadow-xl ${isMobile ? "grid place-items-center" : "hidden"
+                        className={`z-40 w-60 shrink-0 bg-[#182330] md:flex flex-col md:relative fixed top-0 left-0 min-h-screen md:min-h-full md:h-auto shadow-xl transition-all duration-700 md:translate-x-0 ${isMobile ? "" : "-translate-x-60"
                             }`}
                     >
                         <div className="md:flex flex-col md:h-full">
-                            <div className="text-white text-center mb-4">
+
+                            {/* <div className="text-white text-center mb-4">
                                 <img
-                                    src="/images/logo.jpg"
+                                    src="/images/banner.jpg"
                                     alt="logo"
-                                    className="w-80 md:w-40 inline-block"
+                                    className="w-full h-40 object-cover object-top inline-block"
                                 />
+                            </div> */}
+
+                            <div className="flex text-xl gap-2 items-center w-full pl-4 mt-6 text-gray-200">
+                                <Fa6SolidCalendarDays></Fa6SolidCalendarDays>
+                                <p className="mallanna">
+                                    {new Date().toDateString()}
+                                </p>
                             </div>
+                            <div className="w-[2px] bg-gray-800 h-6"></div>
                             <div className="flex flex-col grow">
                                 {/* <Link
                                     to={"/home/"}
@@ -129,14 +146,17 @@ const Home: React.FC = (): JSX.Element => {
                                             }}
                                         >
                                             <SidebarTab
-                                                icon={Fa6SolidObjectUngroup}
+                                                icon={MdiDesktopMacDashboard}
                                                 title="Dashboard"
                                                 active={asideindex === SideBarTabs.Dashborad}
                                             ></SidebarTab>
                                         </Link>
                                         <Link
                                             to={"/home/services"}
-                                            onClick={() => achangeindex(SideBarTabs.Services)}
+                                            onClick={() => {
+                                                achangeindex(SideBarTabs.Services);
+                                                changeMobile(false);
+                                            }}
                                         >
                                             <SidebarTab
                                                 icon={Fa6SolidCodeBranch}
@@ -256,7 +276,6 @@ const Home: React.FC = (): JSX.Element => {
                                         </button>
                                     </>
                                 )}
-
                                 {user.role == "USER" ?
                                     <Link
                                         to={"/home/editprofile"}
@@ -266,7 +285,7 @@ const Home: React.FC = (): JSX.Element => {
                                         }}
                                     >
                                         <SidebarTab
-                                            icon={CarbonEdit}
+                                            icon={StreamlineInterfaceUserEditActionsCloseEditGeometricHumanPencilPersonSingleUpUserWrite}
                                             title="Edit Profile"
                                             active={asideindex === SideBarTabs.EditProfile}
                                         ></SidebarTab>
@@ -315,7 +334,7 @@ const Home: React.FC = (): JSX.Element => {
                                 </button>
                                 <div
                                     onClick={() => changeMobile(false)}
-                                    className={`md:hidden flex gap-2 items-center my-1 b  py-1 px-2 rounded-md hover:bg-rose-500 hover:bg-opacity-10 hover:text-rose-500 text-gray-900 cursor-pointer`}
+                                    className={`w-60 md:w-auto font-medium flex gap-2 items-center my-1 b  py-1 px-2 text-left text-lg cursor-pointer text-gray-400 hover:text-white hover:bg-white hover:bg-opacity-10 md:hidden`}
                                 >
                                     <Fa6SolidXmark></Fa6SolidXmark>
                                     <p className="text-xl">CLOSE</p>
@@ -354,9 +373,9 @@ type SideBarTabProps = {
 const SidebarTab = (props: SideBarTabProps) => {
     return (
         <div
-            className={`w-60 md:w-auto font-medium flex gap-2 items-center my-1 b  py-1 px-2 rounded-md text-left text-lg cursor-pointer ${props.active
-                ? "bg-indigo-500 text-white"
-                : "text-gray-800 hover:text-white hover:bg-indigo-500"
+            className={`w-60 md:w-auto font-medium flex gap-2 items-center my-1 b  py-1 px-2 text-left text-lg cursor-pointer ${props.active
+                ? "border-r-4 border-[#0984e3] bg-white bg-opacity-10 text-white"
+                : "text-gray-400 hover:text-white hover:bg-white hover:bg-opacity-10"
                 }`}
         >
             <props.icon></props.icon>
@@ -383,19 +402,16 @@ const TopNavBar = (props: TopNavBarProps) => {
             </div>
             <div className="text-center text-gray-900 text-2xl hidden md:block">Home</div>
             <div className="grow"></div>
-            <div className="text-gray-800 flex gap-2 items-center">
+            {/* <div className="text-gray-800 flex gap-2 items-center">
                 <Fa6SolidCalendarDays></Fa6SolidCalendarDays>
-                <p>
+                <p className="mallanna">
                     {new Date().toDateString()}
                 </p>
-            </div>
-            <div className="w-[2px] bg-gray-800 h-10"></div>
+            </div> */}
+            {/* <div className="w-[2px] bg-gray-800 h-10"></div> */}
             <div className="flex gap-2 relative group items-center">
-                <div className="shrink-0 rounded-full w-10 h-10 bg-indigo-500 grid place-items-center">
-                    {props.name.toString().slice(0, 1).toUpperCase()}
-                </div>
-                <div className="text-gray-900 font-medium text-2xl text-center cursor-pointer">
-                    {props.name}
+                <div className="text-gray-900 font-medium text-xl text-center cursor-pointer">
+                    <span className="font-semibold">Hello, </span> {props.name}
                 </div>
             </div>
         </div>
@@ -405,7 +421,7 @@ const TopNavBar = (props: TopNavBarProps) => {
 const Footer = () => {
     const year = new Date().getFullYear();
     return (
-        <div className="absolute bottom-0 w-full h-14 bg-white font-semibold text-center grid place-items-center text-gray-800 text-xl shadow-xl">
+        <div className="absolute bottom-0 w-full h-14 bg-white font-medium text-center grid place-items-center text-gray-800 text-lg shadow-xl mallanna">
             &copy; {year} PLANNING & DEVELOPMENT AUTHORITY - All rights reserved.
         </div>
     );
