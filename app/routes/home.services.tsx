@@ -6,7 +6,6 @@ import { FluentCloudArchive24Filled, MdiFolderInformation, MdiMapMarkerPath } fr
 
 const Services: React.FC = (): JSX.Element => {
 
-
     const title = useRef<HTMLHeadingElement | null>(null);
 
     useLayoutEffect(() => {

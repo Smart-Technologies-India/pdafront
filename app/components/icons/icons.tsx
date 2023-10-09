@@ -445,3 +445,35 @@ export function StreamlineNatureEcologyLeafProtectEnvironmentLeafEcologyPlantPla
         <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 14 14" {...props}><g fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round"><path d="M11.31 4.15c0-1 0-2-.07-2.66A1 1 0 0 0 9.89.55c-2.16.62-6.57 2.17-8.42 4.83c-2 2.82-.46 6.05.27 7.31a1.38 1.38 0 0 0 1 .66a9.36 9.36 0 0 0 2.79.08"></path><path d="M5 8.58a51.12 51.12 0 0 0-2.78 4.6m8.45.29h0a.5.5 0 0 1-.34 0h0A4.48 4.48 0 0 1 7.5 9.31V7.46A.47.47 0 0 1 8 7h5a.47.47 0 0 1 .46.46v1.85a4.48 4.48 0 0 1-2.79 4.16Z"></path></g></svg>
     )
 }
+
+
+export function Fa6SolidSun(props: SVGProps<SVGSVGElement>) {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 512 512" {...props}><path fill="currentColor" d="M361.5 1.2c5 2.1 8.6 6.6 9.6 11.9L391 121l107.9 19.8c5.3 1 9.8 4.6 11.9 9.6s1.5 10.7-1.6 15.2L446.9 256l62.3 90.3c3.1 4.5 3.7 10.2 1.6 15.2s-6.6 8.6-11.9 9.6L391 391l-19.9 107.9c-1 5.3-4.6 9.8-9.6 11.9s-10.7 1.5-15.2-1.6L256 446.9l-90.3 62.3c-4.5 3.1-10.2 3.7-15.2 1.6s-8.6-6.6-9.6-11.9L121 391L13.1 371.1c-5.3-1-9.8-4.6-11.9-9.6s-1.5-10.7 1.6-15.2L65.1 256L2.8 165.7c-3.1-4.5-3.7-10.2-1.6-15.2s6.6-8.6 11.9-9.6L121 121l19.9-107.9c1-5.3 4.6-9.8 9.6-11.9s10.7-1.5 15.2 1.6L256 65.1l90.3-62.3c4.5-3.1 10.2-3.7 15.2-1.6zM160 256a96 96 0 1 1 192 0a96 96 0 1 1-192 0zm224 0a128 128 0 1 0-256 0a128 128 0 1 0 256 0z"></path></svg>
+    )
+}
+
+
+export function Fa6SolidMoon(props: SVGProps<SVGSVGElement>) {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" width="0.75em" height="1em" viewBox="0 0 384 512" {...props}><path fill="currentColor" d="M223.5 32C100 32 0 132.3 0 256s100 224 223.5 224c60.6 0 115.5-24.2 155.8-63.4c5-4.9 6.3-12.5 3.1-18.7s-10.1-9.7-17-8.5c-9.8 1.7-19.8 2.6-30.1 2.6c-96.9 0-175.5-78.8-175.5-176c0-65.8 36-123.1 89.3-153.3c6.1-3.5 9.2-10.5 7.7-17.3s-7.3-11.9-14.3-12.5c-6.3-.5-12.6-.8-19-.8z"></path></svg>
+    )
+}
+
+export function MdiMessageTextLock(props: SVGProps<SVGSVGElement>) {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...props}><path fill="currentColor" d="M20.5 0A2.5 2.5 0 0 0 18 2.5V3a1 1 0 0 0-1 1v4a1 1 0 0 0 1 1h5a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1v-.5A2.5 2.5 0 0 0 20.5 0m0 1A1.5 1.5 0 0 1 22 2.5V3h-3v-.5A1.5 1.5 0 0 1 20.5 1M4 2a2 2 0 0 0-2 2v18l4-4h14a2 2 0 0 0 2-2v-5h-5c-1.11 0-2-.89-2-2V2H4m2 4h7v2H6V6m0 3h7v2H6V9m0 3h8v2H6v-2Z"></path></svg>
+    )
+}
+
+export function MaterialSymbolsFramePerson(props: SVGProps<SVGSVGElement>) {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...props}><path fill="currentColor" d="M4 22q-.825 0-1.413-.588T2 20v-4h2v4h4v2H4ZM2 8V4q0-.825.588-1.413T4 2h4v2H4v4H2Zm14 14v-2h4v-4h2v4q0 .825-.588 1.413T20 22h-4Zm4-14V4h-4V2h4q.825 0 1.413.588T22 4v4h-2Zm-8 4q-1.275 0-2.138-.863T9 9q0-1.25.863-2.125T12 6q1.25 0 2.125.875T15 9q0 1.275-.875 2.138T12 12Zm-6 6v-1.9q0-.525.263-.988t.712-.737q1.15-.675 2.413-1.025T12 13q1.35 0 2.613.35t2.412 1.025q.45.275.713.738T18 16.1V18H6Z"></path></svg>
+    )
+}
+
+export function ClarityCertificateSolid(props: SVGProps<SVGSVGElement>) {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 36 36" {...props}><path fill="currentColor" d="M19 30H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h28a2 2 0 0 1 2 2v10.37a8.34 8.34 0 0 0-13.49 9.79l-.93 1.14ZM7 12v1.6h17V12Zm0 5.6h11V16H7Zm0 7h10V23H7Z" className="clr-i-solid clr-i-solid-path-1"></path><path fill="currentColor" d="M33.83 23.59a6.37 6.37 0 1 0-10.77 4.59l-1.94 2.37l.9 3.61l3.66-4.46a6.26 6.26 0 0 0 3.55 0l3.66 4.46l.9-3.61l-1.94-2.37a6.34 6.34 0 0 0 1.98-4.59Zm-10.74 0a4.37 4.37 0 1 1 4.37 4.31a4.35 4.35 0 0 1-4.36-4.31Z" className="clr-i-solid clr-i-solid-path-2"></path><path fill="none" d="M0 0h36v36H0z"></path></svg>
+    )
+}

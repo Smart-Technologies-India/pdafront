@@ -402,13 +402,6 @@ const TopNavBar = (props: TopNavBarProps) => {
             </div>
             <div className="text-center text-gray-900 text-2xl hidden md:block">Home</div>
             <div className="grow"></div>
-            {/* <div className="text-gray-800 flex gap-2 items-center">
-                <Fa6SolidCalendarDays></Fa6SolidCalendarDays>
-                <p className="mallanna">
-                    {new Date().toDateString()}
-                </p>
-            </div> */}
-            {/* <div className="w-[2px] bg-gray-800 h-10"></div> */}
             <div className="flex gap-2 relative group items-center">
                 <div className="text-gray-900 font-medium text-xl text-center cursor-pointer">
                     <span className="font-semibold">Hello, </span> {props.name}
