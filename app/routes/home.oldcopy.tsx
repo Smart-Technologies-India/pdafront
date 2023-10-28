@@ -457,7 +457,7 @@ const OldCopy: React.FC = (): JSX.Element => {
 
                 {/*--------------------- section 3 start here ------------------------- */}
                 <div className="w-full bg-[#0984e3] py-2 rounded-md px-4 mt-4">
-                    <p className="text-left font-semibold text-xl text-white"> 3. Permisstion Details </p>
+                    <p className="text-left font-semibold text-xl text-white"> 3. Permission Details </p>
                 </div>
                 <div className="flex flex-wrap gap-4 gap-y-2 items-center px-4 py-2 my-2">
                     <div className="flex-none lg:flex-1 w-full lg:w-auto text-xl font-normal text-left text-gray-700">
