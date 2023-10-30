@@ -100,6 +100,15 @@ const search = () => {
             return `/home/rtiview/${id}`;
         } else if (value == "ZONE") {
             return `/home/zoneinfoview/${id}`;
+        }    else if (value == "CP") {
+                return `/home/cpview/${id}`;  
+            } 
+            else if (value == "OC") {
+                return `/home/ocview/${id}`;
+            } 
+            else if (value == "PLINTH") {
+                return `/home/plinthview/${id}`;
+            
         } else if (value == "DEMOLITION") {
             return "/home";
         } else if (value == "OLDCOPY") {
@@ -132,6 +141,9 @@ const search = () => {
                             <option value="PETROLEUM" className="bg-white text-blakc text-lg">Petroleum</option>
                             <option value="RTI" className="bg-white text-blakc text-lg">RTI</option>
                             <option value="ZONE" className="bg-white text-blakc text-lg">ZONE</option>
+                            <option value="OC" className="bg-white text-blakc text-lg">OC</option>
+                            <option value="CP" className="bg-white text-blakc text-lg">CP</option>
+                            <option value="PLINTH" className="bg-white text-blakc text-lg">PLINTH</option>
                             <option value="DEMOLITION" className="bg-white text-blakc text-lg">DEMOLITION</option>
                             <option value="OLDCOPY" className="bg-white text-blakc text-lg">OLDCOPY</option>
                             <option value="LANDRECORDS" className="bg-white text-blakc text-lg">LAND RECORDS</option>

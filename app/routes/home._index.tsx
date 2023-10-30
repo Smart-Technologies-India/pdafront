@@ -32,6 +32,9 @@ export const loader: LoaderFunction = async (props: LoaderArgs) => {
               PETROLEUM,
               UNAUTHORIZED,
               LANDRECORDS,
+              CP,
+              OC,
+              PLINTH,
             }
           }
       `,
@@ -102,7 +105,22 @@ export const loader: LoaderFunction = async (props: LoaderArgs) => {
               pending,
               completed,
               rejected
-            }
+            },
+            CP{
+                pending,
+                completed,
+                rejected
+              },
+              OC{
+                pending,
+                completed,
+                rejected
+              },
+              PLINTH{
+                pending,
+                completed,
+                rejected
+              }
         }
         }
       `,
@@ -313,7 +331,7 @@ const DashBoard = (): JSX.Element => {
         },
     };
 
-    const labels = ["RTI", 'Old Copy', 'Zone', 'Petroleum', 'Unauthorized', 'Land Section'];
+    const labels = ["RTI", 'Old Copy', 'Zone', 'Petroleum', 'Unauthorized', 'Land Section','CP','OC','PLINTH'];
 
 
     const pendingData: number[] = [];
@@ -425,6 +443,9 @@ const DashBoard = (): JSX.Element => {
                         <DashboradCard onclick={() => achangeindex(SideBarTabs.ZoneInfo)} title="Zone Info" color="bg-gradient-to-r from-rose-400 to-rose-600" textcolor="text-rose-500" link="/home/vzoneinfo" value={filecount.ZONE} />
                         <DashboradCard onclick={() => achangeindex(SideBarTabs.OldCopy)} title="Old Copy" color="bg-gradient-to-r from-cyan-400 to-cyan-600" textcolor="text-cyan-500" link="/home/voldcopy" value={filecount.OLDCOPY} />
                         <DashboradCard onclick={() => achangeindex(SideBarTabs.Rti)} title="RTI" color="bg-gradient-to-r from-blue-400 to-blue-600" textcolor="text-blue-500" link="/home/vrti" value={filecount.RTI} />
+                        <DashboradCard onclick={() => achangeindex(SideBarTabs.Cp)} title="CP" color="bg-gradient-to-r from-blue-400 to-blue-600" textcolor="text-blue-500" link="/home/vcp" value={filecount.CP} />
+                        <DashboradCard onclick={() => achangeindex(SideBarTabs.Oc)} title="OC" color="bg-gradient-to-r from-blue-400 to-blue-600" textcolor="text-blue-500" link="/home/voc" value={filecount.OC} />
+                        <DashboradCard onclick={() => achangeindex(SideBarTabs.Plinth)} title="PLINTH" color="bg-gradient-to-r from-blue-400 to-blue-600" textcolor="text-blue-500" link="/home/vplinth" value={filecount.PLINTH} />
                         <DashboradCard onclick={() => achangeindex(SideBarTabs.Petroleum)} title="Petroleum" color="bg-gradient-to-r from-green-400 to-green-600" textcolor="text-green-500" link="/home/vpetroleum" value={filecount.PETROLEUM} />
                         <DashboradCard onclick={() => achangeindex(SideBarTabs.Unauthorisd)} title="Unauthorized" color="bg-gradient-to-r from-slate-400 to-slate-600" textcolor="text-slate-500" link="/home/vunauthorised" value={filecount.UNAUTHORIZED} />
                         <DashboradCard onclick={() => achangeindex(SideBarTabs.landSection)} title="Land Section" color="bg-gradient-to-r from-indigo-400 to-indigo-600" textcolor="text-[#0984e3]" link="/home/vlandsection" value={filecount.LANDRECORDS} />

@@ -229,6 +229,36 @@ const Home: React.FC = (): JSX.Element => {
                                                 active={asideindex === SideBarTabs.OldCopy}
                                             ></SidebarTab>
                                         </Link>
+                                        <Link
+                                            to={"/home/voc"}
+                                            onClick={() => achangeindex(SideBarTabs.Oc)}
+                                        >
+                                            <SidebarTab
+                                                icon={MaterialSymbolsOralDisease}
+                                                title="OC"
+                                                active={asideindex === SideBarTabs.Oc}
+                                            ></SidebarTab>
+                                        </Link>
+                                        <Link
+                                            to={"/home/vcp"}
+                                            onClick={() => achangeindex(SideBarTabs.Cp)}
+                                        >
+                                            <SidebarTab
+                                                icon={MaterialSymbolsOralDisease}
+                                                title="CP"
+                                                active={asideindex === SideBarTabs.Cp}
+                                            ></SidebarTab>
+                                        </Link>
+                                        <Link
+                                            to={"/home/vplinth"}
+                                            onClick={() => achangeindex(SideBarTabs.Plinth)}
+                                        >
+                                            <SidebarTab
+                                                icon={MaterialSymbolsOralDisease}
+                                                title="Plinth"
+                                                active={asideindex === SideBarTabs.Plinth}
+                                            ></SidebarTab>
+                                        </Link>
                                         <div className="w-full h-[2px] bg-gray-800 my-3"></div>
                                         <p className="text-left px-2 font-serif text-sm my-2 text-gray-600 w-full">Department Files</p>
                                         <Link

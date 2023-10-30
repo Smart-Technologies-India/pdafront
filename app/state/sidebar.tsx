@@ -13,7 +13,10 @@ enum SideBarTabs {
     DesignPoint,
     EditProfile,
     Search,
-    DealingHand
+    DealingHand,
+    Cp,
+    Oc,
+    Plinth
 }
 
 interface SideBarState {
