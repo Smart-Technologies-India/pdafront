@@ -149,6 +149,12 @@ const Dashboard: React.FC = (): JSX.Element => {
             return `/home/rtiview/${id}`;
         } else if (value == "ZONE") {
             return `/home/zoneinfoview/${id}`;
+        } else if (value == "CP") {
+            return `/home/cpview/${id}`;
+        } else if (value == "OC") {
+            return `/home/ocview/${id}`;
+        } else if (value == "PLINTH") {
+            return `/home/plinthview/${id}`;
         } else if (value == "DEMOLITION") {
             return "/home";
         } else if (value == "OLDCOPY") {
