@@ -1,8 +1,13 @@
 import { Link } from "@remix-run/react";
 import { SVGProps, useLayoutEffect, useRef, useState } from "react";
-import { ClarityCertificateSolid, Fa6SolidMoon, Fa6SolidSun, MaterialSymbolsFramePerson, MdiMessageTextLock } from "~/components/icons/icons";
+import {
+  ClarityCertificateSolid,
+  Fa6SolidMoon,
+  Fa6SolidSun,
+  MaterialSymbolsFramePerson,
+  MdiMessageTextLock,
+} from "~/components/icons/icons";
 import gsap from "gsap";
-
 
 const Home: React.FC = (): JSX.Element => {
   const [isDark, setIsDark] = useState<boolean>(false);
@@ -162,7 +167,6 @@ const Home: React.FC = (): JSX.Element => {
     },
   ];
 
-
   const downloads = [
     {
       name: "DCR for Daman",
@@ -185,7 +189,6 @@ const Home: React.FC = (): JSX.Element => {
       link: "./assets/doc5.pdf",
     },
   ];
-
 
   const pandr = [
     {
@@ -256,7 +259,6 @@ const Home: React.FC = (): JSX.Element => {
       link: "https://daman.nic.in/websites/town_country_planning_department_daman/documents/2021/75-28-01-2021.pdf",
     },
   ];
-
 
   const downloadstwo = [
     {
@@ -387,7 +389,6 @@ const Home: React.FC = (): JSX.Element => {
 
   const header = useRef<HTMLElement | null>(null);
 
-
   const [menu, setMenu] = useState<boolean>(false);
   useLayoutEffect(() => {
     let ctx = gsap.context(() => {
@@ -397,8 +398,8 @@ const Home: React.FC = (): JSX.Element => {
         y: 100,
         stagger: {
           from: "start",
-          amount: 0.5
-        }
+          amount: 0.5,
+        },
       });
 
       gsap.from(header.current, {
@@ -412,30 +413,61 @@ const Home: React.FC = (): JSX.Element => {
   return (
     <div className={`${isDark ? "dark" : ""}`}>
       <main className="min-h-screen w-full relative">
-        <img src="/images/banner.jpg" alt="error" className="inline-block w-full h-screen absolute top-0 left-0 object-cover object-top" />
+        <img
+          src="/images/banner.jpg"
+          alt="error"
+          className="inline-block w-full h-screen absolute top-0 left-0 object-cover object-top"
+        />
 
         <div className="absolute top-0 left-0 h-screen w-full bg-black bg-opacity-20 p-20 grid items-center justify-start">
           <div className="home">
-            <h1 className="ele text-white lato font-medium text-6xl mt-20 leading-tight">Shaping Tomorrow,<br />Building Today</h1>
-            <p className="ele text-white text-2xl mt-4">Partner with the leading goverment authority for planning and<br /> development in Daman and Diu.</p>
-            <Link to={"/mobilelogin/"} className="ele bg-[#62d6be]  font-medium text-center text-lg py-1 px-4 text-black rounded-md mallanna tracking-wide mt-4 inline-block">Join Us</Link>
+            <h1 className="ele text-white lato font-medium text-6xl mt-20 leading-tight">
+              Shaping Tomorrow,
+              <br />
+              Building Today
+            </h1>
+            <p className="ele text-white text-2xl mt-4">
+              Partner with the leading goverment authority for planning and
+              <br /> development in Daman and Diu.
+            </p>
+            <Link
+              to={"/mobilelogin/"}
+              className="ele bg-[#62d6be]  font-medium text-center text-lg py-1 px-4 text-black rounded-md mallanna tracking-wide mt-4 inline-block"
+            >
+              Login
+            </Link>
           </div>
         </div>
 
-
-        <header ref={header} className="fixed top-0 left-0 w-full py-4 gap-4 bg-[#1f1f1f] flex flex-col md:flex-row px-8 items-center z-50">
-          <p className="font-medium text-xl text-white font-sans">PLANNING & DEVELOPMENT AUTHORITY</p>
+        <header
+          ref={header}
+          className="fixed top-0 left-0 w-full py-4 gap-4 bg-[#1f1f1f] flex flex-col md:flex-row px-8 items-center z-50"
+        >
+          <p className="font-medium text-xl text-white font-sans">
+            PLANNING & DEVELOPMENT AUTHORITY
+          </p>
           <div className="hidden md:block grow"></div>
           <div className="shrink-0 flex gap-4">
-            <Link to={"/mobilelogin/"} className="bg-[#99908d]  font-medium text-center text-lg py-1 px-4 text-white rounded-md mallanna tracking-wide">Citizen Login</Link>
-            <a href={"http://77.75.120.70:8073"} className="bg-cyan-500  font-medium text-center text-lg py-1 px-4 text-white rounded-md mallanna tracking-wide">Architect Login</a>
+            <Link
+              to={"/mobilelogin/"}
+              className="bg-[#99908d]  font-medium text-center text-lg py-1 px-4 text-white rounded-md mallanna tracking-wide"
+            >
+              Citizen Login
+            </Link>
+            <a
+              href={"http://77.75.120.70:8073"}
+              className="bg-cyan-500  font-medium text-center text-lg py-1 px-4 text-white rounded-md mallanna tracking-wide"
+            >
+              Architect Login
+            </a>
             <div className="w-16 h-8 bg-white rounded-full p-1">
-              <div className={`text-xl grid place-items-center h-6 w-6 rounded-full text-yellow-500 dark:text-[#1f1f1f] transition-all duration-500 cursor-pointer ${isDark ? "translate-x-8" : "translate-x-0"}`} onClick={() => setIsDark(val => !val)}>
-                {isDark ?
-                  <Fa6SolidMoon />
-                  :
-                  <Fa6SolidSun />
-                }
+              <div
+                className={`text-xl grid place-items-center h-6 w-6 rounded-full text-yellow-500 dark:text-[#1f1f1f] transition-all duration-500 cursor-pointer ${
+                  isDark ? "translate-x-8" : "translate-x-0"
+                }`}
+                onClick={() => setIsDark((val) => !val)}
+              >
+                {isDark ? <Fa6SolidMoon /> : <Fa6SolidSun />}
               </div>
             </div>
           </div>
@@ -444,16 +476,19 @@ const Home: React.FC = (): JSX.Element => {
 
       <section className="py-32 grid place-items-center bg-[#eeeeee] dark:bg-[#1f1f1f]">
         <div className="w-4/6">
-          <p className="text-gray-800 dark:text-white text-center text-2xl font-sans"> The Planning and Development Authority Daman (PDA Daman) is a statutory body constituted under Section
-            20
-            Daman & Diu Town and Country Planning (Amendment) Regulation, 1999 (Principal Act- Goa, Daman and Diu
-            Town and
-            Country Planning Act, 1974) in the year 2012.
+          <p className="text-gray-800 dark:text-white text-center text-2xl font-sans">
+            {" "}
+            The Planning and Development Authority Daman (PDA Daman) is a
+            statutory body constituted under Section 20 Daman & Diu Town and
+            Country Planning (Amendment) Regulation, 1999 (Principal Act- Goa,
+            Daman and Diu Town and Country Planning Act, 1974) in the year 2012.
           </p>
-          <p className="text-gray-800 dark:text-white text-center text-2xl mt-10 font-sans"> The whole area of Daman district (except area of designated reserved forests and area under the
-            Jurisdiction of Coast Guard Authority) has been declared as planning area under section 18 of the Act in
-            the
-            year 2011.
+          <p className="text-gray-800 dark:text-white text-center text-2xl mt-10 font-sans">
+            {" "}
+            The whole area of Daman district (except area of designated reserved
+            forests and area under the Jurisdiction of Coast Guard Authority)
+            has been declared as planning area under section 18 of the Act in
+            the year 2011.
           </p>
         </div>
       </section>
@@ -490,44 +525,66 @@ const Home: React.FC = (): JSX.Element => {
         </div>
       </section> */}
 
-
-
       <section className="bg-[#eeeeee] dark:bg-[#252525] p-10 flex flex-col md:flex-row items-center md:justify-evenly">
         <div className="w-80 md:w-96 p-8">
           <div className="grid place-items-center">
             <MdiMessageTextLock className="text-5xl text-gray-800 dark:text-gray-300 text-center"></MdiMessageTextLock>
           </div>
-          <p className="text-gray-800 dark:text-gray-300 text-center text-3xl font-semibold mt-10 font-sans">Application</p>
+          <p className="text-gray-800 dark:text-gray-300 text-center text-3xl font-semibold mt-10 font-sans">
+            Application
+          </p>
         </div>
         <div className="w-80 md:w-96 p-8">
           <div className="grid place-items-center">
             <MaterialSymbolsFramePerson className="text-5xl text-gray-800 dark:text-gray-300 text-center"></MaterialSymbolsFramePerson>
           </div>
-          <p className="text-gray-800 dark:text-gray-300 text-center text-3xl font-semibold mt-10 font-sans">Verification</p>
+          <p className="text-gray-800 dark:text-gray-300 text-center text-3xl font-semibold mt-10 font-sans">
+            Verification
+          </p>
         </div>
         <div className="w-80 md:w-96 p-8">
           <div className="grid place-items-center">
             <ClarityCertificateSolid className="text-5xl text-gray-800 dark:text-gray-300 text-center"></ClarityCertificateSolid>
           </div>
-          <p className="text-gray-800 dark:text-gray-300 text-center text-3xl font-semibold mt-10 font-sans">Certificate</p>
+          <p className="text-gray-800 dark:text-gray-300 text-center text-3xl font-semibold mt-10 font-sans">
+            Certificate
+          </p>
         </div>
       </section>
       <section className="bg-white dark:bg-[#2e2e2e] p-20">
-        <h1 className="text-gray-800 dark:text-gray-300 text-4xl font-semibold mt-10 font-sans text-center lg:text-left">Services</h1>
+        <h1 className="text-gray-800 dark:text-gray-300 text-4xl font-semibold mt-10 font-sans text-center lg:text-left">
+          Services
+        </h1>
         {/* <div className="gap-6 mt-6 flex-col lg:flex-row relative items-center justify-between align-middle place-items-center grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3"> */}
         <div className="gap-4 mt-6 flex-col lg:flex-row relative items-center justify-around flex flex-wrap">
           <div className="w-60 h-[24rem] rounded-xl relative overflow-hidden group">
-            <img src="/images/service1.jfif" alt="service one" className="w-full h-full absolute top-0 left-0 object-cover object-center rounded-xl" />
+            <img
+              src="/images/service1.jfif"
+              alt="service one"
+              className="w-full h-full absolute top-0 left-0 object-cover object-center rounded-xl"
+            />
             <div className="absolute bottom-0 left-0 w-full bg-black bg-opacity-70 p-2 rounded-b-xl h-32">
-              <h1 className="text-gray-300 text-left text-xl font-semibold font-sans">RTI Service</h1>
-              <p className="text-gray-300 text-left text-sm font-semibold font-sans">Access info through Right to Information. </p>
+              <h1 className="text-gray-300 text-left text-xl font-semibold font-sans">
+                RTI Service
+              </h1>
+              <p className="text-gray-300 text-left text-sm font-semibold font-sans">
+                Access info through Right to Information.{" "}
+              </p>
             </div>
           </div>
           <div className="w-60 h-[24rem] rounded-lg relative overflow-hidden group">
-            <img src="/images/service2.jpg" alt="service two" className="w-full h-full absolute top-0 left-0 object-cover object-center rounded-xl" />
+            <img
+              src="/images/service2.jpg"
+              alt="service two"
+              className="w-full h-full absolute top-0 left-0 object-cover object-center rounded-xl"
+            />
             <div className="absolute bottom-0 left-0 w-full bg-black bg-opacity-70 p-2 rounded-b-xl h-32">
-              <h1 className="text-gray-300 text-left text-xl font-semibold font-sans">Zone Information</h1>
-              <p className="text-gray-300 text-left text-sm font-semibold font-sans">Get detailed zoning data for informed decisions.  </p>
+              <h1 className="text-gray-300 text-left text-xl font-semibold font-sans">
+                Zone Information
+              </h1>
+              <p className="text-gray-300 text-left text-sm font-semibold font-sans">
+                Get detailed zoning data for informed decisions.{" "}
+              </p>
             </div>
           </div>
           {/* <div className="w-60 h-[24rem] rounded-lg relative overflow-hidden group">
@@ -538,63 +595,135 @@ const Home: React.FC = (): JSX.Element => {
             </div>
           </div> */}
           <div className="w-60 h-[24rem] rounded-xl relative overflow-hidden group">
-            <img src="/images/one.jpeg" alt="service one" className="w-full h-full absolute top-0 left-0 object-cover object-center rounded-xl" />
+            <img
+              src="/images/one.jpeg"
+              alt="service one"
+              className="w-full h-full absolute top-0 left-0 object-cover object-center rounded-xl"
+            />
             <div className="absolute bottom-0 left-0 w-full bg-black bg-opacity-70 p-2 rounded-b-xl h-32">
-              <h1 className="text-gray-300 text-left text-xl font-semibold font-sans">Construction permission</h1>
-              <p className="text-gray-300 text-left text-sm font-semibold font-sans">Secure legal authorization swiftly for your projects through our portal. Hassle-free</p>
+              <h1 className="text-gray-300 text-left text-xl font-semibold font-sans">
+                Construction permission
+              </h1>
+              <p className="text-gray-300 text-left text-sm font-semibold font-sans">
+                Secure legal authorization swiftly for your projects through our
+                portal. Hassle-free
+              </p>
             </div>
           </div>
           <div className="w-60 h-[24rem] rounded-lg relative overflow-hidden group">
-            <img src="/images/two.jpeg" alt="service two" className="w-full h-full absolute top-0 left-0 object-cover object-center rounded-xl" />
+            <img
+              src="/images/two.jpeg"
+              alt="service two"
+              className="w-full h-full absolute top-0 left-0 object-cover object-center rounded-xl"
+            />
             <div className="absolute bottom-0 left-0 w-full bg-black bg-opacity-70 p-2 rounded-b-xl h-32">
-              <h1 className="text-gray-300 text-left text-xl font-semibold font-sans">Occupancy certificate</h1>
-              <p className="text-gray-300 text-left text-sm font-semibold font-sans">Obtain your occupancy certificate online. Ensure your property is compliant with regulations for safe and legal occupation.</p>
+              <h1 className="text-gray-300 text-left text-xl font-semibold font-sans">
+                Occupancy certificate
+              </h1>
+              <p className="text-gray-300 text-left text-sm font-semibold font-sans">
+                Obtain your occupancy certificate online. Ensure your property
+                is compliant with regulations for safe and legal occupation.
+              </p>
             </div>
           </div>
           <div className="w-60 h-[24rem] rounded-lg relative overflow-hidden group">
-            <img src="/images/three.jpeg" alt="service three" className="w-full h-full absolute top-0 left-0 object-cover object-center rounded-xl" />
+            <img
+              src="/images/three.jpeg"
+              alt="service three"
+              className="w-full h-full absolute top-0 left-0 object-cover object-center rounded-xl"
+            />
             <div className="absolute bottom-0 left-0 w-full bg-black bg-opacity-70 p-2 rounded-b-xl h-32">
-              <h1 className="text-gray-300 text-left text-xl font-semibold font-sans">Old copy Service</h1>
-              <p className="text-gray-300 text-left text-sm font-semibold font-sans">Access old Maps, OC, and CP easily. Government portal for quick historical document retrieval.</p>
+              <h1 className="text-gray-300 text-left text-xl font-semibold font-sans">
+                Old copy Service
+              </h1>
+              <p className="text-gray-300 text-left text-sm font-semibold font-sans">
+                Access old Maps, OC, and CP easily. Government portal for quick
+                historical document retrieval.
+              </p>
             </div>
           </div>
           <div className="w-60 h-[24rem] rounded-lg relative overflow-hidden group">
-            <img src="/images/forth.jpg" alt="service three" className="w-full h-full absolute top-0 left-0 object-cover object-center rounded-xl" />
+            <img
+              src="/images/forth.jpg"
+              alt="service three"
+              className="w-full h-full absolute top-0 left-0 object-cover object-center rounded-xl"
+            />
             <div className="absolute bottom-0 left-0 w-full bg-black bg-opacity-70 p-2 rounded-b-xl h-32">
-              <h1 className="text-gray-300 text-left text-xl font-semibold font-sans">Plinth Inspection</h1>
-              <p className="text-gray-300 text-left text-sm font-semibold font-sans">Apply for plinth inspections online. Ensure your project's foundation is stable and secure. </p>
+              <h1 className="text-gray-300 text-left text-xl font-semibold font-sans">
+                Plinth Inspection
+              </h1>
+              <p className="text-gray-300 text-left text-sm font-semibold font-sans">
+                Apply for plinth inspections online. Ensure your project's
+                foundation is stable and secure.{" "}
+              </p>
             </div>
           </div>
         </div>
       </section>
 
       <section className="bg-white dark:bg-[#252525] sm:p-20 p-6">
-        <h3 className="text-3xl text-gray-800 dark:text-gray-300 font-medium lato mb-4">Permissions and Reports</h3>
+        <h3 className="text-3xl text-gray-800 dark:text-gray-300 font-medium lato mb-4">
+          Permissions and Reports
+        </h3>
         <div className="overflow-y-scroll no-scrollbar">
           {pandr.map((val: any, index: number) => {
             return (
-              <div key={index} className="flex items-center gap-x-2 bg-[#eeeeee] dark:bg-[#191919] rounded-lg my-2 py-1 px-4">
-                <Link target="_blank" to={val.link} className="flex hover:underline text-gray-800 dark:text-gray-300 text-xl font-medium mallanna">	&#x25C7; {val.name}</Link>
+              <div
+                key={index}
+                className="flex items-center gap-x-2 bg-[#eeeeee] dark:bg-[#191919] rounded-lg my-2 py-1 px-4"
+              >
+                <Link
+                  target="_blank"
+                  to={val.link}
+                  className="flex hover:underline text-gray-800 dark:text-gray-300 text-xl font-medium mallanna"
+                >
+                  {" "}
+                  &#x25C7; {val.name}
+                </Link>
               </div>
             );
           })}
         </div>
-        <h3 className="text-3xl text-gray-800 dark:text-gray-300 font-medium lato mb-4 mt-8">Ease of Doing Business(EODB)</h3>
+        <h3 className="text-3xl text-gray-800 dark:text-gray-300 font-medium lato mb-4 mt-8">
+          Ease of Doing Business(EODB)
+        </h3>
         <div className="h-[450px] overflow-y-scroll no-scrollbar">
           {easeofdoing.map((val: any, index: number) => {
             return (
-              <div key={index} className="flex items-center gap-x-2 bg-[#eeeeee] dark:bg-[#191919] rounded-lg my-2 py-1 px-4">
-                <Link target="_blank" to={val.link} className="flex hover:underline text-gray-800 dark:text-gray-300 text-xl font-medium mallanna">	&#x25C7; {val.name}</Link>
+              <div
+                key={index}
+                className="flex items-center gap-x-2 bg-[#eeeeee] dark:bg-[#191919] rounded-lg my-2 py-1 px-4"
+              >
+                <Link
+                  target="_blank"
+                  to={val.link}
+                  className="flex hover:underline text-gray-800 dark:text-gray-300 text-xl font-medium mallanna"
+                >
+                  {" "}
+                  &#x25C7; {val.name}
+                </Link>
               </div>
             );
           })}
         </div>
-        <h3 className="text-3xl text-gray-800 dark:text-gray-300 font-medium lato mb-4 mt-8">Downloads</h3>
+        <h3 className="text-3xl text-gray-800 dark:text-gray-300 font-medium lato mb-4 mt-8">
+          Downloads
+        </h3>
         <div className="h-[450px] overflow-y-scroll no-scrollbar">
           {downloadstwo.map((val: any, index: number) => {
             return (
-              <div key={index} className="flex items-center gap-x-2 bg-[#eeeeee] dark:bg-[#191919] rounded-lg my-2 py-1 px-4">
-                <Link target="_blank" to={val.link} className="flex hover:underline text-gray-800 dark:text-gray-300 text-xl font-medium mallanna">	&#x25C7; {val.name}</Link>
+              <div
+                key={index}
+                className="flex items-center gap-x-2 bg-[#eeeeee] dark:bg-[#191919] rounded-lg my-2 py-1 px-4"
+              >
+                <Link
+                  target="_blank"
+                  to={val.link}
+                  className="flex hover:underline text-gray-800 dark:text-gray-300 text-xl font-medium mallanna"
+                >
+                  {" "}
+                  &#x25C7; {val.name}
+                </Link>
               </div>
             );
           })}
@@ -613,10 +742,24 @@ const Home: React.FC = (): JSX.Element => {
       <section className="bg-[#fefefe] dark:bg-[#1f1f1f] p-10 sm:p-20">
         <div className="flex xl:items-center items-start justify-between gap-6 flex-col xl:flex-row">
           <div className="shrink-0">
-            <h1 className="text-gray-800 dark:text-white font-medium text-left text-2xl font-sans mt-4">Location</h1>
-            <p className="text-gray-800 dark:text-white font-medium text-left text-lg font-sans mt-2">Office of the Collector & District Magistrate <br />Bhitwadi Road, Municipal Market, Dholar,<br /> Moti Daman, Daman,<br />Daman and Diu and Dadra and Nagar Haveli  396210</p>
+            <h1 className="text-gray-800 dark:text-white font-medium text-left text-2xl font-sans mt-4">
+              Location
+            </h1>
+            <p className="text-gray-800 dark:text-white font-medium text-left text-lg font-sans mt-2">
+              Office of the Collector & District Magistrate <br />
+              Bhitwadi Road, Municipal Market, Dholar,
+              <br /> Moti Daman, Daman,
+              <br />
+              Daman and Diu and Dadra and Nagar Haveli 396210
+            </p>
           </div>
-          <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d14958.90673931113!2d72.8328819!3d20.394156!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be0d094bbefa247%3A0x147da831799ce416!2sOffice%20of%20the%20Collector%20%26%20District%20Magistrate%2C%20Daman!5e0!3m2!1sen!2sin!4v1696066672958!5m2!1sen!2sin" width="600" height="450" className="shrink-0 border-none rounded-xl scale-50 origin-top-left sm:scale-100" loading="lazy"></iframe>
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d14958.90673931113!2d72.8328819!3d20.394156!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be0d094bbefa247%3A0x147da831799ce416!2sOffice%20of%20the%20Collector%20%26%20District%20Magistrate%2C%20Daman!5e0!3m2!1sen!2sin!4v1696066672958!5m2!1sen!2sin"
+            width="600"
+            height="450"
+            className="shrink-0 border-none rounded-xl scale-50 origin-top-left sm:scale-100"
+            loading="lazy"
+          ></iframe>
         </div>
       </section>
       <footer className="bg-[#141414] p-10 sm:p-20">
@@ -624,43 +767,72 @@ const Home: React.FC = (): JSX.Element => {
           This Website is Designed & Developed by
         </p>
         <p className="text-center text-white text-xl mb-6 font-sans">
-          <span className="font-medium lato">Contents Coordinator</span> - Planning and
-          Development Authority, Daman
+          <span className="font-medium lato">Contents Coordinator</span> -
+          Planning and Development Authority, Daman
         </p>
         <p className="text-center text-white text-xl ">
-          <span className="font-medium font-sans">DISCLAIMER</span> - The content is
-          provided by Planning and Development Authority. PDA is responsible for
-          correctness, completeness and regularly updating the contents. Daman
-          e-Governance Society is not responsible for any consequences
-          arising out of this.
+          <span className="font-medium font-sans">DISCLAIMER</span> - The
+          content is provided by Planning and Development Authority. PDA is
+          responsible for correctness, completeness and regularly updating the
+          contents. Daman e-Governance Society is not responsible for any
+          consequences arising out of this.
         </p>
       </footer>
     </div>
   );
-}
-
+};
 
 export default Home;
 
-
-
 function Fa6SolidBars(props: SVGProps<SVGSVGElement>) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="0.88em" height="1em" viewBox="0 0 448 512" {...props}><path fill="currentColor" d="M0 96c0-17.7 14.3-32 32-32h384c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zm0 160c0-17.7 14.3-32 32-32h384c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zm448 160c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32h384c17.7 0 32 14.3 32 32z"></path></svg>
-  )
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="0.88em"
+      height="1em"
+      viewBox="0 0 448 512"
+      {...props}
+    >
+      <path
+        fill="currentColor"
+        d="M0 96c0-17.7 14.3-32 32-32h384c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zm0 160c0-17.7 14.3-32 32-32h384c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zm448 160c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32h384c17.7 0 32 14.3 32 32z"
+      ></path>
+    </svg>
+  );
 }
 
 function Fa6SolidXmark(props: SVGProps<SVGSVGElement>) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="0.75em" height="1em" viewBox="0 0 384 512" {...props}><path fill="currentColor" d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7L86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256L41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3l105.4 105.3c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256l105.3-105.4z"></path></svg>
-  )
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="0.75em"
+      height="1em"
+      viewBox="0 0 384 512"
+      {...props}
+    >
+      <path
+        fill="currentColor"
+        d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7L86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256L41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3l105.4 105.3c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256l105.3-105.4z"
+      ></path>
+    </svg>
+  );
 }
 
-
-
-
-export function MaterialSymbolsFormatParagraphRounded(props: SVGProps<SVGSVGElement>) {
+export function MaterialSymbolsFormatParagraphRounded(
+  props: SVGProps<SVGSVGElement>
+) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...props}><path fill="currentColor" d="M10 20q-.425 0-.713-.288T9 19v-5q-2.075 0-3.538-1.463T4 9q0-2.075 1.463-3.538T9 4h8q.425 0 .713.288T18 5q0 .425-.288.713T17 6h-1v13q0 .425-.288.713T15 20q-.425 0-.713-.288T14 19V6h-3v13q0 .425-.288.713T10 20Z"></path></svg>
-  )
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="1em"
+      height="1em"
+      viewBox="0 0 24 24"
+      {...props}
+    >
+      <path
+        fill="currentColor"
+        d="M10 20q-.425 0-.713-.288T9 19v-5q-2.075 0-3.538-1.463T4 9q0-2.075 1.463-3.538T9 4h8q.425 0 .713.288T18 5q0 .425-.288.713T17 6h-1v13q0 .425-.288.713T15 20q-.425 0-.713-.288T14 19V6h-3v13q0 .425-.288.713T10 20Z"
+      ></path>
+    </svg>
+  );
 }

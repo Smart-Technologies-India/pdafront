@@ -3,5 +3,5 @@
 // export const uploadUrl = "http://192.168.2.203:5579/";
 // export const uploadUrl = "http://localhost:5579/";
 // export const uploadUrl = "https://www.pdadaman.in/api/";
-export const uploadUrl = "http://192.168.2.203:5579/";
+export const uploadUrl = "http://192.168.2.201:5579/";
 export const BaseUrl = `${uploadUrl}graphql/`;

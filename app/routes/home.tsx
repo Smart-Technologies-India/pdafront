@@ -384,7 +384,8 @@ const Home: React.FC = (): JSX.Element => {
                 </div>
             </section>
             <div className="hidden">
-                <form method="POST" action="http://77.75.120.70:8073/Home/AuthenticateFromLandRecord">
+                {/* <form method="POST" action="http://77.75.120.70:8073/Home/AuthenticateFromLandRecord"> */}
+                <form method="POST" action="https://www.svpass.in/wf/Home/AuthenticateFromLandRecord">
                     <input type="text" name="UserId" ref={designpointRef} />
                     <input type="text" name="AccessKey" ref={accesskeyRef} />
                     <button type="submit" ref={submitRef}>submit</button>
