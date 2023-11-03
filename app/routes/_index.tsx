@@ -561,7 +561,7 @@ const Home: React.FC = (): JSX.Element => {
         {/* <div className="gap-6 mt-6 flex-col lg:flex-row relative items-center justify-between align-middle place-items-center grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3"> */}
         {/* <div className="gap-4 mt-6 flex-col lg:flex-row relative items-center justify-around flex flex-wrap"> */}
         <div className="gap-4 mt-6  relative items-center justify-around grid grid-cols-6">
-          <div className="h-[24rem] rounded-xl relative overflow-hidden group">
+          <div className="h-80 rounded-xl relative overflow-hidden group">
             <img
               src="/images/one.jpeg"
               alt="service one"
@@ -581,11 +581,11 @@ const Home: React.FC = (): JSX.Element => {
             </div>
           </div>
 
-          <div className="h-[24rem] rounded-lg relative overflow-hidden group">
+          <div className="h-80 rounded-lg relative overflow-hidden group">
             <img
               src="/images/forth.jpg"
               alt="service three"
-              className="w-full h-full absolute top-0 left-0 object-cover object-center rounded-xl"
+              className="w-full h-full absolute top-0 left-0 object-cover object-center rounded-xl bg-[#e4f3fa]"
             />
             <div className="absolute bottom-0 left-0 w-full bg-black bg-opacity-70 p-2 rounded-b-xl h-20 hover:h-full grid place-items-center">
               <div>
@@ -600,7 +600,7 @@ const Home: React.FC = (): JSX.Element => {
               </div>
             </div>
           </div>
-          <div className="h-[24rem] rounded-lg relative overflow-hidden group">
+          <div className="h-80 rounded-lg relative overflow-hidden group">
             <img
               src="/images/two.jpeg"
               alt="service two"
@@ -619,9 +619,9 @@ const Home: React.FC = (): JSX.Element => {
               </div>
             </div>
           </div>
-          <div className="h-[24rem] rounded-lg relative overflow-hidden group">
+          <div className="h-80 rounded-lg relative overflow-hidden group">
             <img
-              src="/images/service2.jpg"
+              src="/images/zone.jpeg"
               alt="service two"
               className="w-full h-full absolute top-0 left-0 object-cover object-center rounded-xl"
             />
@@ -635,7 +635,7 @@ const Home: React.FC = (): JSX.Element => {
               </p>
             </div>
           </div>
-          <div className="h-[24rem] rounded-lg relative overflow-hidden group">
+          <div className="h-80 rounded-lg relative overflow-hidden group">
             <img
               src="/images/three.jpeg"
               alt="service three"
@@ -654,9 +654,9 @@ const Home: React.FC = (): JSX.Element => {
               </div>
             </div>
           </div>
-          <div className="h-[24rem] rounded-xl relative overflow-hidden group">
+          <div className="h-80 rounded-xl relative overflow-hidden group">
             <img
-              src="/images/service1.jfif"
+              src="/images/rti.jpeg"
               alt="service one"
               className="w-full h-full absolute top-0 left-0 object-cover object-center rounded-xl"
             />
@@ -667,7 +667,7 @@ const Home: React.FC = (): JSX.Element => {
                   Service
                 </h1>
                 <p className="text-gray-300 text-center text-sm font-semibold font-sans mt-4">
-                  Access info through Right to Information.{" "}
+                  Access information through Right to Information Act.{" "}
                 </p>
               </div>
             </div>

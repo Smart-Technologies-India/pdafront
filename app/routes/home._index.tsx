@@ -16,7 +16,15 @@ import { LoaderArgs, LoaderFunction, json, redirect } from "@remix-run/node";
 import { ApiCall } from "~/services/api";
 import { userPrefs } from "~/cookies";
 import sideBarStore, { SideBarTabs } from "~/state/sidebar";
-import { Fa6SolidHouse } from "~/components/icons/icons";
+import {
+  Fa6SolidHouse,
+  Fa6SolidLandmark,
+  LineMdConstruction,
+  MdiFileLockOpen,
+  MdiSelectionMultipleMarker,
+  MingcuteGasStationFill,
+  TablerMap2,
+} from "~/components/icons/icons";
 ChartJS.register(
   ArcElement,
   Tooltip,
@@ -471,6 +479,7 @@ const DashBoard = (): JSX.Element => {
           textcolor="text-rose-500"
           link="/home/vzoneinfo"
           value={filecount.ZONE}
+          icon={1}
         />
         <DashboradCard
           onclick={() => achangeindex(SideBarTabs.OldCopy)}
@@ -479,6 +488,7 @@ const DashBoard = (): JSX.Element => {
           textcolor="text-cyan-500"
           link="/home/voldcopy"
           value={filecount.OLDCOPY}
+          icon={2}
         />
         <DashboradCard
           onclick={() => achangeindex(SideBarTabs.Rti)}
@@ -487,6 +497,7 @@ const DashBoard = (): JSX.Element => {
           textcolor="text-blue-500"
           link="/home/vrti"
           value={filecount.RTI}
+          icon={3}
         />
         {/* <DashboradCard
           onclick={() => achangeindex(SideBarTabs.Cp)}
@@ -519,6 +530,7 @@ const DashBoard = (): JSX.Element => {
           textcolor="text-green-500"
           link="/home/vpetroleum"
           value={filecount.PETROLEUM}
+          icon={4}
         />
         <DashboradCard
           onclick={() => achangeindex(SideBarTabs.Unauthorisd)}
@@ -527,6 +539,7 @@ const DashBoard = (): JSX.Element => {
           textcolor="text-slate-500"
           link="/home/vunauthorised"
           value={filecount.UNAUTHORIZED}
+          icon={5}
         />
         <DashboradCard
           onclick={() => achangeindex(SideBarTabs.landSection)}
@@ -535,6 +548,7 @@ const DashBoard = (): JSX.Element => {
           textcolor="text-[#0984e3]"
           link="/home/vlandsection"
           value={filecount.LANDRECORDS}
+          icon={6}
         />
       </div>
 
@@ -574,6 +588,7 @@ interface DashboradCardProps {
   color: string;
   textcolor: string;
   onclick: () => void;
+  icon: number;
 }
 
 const DashboradCard: React.FC<DashboradCardProps> = (
@@ -599,7 +614,34 @@ const DashboradCard: React.FC<DashboradCardProps> = (
         </Link> */}
       </div>
       <div>
-        <Fa6SolidHouse className={`text-3xl ${props.textcolor}`} />
+        {props.icon == 1 ? (
+          <MdiSelectionMultipleMarker
+            className={`text-3xl ${props.textcolor}`}
+          ></MdiSelectionMultipleMarker>
+        ) : null}
+        {props.icon == 2 ? (
+          <TablerMap2 className={`text-3xl ${props.textcolor}`}></TablerMap2>
+        ) : null}
+        {props.icon == 3 ? (
+          <MdiFileLockOpen
+            className={`text-3xl ${props.textcolor}`}
+          ></MdiFileLockOpen>
+        ) : null}
+        {props.icon == 4 ? (
+          <MingcuteGasStationFill
+            className={`text-3xl ${props.textcolor}`}
+          ></MingcuteGasStationFill>
+        ) : null}
+        {props.icon == 5 ? (
+          <LineMdConstruction
+            className={`text-3xl ${props.textcolor}`}
+          ></LineMdConstruction>
+        ) : null}
+        {props.icon == 6 ? (
+          <Fa6SolidLandmark
+            className={`text-3xl ${props.textcolor}`}
+          ></Fa6SolidLandmark>
+        ) : null}
       </div>
     </div>
   );
